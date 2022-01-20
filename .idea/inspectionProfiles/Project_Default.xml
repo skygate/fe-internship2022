@@ -1,0 +1,16 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="engine.simulation.buy_first_indicator_options_list1" />
+          <option value="engine.simulation.buy_first_indicator_short_name1" />
+          <option value="brownie.SimpleCollectible" />
+          <option value="brownie.LinkToken" />
+          <option value="brownie.VRFCoordinatorMock" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
