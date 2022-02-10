@@ -42,5 +42,8 @@ module.exports = {
       url: secret.ALCHEMY_RINKEBY_API_KEY,
       accounts: [secret.RINKEYBY_PRIVATE_KEY]
     }
+  },
+  paths: {
+    artifacts: "./frontend/artifacts"
   }
 };
