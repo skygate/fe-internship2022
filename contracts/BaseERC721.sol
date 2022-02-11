@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder , Ownable {
+contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -59,7 +59,10 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder , Ownable {
     }
 
     function startSale(uint256 tokenCounter, uint256 price) public {
-        require(ownerOf(tokenCounter) == msg.sender, "To put token on sale you must be owner!");
+        require(
+            ownerOf(tokenCounter) == msg.sender,
+            "To put token on sale you must be owner!"
+        );
         require(price > 0, "Can not sale for 0 ETH!");
         tokenIdToPriceOnSale[tokenCounter] = price;
         safeTransferFrom(msg.sender, address(this), tokenCounter);

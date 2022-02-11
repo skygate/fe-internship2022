@@ -112,7 +112,7 @@ describe("Test base ERC721", function () {
 
 		await expect(
 			myBaseERC721.connect(addr2).startSale(tokenId, sellPrice)
-			).to.be.revertedWith("To put token on sale you must be owner!");
+		).to.be.revertedWith("To put token on sale you must be owner!");
 
 		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
 		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
@@ -131,7 +131,7 @@ describe("Test base ERC721", function () {
 
 		await expect(
 			myBaseERC721.connect(addr1).startSale(tokenId, 0)
-			).to.be.revertedWith("Can not sale for 0 ETH!");
+		).to.be.revertedWith("Can not sale for 0 ETH!");
 
 		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
 		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
