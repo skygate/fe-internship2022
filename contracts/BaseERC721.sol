@@ -2,14 +2,16 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract BaseERC721 is ERC721, ERC721URIStorage, Ownable {
+contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder , Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
+    mapping(uint256 => uint256) public tokenIdToPriceOnSale;
 
     constructor(string memory _name, string memory _symbol)
         ERC721(_name, _symbol)
@@ -54,5 +56,12 @@ contract BaseERC721 is ERC721, ERC721URIStorage, Ownable {
 
     function count() public view returns (uint256) {
         return _tokenIdCounter.current();
+    }
+
+    function startSale(uint256 tokenCounter, uint256 price) public {
+        require(ownerOf(tokenCounter) == msg.sender, "To put token on sale you must be owner!");
+        require(price > 0, "Can not sale for 0 ETH!");
+        tokenIdToPriceOnSale[tokenCounter] = price;
+        safeTransferFrom(msg.sender, address(this), tokenCounter);
     }
 }

@@ -75,4 +75,65 @@ describe("Test base ERC721", function () {
 		const currentCounter = await myBaseERC721.connect(addr2).count();
 		expect(currentCounter).to.equal(0);
 	});
+
+	it("TEST startSale() - PASS", async () => {
+		const sellPrice = ethers.utils.parseEther("0.5");
+		const tokenId = 0;
+		const mintTx = await myBaseERC721.connect(addr1).payToMint(
+			addr1.address,
+			metadataURI,
+			{
+				value: ethers.utils.parseEther("0.05"),
+			}
+		);
+		await mintTx.wait();
+
+		const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+			tokenId,
+			sellPrice
+		);
+		await putOnSaleTx.wait();
+
+		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
+		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(myBaseERC721.address);
+	});
+
+	it("TEST startSale() not onwer of token - FAIL", async () => {
+		const sellPrice = ethers.utils.parseEther("0.5");
+		const tokenId = 0;
+		const mintTx = await myBaseERC721.connect(addr1).payToMint(
+			addr1.address,
+			metadataURI,
+			{
+				value: ethers.utils.parseEther("0.05"),
+			}
+		);
+		await mintTx.wait();
+
+		await expect(
+			myBaseERC721.connect(addr2).startSale(tokenId, sellPrice)
+			).to.be.revertedWith("To put token on sale you must be owner!");
+
+		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+	});
+
+	it("TEST startSale() for 0 ETH - FAIL", async () => {
+		const tokenId = 0;
+		const mintTx = await myBaseERC721.connect(addr1).payToMint(
+			addr1.address,
+			metadataURI,
+			{
+				value: ethers.utils.parseEther("0.05"),
+			}
+		);
+		await mintTx.wait();
+
+		await expect(
+			myBaseERC721.connect(addr1).startSale(tokenId, 0)
+			).to.be.revertedWith("Can not sale for 0 ETH!");
+
+		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+	});
 });
