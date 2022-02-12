@@ -12,6 +12,7 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
 
     Counters.Counter private _tokenIdCounter;
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
+    mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
 
     constructor(string memory _name, string memory _symbol)
         ERC721(_name, _symbol)
@@ -65,6 +66,7 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         );
         require(price > 0, "Can not sale for 0 ETH!");
         tokenIdToPriceOnSale[tokenCounter] = price;
+        tokenIdToOwnerAddressOnSale[tokenCounter] = msg.sender;
         safeTransferFrom(msg.sender, address(this), tokenCounter);
     }
 }

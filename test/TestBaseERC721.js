@@ -3,6 +3,7 @@ const { ethers } = require("hardhat");
 
 describe("Test base ERC721", function () {
 	const metadataURI = "cid/test.png";
+	const addrNull = "0x0000000000000000000000000000000000000000";
 
 	let myBaseERC721;
 	let owner;
@@ -96,6 +97,7 @@ describe("Test base ERC721", function () {
 
 		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
 		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(myBaseERC721.address);
+		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addr1.address);
 	});
 
 	it("TEST startSale() not onwer of token - FAIL", async () => {
@@ -116,6 +118,7 @@ describe("Test base ERC721", function () {
 
 		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
 		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
 	});
 
 	it("TEST startSale() for 0 ETH - FAIL", async () => {
@@ -135,5 +138,6 @@ describe("Test base ERC721", function () {
 
 		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
 		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
 	});
 });
