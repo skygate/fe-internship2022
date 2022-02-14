@@ -1,5 +1,6 @@
 //@type import('Hardhat/config').HardhatUserConfig
 
+require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
 let secret = require("./secret")
 //require('dotenv').config({path:+'/.env'})
@@ -43,7 +44,10 @@ module.exports = {
       accounts: [secret.RINKEYBY_PRIVATE_KEY]
     }
   },
+  etherscan: {
+    apiKey: secret.ETHERSCAN_API_KEY
+  },
   paths: {
-    artifacts: "./frontend/artifacts"
+    artifacts: "./frontend/src/artifacts"
   }
 };
