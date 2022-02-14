@@ -59,14 +59,14 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return _tokenIdCounter.current();
     }
 
-    function startSale(uint256 tokenCounter, uint256 price) public {
+    function startSale(uint256 tokenId, uint256 price) public {
         require(
-            ownerOf(tokenCounter) == msg.sender,
+            ownerOf(tokenId) == msg.sender,
             "To put token on sale you must be owner!"
         );
         require(price > 0, "Can not sale for 0 ETH!");
-        tokenIdToPriceOnSale[tokenCounter] = price;
-        tokenIdToOwnerAddressOnSale[tokenCounter] = msg.sender;
-        safeTransferFrom(msg.sender, address(this), tokenCounter);
+        tokenIdToPriceOnSale[tokenId] = price;
+        tokenIdToOwnerAddressOnSale[tokenId] = msg.sender;
+        safeTransferFrom(msg.sender, address(this), tokenId);
     }
 }
