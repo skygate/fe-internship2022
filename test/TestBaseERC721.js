@@ -197,7 +197,6 @@ describe("Test base ERC721", function () {
 	});
 
 	it("TEST cancelSale() sale not started - FAIL", async () => {
-		const sellPrice = ethers.utils.parseEther("0.5");
 		const tokenId = 0;
 		const mintTx = await myBaseERC721.connect(addr1).payToMint(
 			addr1.address,
