@@ -41,7 +41,7 @@ module.exports = {
     },
     rinkeby: {
       url: secret.ALCHEMY_RINKEBY_API_KEY,
-      accounts: [secret.RINKEYBY_PRIVATE_KEY]
+      accounts: [secret.RINKEBY_PRIVATE_KEY]
     }
   },
   etherscan: {
