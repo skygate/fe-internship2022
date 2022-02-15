@@ -6,7 +6,7 @@ const MintNFT = (props) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
-    const contractAddress = "0x68D33A65A2341Fa2269b0150C3DA4912D8a7abFe";
+    const contractAddress = "0x5fbdb2315678afecb367f032d93f642f64180aa3";
     const metadataURI = "ipfs://QmT8nzbH2Rr9WA55Rsv2uWFRBRCF4yGJWr44xSUrZGjTGc";
 
     const contract = new ethers.Contract(contractAddress, BaseERC721.abi, signer);

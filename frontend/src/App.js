@@ -15,7 +15,7 @@ const App = () => {
         <Header activeAccountProps = {activeAccount}/>
         <div className="content">
           <Routes>
-            <Route exact path="/" element={<MainContext />}/>
+            <Route exact path="/" element={<MainContext activeAccountProps = {activeAccount}/>}/>
             <Route path="/MintNFT" element={<MintNFT activeAccountProps = {activeAccount} />}/>
             <Route path="/login" element={<ChooseProvider changeActiveAccount ={activeAccount => setActiveAccount(activeAccount)} />}/>
           </Routes>

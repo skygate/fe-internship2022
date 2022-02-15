@@ -31,7 +31,7 @@ const ChooseProvider = (props) => {
 
     return (
         <div className="center">
-            <button onClick={connect}>Browser Extension Wallets(MetaMask, CoinBase)</button>
+            <button onClick={connect} type="submit">Browser Extension Wallets(MetaMask, CoinBase)</button>
         </div>
     );
 };
