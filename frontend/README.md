@@ -10,7 +10,7 @@ Running with `nmp run dev` automatically refreshes app with new chenges in code.
 # Adding new features on frontend
 ### To add new feature go to `MainContext.jsx`, create new `div` with `className='sectionX'`, add component inside created `div` and add new section in `mainContext.css`. Example for x=2:
 ```html
-<div className="section1">
+<div className="section2">
     <h2>Mint NFT</h2>
         <MintNFT /> <!-- component with logic -->
 </div>
