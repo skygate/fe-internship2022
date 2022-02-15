@@ -1,4 +1,4 @@
-import "./chooseProvider.css";
+import '../mainContext/mainContext.css';
 import React from 'react'
 
 const ChooseProvider = (props) => {
@@ -31,7 +31,7 @@ const ChooseProvider = (props) => {
 
     return (
         <div className="center">
-            <button onClick={connect}>Browser Extension Walletss(MetaMask, CoinBase)</button>
+            <button onClick={connect} type="submit">Browser Extension Wallets(MetaMask, CoinBase)</button>
         </div>
     );
 };
