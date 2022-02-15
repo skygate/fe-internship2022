@@ -140,4 +140,79 @@ describe("Test base ERC721", function () {
 		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
 		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
 	});
+
+	it("TEST cancelSale() - PASS", async () => {
+		const sellPrice = ethers.utils.parseEther("0.5");
+		const tokenId = 0;
+		const mintTx = await myBaseERC721.connect(addr1).payToMint(
+			addr1.address,
+			metadataURI,
+			{
+				value: ethers.utils.parseEther("0.05"),
+			}
+		);
+		await mintTx.wait();
+
+		const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+			tokenId,
+			sellPrice
+		);
+		await putOnSaleTx.wait();
+
+		const cancelTheSaleTX = await myBaseERC721.connect(addr1).cancelSale(
+			tokenId,
+		);
+		await cancelTheSaleTX.wait();
+
+		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
+		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+	});
+
+	it("TEST cancelSale() not onwer of token - FAIL", async () => {
+		const sellPrice = ethers.utils.parseEther("0.5");
+		const tokenId = 0;
+		const mintTx = await myBaseERC721.connect(addr1).payToMint(
+			addr1.address,
+			metadataURI,
+			{
+				value: ethers.utils.parseEther("0.05"),
+			}
+		);
+		await mintTx.wait();
+
+		const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+			tokenId,
+			sellPrice
+		);
+		await putOnSaleTx.wait();
+
+		await expect(
+			myBaseERC721.connect(addr2).cancelSale(tokenId)
+		).to.be.revertedWith("To cancel sale you must be owner!");
+
+		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
+		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(myBaseERC721.address);
+		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addr1.address);
+	});
+
+	it("TEST cancelSale() sale not started - FAIL", async () => {
+		const tokenId = 0;
+		const mintTx = await myBaseERC721.connect(addr1).payToMint(
+			addr1.address,
+			metadataURI,
+			{
+				value: ethers.utils.parseEther("0.05"),
+			}
+		);
+		await mintTx.wait();
+
+		await expect(
+			myBaseERC721.connect(addr1).cancelSale(tokenId)
+		).to.be.revertedWith("To cancel Sale, The sale must be started!");
+
+		expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+		expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
+	});
 });

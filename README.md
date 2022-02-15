@@ -1,1 +1,1 @@
-## NFT internship using HARHDAT
+## NFT internship using HARDHAT
