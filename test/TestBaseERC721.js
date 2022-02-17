@@ -14,7 +14,7 @@ describe("Test base ERC721", function () {
 
 	beforeEach(async () => {
 		const BaseERC721 = await ethers.getContractFactory("BaseERC721");
-		myBaseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721");
+		myBaseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721",);
 		await myBaseERC721.deployed();
 
 		[owner, addr1, addr2, ...addrs] = await ethers.getSigners();

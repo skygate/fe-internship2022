@@ -41,7 +41,8 @@ module.exports = {
     },
     rinkeby: {
       url: secret.ALCHEMY_RINKEBY_API_KEY,
-      accounts: [secret.RINKEBY_PRIVATE_KEY]
+      accounts: [secret.RINKEBY_PRIVATE_KEY],
+      priceFeedAddress: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
     }
   },
   etherscan: {

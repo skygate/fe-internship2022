@@ -6,17 +6,23 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
+    AggregatorV3Interface internal priceFeed;
 
     Counters.Counter private _tokenIdCounter;
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
 
-    constructor(string memory _name, string memory _symbol)
-        ERC721(_name, _symbol)
-    {}
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        address _priceFeedAddress
+    ) ERC721(_name, _symbol) {
+        priceFeed = AggregatorV3Interface(_priceFeedAddress);
+    }
 
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
@@ -100,5 +106,10 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         require(success, "Transfer failed.");
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
+    }
+
+    function getLatestPrice() public view returns (int256) {
+        (, int256 price, , , ) = priceFeed.latestRoundData();
+        return price;
     }
 }
