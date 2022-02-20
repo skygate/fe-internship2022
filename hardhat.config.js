@@ -33,7 +33,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.4",
+  solidity: {
+    compilers: [{ version: "0.6.6" },
+    { version: "0.8.4" }]
+  },
   networks: {
     ropsten: {
       url: secret.ALCHEMY_ROPSTEN_API_KEY,
@@ -42,7 +45,6 @@ module.exports = {
     rinkeby: {
       url: secret.ALCHEMY_RINKEBY_API_KEY,
       accounts: [secret.RINKEBY_PRIVATE_KEY],
-      priceFeedAddress: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
     }
   },
   etherscan: {
