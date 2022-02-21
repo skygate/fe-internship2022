@@ -2,7 +2,6 @@
   display: grid;
   width: 60%;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
   gap: 40px 0px;
   grid-auto-flow: row;
   margin-top: 40px;
@@ -10,11 +9,9 @@
   grid-template-areas:
     'section1 section1 section1'
     'section2 section2 section2'
-    'section3 section3 section3';
+    'section3 section3 section3'
+    'section4 section4 section4';
 }
-/* div[class*="section"] {
-    border-style: solid;
-    border-color: red;} */
 
 .section1 {
   grid-area: section1;
@@ -24,6 +21,9 @@
 }
 .section3 {
   grid-area: section3;
+}
+.section4 {
+  grid-area: section4;
 }
 
 input[type='text'],

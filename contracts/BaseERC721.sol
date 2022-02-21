@@ -83,4 +83,22 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
+
+    function buyTokenOnSale(uint256 tokenId) public payable {
+        require(
+            tokenIdToPriceOnSale[tokenId] > 0,
+            "This token is not for sale!"
+        );
+        require(
+            tokenIdToPriceOnSale[tokenId] <= msg.value,
+            "Pleas provide minimum price of this specific token!"
+        );
+        _transfer(address(this), msg.sender, tokenId);
+        (bool success, ) = tokenIdToOwnerAddressOnSale[tokenId].call{
+            value: msg.value
+        }("");
+        require(success, "Transfer failed.");
+        delete tokenIdToPriceOnSale[tokenId];
+        delete tokenIdToOwnerAddressOnSale[tokenId];
+    }
 }
