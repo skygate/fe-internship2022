@@ -109,7 +109,7 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     }
 
     function getLatestPrice() public view returns (int256) {
-        (, int256 price, , , ) = priceFeed.latestRoundData();
-        return price;
+        (, int256 answer, , , ) = priceFeed.latestRoundData();
+        return answer;
     }
 }

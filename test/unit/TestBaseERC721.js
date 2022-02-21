@@ -15,20 +15,20 @@ describe("Test base ERC721", function () {
     let addrs;
 
     beforeEach(async () => {
-        const MockV3Aggregator = await ethers.getContractFactory("MockV3Aggregator");
-        mockV3Aggregator = await MockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE,);
-        await mockV3Aggregator.deployed();
+        const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
+        myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE,);
+        await myMockV3Aggregator.deployed();
 
 
         const BaseERC721 = await ethers.getContractFactory("BaseERC721");
-        myBaseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721", mockV3Aggregator.address);
+        myBaseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721", myMockV3Aggregator.address);
         await myBaseERC721.deployed();
 
         [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
     });
 
     it('TEST getLatestPrice() - PASS', async () => {
-        let result = await mockV3Aggregator.getLatestPrice();
+        let result = await myBaseERC721.getLatestPrice();
         // console.log('price:' + new ethers.BigNumber.from(result._hex).toString())
         expect((new ethers.BigNumber.from(result._hex).toString())).equals(INITIAL_PRICE).toString()
     });
