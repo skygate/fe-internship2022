@@ -30,8 +30,10 @@ const ChooseProvider = (props) => {
     window.ethereum.on('accountsChanged', connect);
 
     return (
-        <div className="center">
+        <div className="container">
+          <div className="section1">
             <button onClick={connect} type="submit">Browser Extension Wallets(MetaMask, CoinBase)</button>
+          </div>
         </div>
     );
 };
