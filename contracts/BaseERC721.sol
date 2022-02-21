@@ -24,11 +24,21 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         priceFeed = AggregatorV3Interface(_priceFeedAddress);
     }
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
+    modifier isTokenOnSale(uint256 tokenId) {
+        require(
+            tokenIdToPriceOnSale[tokenId] > 0,
+            "Cant perform this action, token is not on sale!"
+        );
+        _;
+    }
+
+    modifier isOwnerOfToken(uint256 tokenId) {
+        require(
+            ownerOf(tokenId) == msg.sender ||
+                tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
+            "Cant perform this action, you must be owner of this token!"
+        );
+        _;
     }
 
     function _burn(uint256 tokenId)
@@ -45,6 +55,13 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         returns (string memory)
     {
         return super.tokenURI(tokenId);
+    }
+
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
     }
 
     function payToMint(address recipients, string memory metadataURI)
@@ -65,36 +82,31 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return _tokenIdCounter.current();
     }
 
-    function startSale(uint256 tokenId, uint256 price) public {
-        require(
-            ownerOf(tokenId) == msg.sender,
-            "To put token on sale you must be owner!"
-        );
+    function startSale(uint256 tokenId, uint256 price)
+        public
+        isOwnerOfToken(tokenId)
+    {
         require(price > 0, "Can not sale for 0 ETH!");
         tokenIdToPriceOnSale[tokenId] = price;
         tokenIdToOwnerAddressOnSale[tokenId] = msg.sender;
         safeTransferFrom(msg.sender, address(this), tokenId);
     }
 
-    function cancelSale(uint256 tokenId) public {
-        require(
-            tokenIdToPriceOnSale[tokenId] > 0,
-            "To cancel Sale, The sale must be started!"
-        );
-        require(
-            tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
-            "To cancel sale you must be owner!"
-        );
+    function cancelSale(uint256 tokenId)
+        public
+        isTokenOnSale(tokenId)
+        isOwnerOfToken(tokenId)
+    {
         _transfer(address(this), msg.sender, tokenId);
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function buyTokenOnSale(uint256 tokenId) public payable {
-        require(
-            tokenIdToPriceOnSale[tokenId] > 0,
-            "This token is not for sale!"
-        );
+    function buyTokenOnSale(uint256 tokenId)
+        public
+        payable
+        isTokenOnSale(tokenId)
+    {
         require(
             tokenIdToPriceOnSale[tokenId] <= msg.value,
             "Pleas provide minimum price of this specific token!"
