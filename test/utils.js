@@ -13,4 +13,8 @@ const getGasUsedForLastTx = async () => {
     return BigInt(parseInt(lastBlock.gasUsed) * parseInt(txHashAfter.gasPrice));
 }
 
-module.exports = { getGasUsedForLastTx };
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+module.exports = { getGasUsedForLastTx, sleep  };
