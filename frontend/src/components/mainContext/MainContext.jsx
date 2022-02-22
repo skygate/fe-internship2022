@@ -1,6 +1,7 @@
 import './mainContext.css';
 import Utils from '../utils/Utils';
 import StartSale from '../startSale/StartSale';
+import CancelSale from '../cancelSale/CancelSale';
 import BuyToken from '../buyToken/BuyToken';
 import BurnToken from '../burnToken/BurnToken';
 
@@ -21,10 +22,14 @@ const MainContext = (props) => {
                 <StartSale activeAccountProps = {props.activeAccountProps}/>
             </div>
             <div className="section4">
+                <h2>Cancel Sale NFT</h2>
+                <CancelSale activeAccountProps = {props.activeAccountProps}/>
+            </div>
+            <div className="section5">
                 <h2>Buy NFT</h2>
                 <BuyToken activeAccountProps = {props.activeAccountProps}/>
             </div>
-            <div className="section5">
+            <div className="section6">
                 <h2>Burn NFT</h2>
                 <BurnToken activeAccountProps = {props.activeAccountProps}/>
             </div>
