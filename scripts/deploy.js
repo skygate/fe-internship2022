@@ -9,14 +9,14 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const MockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
-  mockV3Aggregator = await MockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
-  await mockV3Aggregator.deployed();
-  console.log("MockV3Aggregator address:", mockV3Aggregator.address);
+  const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
+  myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
+  await myMockV3Aggregator.deployed();
+  console.log("MyMockV3Aggregator address:", myMockV3Aggregator.address);
 
 
   const BaseERC721 = await ethers.getContractFactory("BaseERC721");
-  const baseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721", mockV3Aggregator.address);
+  const baseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721", myMockV3Aggregator.address);
   console.log("BaseERC721 address:", baseERC721.address);
 }
 
