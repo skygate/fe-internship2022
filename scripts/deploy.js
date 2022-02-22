@@ -9,7 +9,7 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const MockV3Aggregator = await ethers.getContractFactory("MockV3Aggregator");
+  const MockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
   mockV3Aggregator = await MockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
   await mockV3Aggregator.deployed();
   console.log("MockV3Aggregator address:", mockV3Aggregator.address);

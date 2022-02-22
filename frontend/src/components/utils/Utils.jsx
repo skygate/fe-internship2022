@@ -13,9 +13,9 @@ const BuyToken = (props) => {
                 .catch((error) => {
                     console.log(error.data.message);
                 })
-            } else {
-                console.log(">>> Please login to perform this action!");
-            }
+        } else {
+            console.log(">>> Please login to perform this action!");
+        }
     };
 
     const getTokenPrice = async () => {
@@ -34,9 +34,9 @@ const BuyToken = (props) => {
                 .catch((error) => {
                     console.log(error.data.message);
                 })
-            } else {
-                console.log(">>> Please login to perform this action!");
-            }
+        } else {
+            console.log(">>> Please login to perform this action!");
+        }
     };
 
     const getTokenOwner = async () => {
@@ -51,9 +51,9 @@ const BuyToken = (props) => {
                 .catch((error) => {
                     console.log(error.data.message);
                 })
-            } else {
-                console.log(">>> Please login to perform this action!");
-            }
+        } else {
+            console.log(">>> Please login to perform this action!");
+        }
     };
 
     return (
