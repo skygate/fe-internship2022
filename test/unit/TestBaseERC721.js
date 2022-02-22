@@ -231,91 +231,163 @@ describe("Test base ERC721", function () {
         expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
     });
 
-	it("TEST buyTokenOnSale() - PASS", async () => {
-		const sellPrice = ethers.utils.parseEther("0.5");
-		const tokenId = 0;
-		const mintTx = await myBaseERC721.connect(addr1).payToMint(
-			addr1.address,
-			metadataURI,
-			{
-				value: ethers.utils.parseEther("0.05"),
-			}
-		);
-		await mintTx.wait();
+    it("TEST buyTokenOnSale() - PASS", async () => {
+        const sellPrice = ethers.utils.parseEther("0.5");
+        const tokenId = 0;
+        const mintTx = await myBaseERC721.connect(addr1).payToMint(
+            addr1.address,
+            metadataURI,
+            {
+                value: ethers.utils.parseEther("0.05"),
+            }
+        );
+        await mintTx.wait();
 
-		const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
-			tokenId,
-			sellPrice
-		);
-		await putOnSaleTx.wait();
+        const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+            tokenId,
+            sellPrice
+        );
+        await putOnSaleTx.wait();
 
-		const addr1BalanceBefor = await addr1.getBalance();
-		const addr2BalanceBefor = await addr2.getBalance();
-		await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
+        const addr1BalanceBefor = await addr1.getBalance();
+        const addr2BalanceBefor = await addr2.getBalance();
+        await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
 
-		const gasUsed = await getGasUsedForLastTx();
+        const gasUsed = await getGasUsedForLastTx();
 
-		expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
-		expect(await myBaseERC721.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
-		expect(await myBaseERC721.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
-		expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor) + BigInt(sellPrice));
-		expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed);
-	});
+        expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
+        expect(await myBaseERC721.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+        expect(await myBaseERC721.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
+        expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor) + BigInt(sellPrice));
+        expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed);
+    });
 
-	it('TEST buyTokenOnSale() token not for sale - FAIL', async () => {
-		const sellPrice = ethers.utils.parseEther('0.5');
-		const tokenId = 0;
-		const mintTx = await myBaseERC721
-			.connect(addr1)
-			.payToMint(addr1.address, metadataURI, {
-				value: ethers.utils.parseEther('0.05'),
-			});
-		await mintTx.wait();
+    it('TEST buyTokenOnSale() token not for sale - FAIL', async () => {
+        const sellPrice = ethers.utils.parseEther('0.5');
+        const tokenId = 0;
+        const mintTx = await myBaseERC721
+            .connect(addr1)
+            .payToMint(addr1.address, metadataURI, {
+                value: ethers.utils.parseEther('0.05'),
+            });
+        await mintTx.wait();
 
-		const addr1BalanceBefor = await addr1.getBalance();
-		const addr2BalanceBefor = await addr2.getBalance();
+        const addr1BalanceBefor = await addr1.getBalance();
+        const addr2BalanceBefor = await addr2.getBalance();
 
-		await expect(
-			myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice })
-		).to.be.revertedWith("Cant perform this action, token is not on sale!");
+        await expect(
+            myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice })
+        ).to.be.revertedWith("Cant perform this action, token is not on sale!");
 
-		const gasForRevertedTx = await getGasUsedForLastTx();
+        const gasForRevertedTx = await getGasUsedForLastTx();
 
-		expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
-		expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
-		expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
-	});
+        expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+        expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
+        expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
+    });
 
-	it('TEST buyTokenOnSale() send eth to low - FAIL', async () => {
-		const sellPrice = ethers.utils.parseEther('0.5');
-		const sendEthAmount = ethers.utils.parseEther('0.05');
-		const tokenId = 0;
-		const mintTx = await myBaseERC721
-			.connect(addr1)
-			.payToMint(addr1.address, metadataURI, {
-				value: sendEthAmount,
-			});
-		await mintTx.wait();
+    it('TEST buyTokenOnSale() send eth to low - FAIL', async () => {
+        const sellPrice = ethers.utils.parseEther('0.5');
+        const sendEthAmount = ethers.utils.parseEther('0.05');
+        const tokenId = 0;
+        const mintTx = await myBaseERC721
+            .connect(addr1)
+            .payToMint(addr1.address, metadataURI, {
+                value: sendEthAmount,
+            });
+        await mintTx.wait();
 
-		const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
-			tokenId,
-			sellPrice
-		);
-		await putOnSaleTx.wait();
+        const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+            tokenId,
+            sellPrice
+        );
+        await putOnSaleTx.wait();
 
-		const addr1BalanceBefor = await addr1.getBalance();
-		const addr2BalanceBefor = await addr2.getBalance();
+        const addr1BalanceBefor = await addr1.getBalance();
+        const addr2BalanceBefor = await addr2.getBalance();
 
-		await expect(
-			myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sendEthAmount })
-		).to.be.revertedWith("Pleas provide minimum price of this specific token!");
+        await expect(
+            myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sendEthAmount })
+        ).to.be.revertedWith("Pleas provide minimum price of this specific token!");
 
-		const gasForRevertedTx = await getGasUsedForLastTx();
+        const gasForRevertedTx = await getGasUsedForLastTx();
 
-		expect(await myBaseERC721.connect(myBaseERC721.address).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
-		expect(await myBaseERC721.connect(myBaseERC721.address).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addr1.address);
-		expect(await myBaseERC721.connect(myBaseERC721.address).ownerOf(tokenId)).to.equal(myBaseERC721.address);
-		expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
-		expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
-	});
+        expect(await myBaseERC721.connect(myBaseERC721.address).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
+        expect(await myBaseERC721.connect(myBaseERC721.address).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addr1.address);
+        expect(await myBaseERC721.connect(myBaseERC721.address).ownerOf(tokenId)).to.equal(myBaseERC721.address);
+        expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
+        expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
+    });
+
+    it('TEST burn() token not on sale - PASS', async () => {
+        const sendEthAmount = ethers.utils.parseEther('0.05');
+        const tokenId = 0;
+        const mintTx = await myBaseERC721
+            .connect(addr1)
+            .payToMint(addr1.address, metadataURI, {
+                value: sendEthAmount,
+            });
+        await mintTx.wait();
+
+        expect(await myBaseERC721.ownerOf(tokenId)).to.equal(addr1.address);
+
+        const burnTx = await myBaseERC721.connect(addr1).burn(tokenId);
+        await burnTx.wait();
+
+        await expect(myBaseERC721.ownerOf(tokenId))
+            .to.be.revertedWith("'ERC721: owner query for nonexistent token");
+    });
+
+    it('TEST burn() token on sale - PASS', async () => {
+        const sendEthAmount = ethers.utils.parseEther('0.05');
+        const sellPrice = ethers.utils.parseEther('0.5');
+        const tokenId = 0;
+        const mintTx = await myBaseERC721
+            .connect(addr1)
+            .payToMint(addr1.address, metadataURI, {
+                value: sendEthAmount,
+            });
+        await mintTx.wait();
+
+        const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+            tokenId,
+            sellPrice
+        );
+        await putOnSaleTx.wait();
+
+        expect(await myBaseERC721.ownerOf(tokenId)).to.equal(myBaseERC721.address);
+
+        const burnTx = await myBaseERC721.connect(addr1).burn(tokenId);
+        await burnTx.wait();
+
+        expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+        expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
+        await expect(myBaseERC721.connect(addr1).ownerOf(tokenId))
+            .to.be.revertedWith("'ERC721: owner query for nonexistent token");
+    });
+
+    it('TEST burn() not owner of token - FAIL', async () => {
+        const sendEthAmount = ethers.utils.parseEther('0.05');
+        const sellPrice = ethers.utils.parseEther('0.5');
+        const tokenId = 0;
+        const mintTx = await myBaseERC721
+            .connect(addr1)
+            .payToMint(addr1.address, metadataURI, {
+                value: sendEthAmount,
+            });
+        await mintTx.wait();
+
+        const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(
+            tokenId,
+            sellPrice
+        );
+        await putOnSaleTx.wait();
+
+        await expect(myBaseERC721.connect(addr2).burn(tokenId))
+            .to.be.revertedWith("Cant perform this action, you must be owner of this token!");
+
+        expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
+        expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addr1.address);
+        expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(myBaseERC721.address);
+    });
 });
