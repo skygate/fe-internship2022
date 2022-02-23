@@ -13,8 +13,9 @@ const getGasUsedForLastTx = async () => {
     return BigInt(parseInt(lastBlock.gasUsed) * parseInt(txHashAfter.gasPrice));
 }
 
-const sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
+const skipt_time = async (seconds) => {
+    await network.provider.send("evm_increaseTime", [seconds])
+    await network.provider.send("evm_mine")
 }
 
-module.exports = { getGasUsedForLastTx, sleep  };
+module.exports = { getGasUsedForLastTx, skipt_time  };

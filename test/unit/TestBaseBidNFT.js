@@ -5,7 +5,7 @@ const {
     ethers
 } = require("hardhat");
 
-const { getGasUsedForLastTx, sleep } = require("./../utils");
+const { getGasUsedForLastTx, skipt_time } = require("./../utils");
 
 describe("Test base BaseBidNFT", function () {
     const addrNull = "0x0000000000000000000000000000000000000000";
@@ -50,31 +50,13 @@ describe("Test base BaseBidNFT", function () {
         expect(balance).to.equal(1);
 
         await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
-
-        await myBaseBidNFT.connect(owner).start(tokenId);
         await myBaseBidNFT.connect(addr1).bid(tokenId, {
             value: ethers.utils.parseEther("0.2"),
         });
-        await sleep(6 * 1000);
+        await skipt_time(6);
 
         await myBaseBidNFT.connect(owner).end(tokenId);
-        // await myBaseBidNFT.connect(owner).withdraw(tokenId);
-    });
-
-    it("TEST start() function before create auction - FAIL", async () => {
-        await myBaseERC721.connect(owner).safeMint(
-            owner.address,
-            metadataURI
-        );
-
-        balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
-        expect(balance).to.equal(1);
-
-        await expect(
-            myBaseBidNFT.connect(owner).start(tokenId)
-        ).to.be.revertedWith("Auction started");
-
-        await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
+        await myBaseBidNFT.connect(owner).withdraw(tokenId);
     });
 
     it("TEST bid() - PASS", async () => {
@@ -95,10 +77,7 @@ describe("Test base BaseBidNFT", function () {
 
         await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
         agregateOwnerGas += await getGasUsedForLastTx();
-
-        await myBaseBidNFT.connect(owner).start(tokenId);
-        agregateOwnerGas += await getGasUsedForLastTx();
-
+        
         await myBaseBidNFT.connect(addr1).bid(tokenId, {
             value: ethers.utils.parseEther("0.2"),
         });
@@ -109,7 +88,7 @@ describe("Test base BaseBidNFT", function () {
         });
         const gasUsedAddres2 = await getGasUsedForLastTx();
 
-        await sleep(6 * 1000);
+        await skipt_time(6);
 
         await myBaseBidNFT.connect(owner).end(tokenId);
         agregateOwnerGas += await getGasUsedForLastTx();
@@ -136,7 +115,7 @@ describe("Test base BaseBidNFT", function () {
             myBaseBidNFT.connect(addr1).bid(tokenId, {
                 value: ethers.utils.parseEther("0.2"),
             })
-        ).to.be.revertedWith("ended");
+        ).to.be.revertedWith("The bidding period is over");
 
         await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
     });
@@ -157,10 +136,7 @@ describe("Test base BaseBidNFT", function () {
         await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
         agregateOwnerGas += await getGasUsedForLastTx();
 
-        await myBaseBidNFT.connect(owner).start(tokenId);
-        agregateOwnerGas += await getGasUsedForLastTx();
-
-        await sleep(6 * 1000);
+        await skipt_time(6);
 
         await myBaseBidNFT.connect(owner).end(tokenId);
         agregateOwnerGas += await getGasUsedForLastTx();
@@ -177,11 +153,11 @@ describe("Test base BaseBidNFT", function () {
         balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
         expect(balance).to.equal(1);
 
-        await sleep(6 * 1000);
+        await skipt_time(6);
 
         await expect(
             myBaseBidNFT.connect(owner).end(tokenId)
-        ).to.be.revertedWith("not seller");
+        ).to.be.revertedWith("You don't have permission to manage this token!");
 
         await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
     });
@@ -196,14 +172,15 @@ describe("Test base BaseBidNFT", function () {
         expect(balance).to.equal(1);
 
         await myBaseBidNFT.connect(owner).createAuction(tokenId, 100);
-
-        await myBaseBidNFT.connect(owner).start(tokenId);
         await myBaseBidNFT.connect(addr1).bid(tokenId, {
             value: ethers.utils.parseEther("0.2"),
         });
 
         await expect(
             myBaseBidNFT.connect(owner).end(tokenId)
-        ).to.be.revertedWith('not ended');
+        ).to.be.revertedWith("The bidding period has not ended");
     });
+
+
+
 });
