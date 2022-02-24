@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 
 import "./BaseERC721.sol";
-import "hardhat/console.sol";
 
 contract BaseBidNFT {
     enum TOKENSTATUS {
@@ -16,17 +15,18 @@ contract BaseBidNFT {
         uint256 HighestBid;
         uint256 startBid;
         uint256 EndAt;
-        uint256 auctionBlance;
+
         TOKENSTATUS tokenStatus;
     }
 
-    event Start(Auctions auction);
+    event Start(address owner, Auctions auction);
+    event Bid(address sender, uint256 amount);
     event End(address winner, uint256 amount);
-    event Cancel(uint256 amount);
-    event Bid(address indexed sender, uint256 amount);
-    event Withdraw(address indexed bidder, uint256 amount);
+    event Withdraw(address bidder, uint256 amount);
+    event Cancel(address highestbidder, uint256 amount);
 
     mapping(uint256 => mapping(address => uint256)) private userBalance;
+    mapping(uint256 => uint256) private auctionBlance;
     mapping(uint256 => Auctions) private auctions;
 
     BaseERC721 private baseERC721;
@@ -87,7 +87,7 @@ contract BaseBidNFT {
         require(
             (msg.value + userBalance[tokenId][msg.sender]) >
                 auctions[tokenId].HighestBid,
-            "value + your blance < highest"
+            "value + your blance < highest bid"
         );
 
         _;
@@ -107,11 +107,10 @@ contract BaseBidNFT {
             0,
             _startingBid,
             auctionEndAt,
-            0,
             TOKENSTATUS.Started
         );
 
-        emit Start(auctions[tokenId]);
+        emit Start(msg.sender, auctions[tokenId]);
     }
 
     function bid(uint256 tokenId)
@@ -123,9 +122,9 @@ contract BaseBidNFT {
         auctions[tokenId].HighBidder = msg.sender;
 
         if (auctions[tokenId].HighBidder != address(0)) {
-            auctions[tokenId].auctionBlance += msg.value;
             auctions[tokenId].HighestBid = (msg.value +
                 userBalance[tokenId][msg.sender]);
+            auctionBlance[tokenId] += msg.value;
             userBalance[tokenId][msg.sender] += msg.value;
         }
 
@@ -133,9 +132,10 @@ contract BaseBidNFT {
     }
 
     function withdraw(uint256 tokenId) public {
-        auctions[tokenId].auctionBlance -= userBalance[tokenId][msg.sender];
+        auctionBlance[tokenId] -= userBalance[tokenId][msg.sender];
         uint256 balance = userBalance[tokenId][msg.sender];
         userBalance[tokenId][msg.sender] = 0;
+
 
         (bool success, ) = payable(msg.sender).call{value: balance}("");
         require(success, "Failed to send Ether");
@@ -148,6 +148,7 @@ contract BaseBidNFT {
         isAuctionNotEnded(tokenId)
         isSeller(tokenId)
     {
+        uint256 balance = userBalance[tokenId][auctions[tokenId].HighBidder];
         auctions[tokenId].tokenStatus = TOKENSTATUS.Ended;
 
         baseERC721.transfer(
@@ -156,8 +157,8 @@ contract BaseBidNFT {
             tokenId
         );
 
+        emit Cancel(auctions[tokenId].HighBidder, balance);
         delete auctions[tokenId];
-        emit Cancel(tokenId);
     }
 
     function end(uint256 tokenId)
@@ -166,13 +167,16 @@ contract BaseBidNFT {
         isAuctionEnded(tokenId)
     {
         require(block.timestamp >= auctions[tokenId].EndAt, "Auction is ended");
+        require(userBalance[tokenId][auctions[tokenId].HighBidder] == auctions[tokenId].HighestBid,"Highest bidder withdraw money befor end auction");
 
         auctions[tokenId].tokenStatus = TOKENSTATUS.Ended;
+        uint256 balance = auctions[tokenId].HighestBid;
+        auctions[tokenId].HighestBid = 0;
+
+        auctionBlance[tokenId] -= userBalance[tokenId][auctions[tokenId].HighBidder];
+        userBalance[tokenId][auctions[tokenId].HighBidder] = 0;
 
         if (auctions[tokenId].HighBidder != address(0)) {
-            uint256 balance = auctions[tokenId].HighestBid;
-            auctions[tokenId].HighestBid = 0;
-
             (bool success, ) = auctions[tokenId].sellerNft.call{value: balance}(
                 ""
             );
@@ -190,8 +194,8 @@ contract BaseBidNFT {
                 tokenId
             );
         }
-        delete auctions[tokenId];
 
-        emit End(auctions[tokenId].HighBidder, auctions[tokenId].HighestBid);
+        emit End(auctions[tokenId].HighBidder, balance);
+        delete auctions[tokenId];
     }
 }

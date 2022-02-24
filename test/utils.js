@@ -13,9 +13,20 @@ const getGasUsedForLastTx = async () => {
     return BigInt(parseInt(lastBlock.gasUsed) * parseInt(txHashAfter.gasPrice));
 }
 
-const skipt_time = async (seconds) => {
-    await network.provider.send("evm_increaseTime", [seconds])
-    await network.provider.send("evm_mine")
+const getTimeStampForLastTx = async () => {
+    const blockNumBefore = await ethers.provider.getBlockNumber();
+    const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+    return blockBefore.timestamp;
 }
 
-module.exports = { getGasUsedForLastTx, skipt_time  };
+const skipt_time = async (seconds) => {
+    network.provider.send("evm_increaseTime", [seconds])
+    network.provider.send("evm_mine")
+}
+
+const getEventLastTx = async (receipt, eventName) => {
+    const event = receipt.events.find(event => event.event === eventName);
+    return event.args;
+}
+
+module.exports = { getGasUsedForLastTx, getTimeStampForLastTx, skipt_time, getEventLastTx };
