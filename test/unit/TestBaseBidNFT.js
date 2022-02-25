@@ -15,6 +15,7 @@ const {
 describe("Test base BaseBidNFT", function () {
     const DECIMALS = '18'
     const INITIAL_PRICE = '200000000000000000000'
+    const addrNull = "0x0000000000000000000000000000000000000000";
 
     const metadataURI = "cid/test.png";
     const startingBid = 100;
@@ -59,7 +60,7 @@ describe("Test base BaseBidNFT", function () {
 
         expect(eventCreateAuctionTx.owner).to.equal(owner.address);
         expect(eventCreateAuctionTx.auction[0]).to.equal(owner.address);
-        expect(eventCreateAuctionTx.auction[1]).to.equal(owner.address);
+        expect(eventCreateAuctionTx.auction[1]).to.equal(addrNull);
         expect(eventCreateAuctionTx.auction[2]).to.equal(0);
         expect(eventCreateAuctionTx.auction[3]).to.equal(startingBid);
         expect(eventCreateAuctionTx.auction[4]).to.equal(timestampBefore + 6);

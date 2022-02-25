@@ -103,7 +103,7 @@ contract BaseBidNFT {
 
         auctions[tokenId] = Auctions(
             msg.sender,
-            msg.sender,
+            address(0),
             0,
             _startingBid,
             auctionEndAt,
