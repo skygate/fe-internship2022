@@ -10,10 +10,10 @@ contract BaseBidNFT {
     }
 
     struct Auctions {
-        address sellerNft;
+        address SellerNft;
         address HighBidder;
         uint256 HighestBid;
-        uint256 startBid;
+        uint256 StartBid;
         uint256 EndAt;
 
         TOKENSTATUS tokenStatus;
@@ -71,7 +71,7 @@ contract BaseBidNFT {
 
     modifier isSeller(uint256 tokenId) {
         require(
-            msg.sender == auctions[tokenId].sellerNft,
+            msg.sender == auctions[tokenId].SellerNft,
             "You don't have permission to manage this token!"
         );
 
@@ -81,7 +81,7 @@ contract BaseBidNFT {
     modifier isBidPossible(uint256 tokenId) {
         require(
             (msg.value + userBalance[tokenId][msg.sender]) >
-                auctions[tokenId].startBid,
+                auctions[tokenId].StartBid,
             "value + your blance < minimal bid"
         );
         require(
@@ -153,7 +153,7 @@ contract BaseBidNFT {
 
         baseERC721.transfer(
             address(this),
-            auctions[tokenId].sellerNft,
+            auctions[tokenId].SellerNft,
             tokenId
         );
 
@@ -177,7 +177,7 @@ contract BaseBidNFT {
         userBalance[tokenId][auctions[tokenId].HighBidder] = 0;
 
         if (auctions[tokenId].HighBidder != address(0)) {
-            (bool success, ) = auctions[tokenId].sellerNft.call{value: balance}(
+            (bool success, ) = auctions[tokenId].SellerNft.call{value: balance}(
                 ""
             );
             require(success, "Failed to send Ether");
@@ -190,7 +190,7 @@ contract BaseBidNFT {
         } else {
             baseERC721.transfer(
                 address(this),
-                auctions[tokenId].sellerNft,
+                auctions[tokenId].SellerNft,
                 tokenId
             );
         }
