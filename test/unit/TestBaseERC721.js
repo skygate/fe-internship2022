@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const { getGasUsedForLastTx } = require("../utils");
+const { getGasUsedForLastTx, calculatePercentageInWei } = require("../utils");
 
 describe("Test base ERC721", function () {
     const metadataURI = "cid/test.png";
@@ -251,15 +251,19 @@ describe("Test base ERC721", function () {
 
         const addr1BalanceBefor = await addr1.getBalance();
         const addr2BalanceBefor = await addr2.getBalance();
+        const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+
         await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
 
         const gasUsed = await getGasUsedForLastTx();
+        const ethersForContract = await calculatePercentageInWei(sellPrice, await myBaseERC721.transactionFee());
 
         expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
         expect(await myBaseERC721.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
         expect(await myBaseERC721.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addrNull);
-        expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor) + BigInt(sellPrice));
+        expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor) + BigInt(sellPrice) - ethersForContract);
         expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed);
+        expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(BigInt(contractBalanceBefor) + ethersForContract);
     });
 
     it('TEST buyTokenOnSale() token not for sale - FAIL', async () => {
@@ -389,5 +393,102 @@ describe("Test base ERC721", function () {
         expect(await myBaseERC721.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(sellPrice);
         expect(await myBaseERC721.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(addr1.address);
         expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(myBaseERC721.address);
+    });
+
+    const feeParematers = [
+        { fee: 1, expected: 5_000_000_000_000 },
+        { fee: 999, expected: 4_995_000_000_000_000 },
+        { fee: 1000, expected: 5_000_000_000_000_000 },
+        { fee: 2500, expected: 12_500_000_000_000_000 },
+        { fee: 10000, expected: 50_000_000_000_000_000 }
+    ];
+
+    feeParematers.forEach(({ fee }) => {
+        it(`TEST setTransactionFee() ${fee / 1000}% - PASS`, async () => {
+            expect(await myBaseERC721.transactionFee()).to.be.equal(BigInt(1000));
+            const setTransactionFeeTx = await myBaseERC721.connect(owner).setTransactionFee(fee);
+            await setTransactionFeeTx.wait();
+            expect(await myBaseERC721.transactionFee()).to.be.equal(fee);
+        });
+    });
+
+    it(`TEST setTransactionFee() not owner - FAIL`, async () => {
+        expect(await myBaseERC721.transactionFee()).to.be.equal(BigInt(1000));
+        await expect(
+            myBaseERC721.connect(addr1).setTransactionFee(1)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+        expect(await myBaseERC721.transactionFee()).to.be.equal(BigInt(1000));
+    });
+
+    feeParematers.forEach(({ fee, expected }) => {
+        it(`TEST transactionFee ${fee / 1000}% - PASS`, async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(
+                addr1.address, metadataURI, { value: ethers.utils.parseEther("0.05")}
+            );
+            await mintTx.wait();
+
+            const setFeeTx = await myBaseERC721.connect(owner).setTransactionFee(fee);
+            await setFeeTx.wait();
+
+            const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+
+            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
+
+            const gasUsed = await getGasUsedForLastTx();
+            const ethersForContract = await calculatePercentageInWei(sellPrice, await myBaseERC721.transactionFee());
+
+            expect(expected).to.be.equal(Number(ethersForContract));
+            expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor) + BigInt(sellPrice) - ethersForContract);
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed);
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(BigInt(contractBalanceBefor) + ethersForContract);
+        });
+    });
+
+    it(`TEST withdraw() - PASS`, async () => {
+        const amoutPayed = ethers.utils.parseEther("0.05");
+        const mintTx = await myBaseERC721.connect(addr1).payToMint(
+            addr1.address, metadataURI, { value: amoutPayed }
+        );
+        await mintTx.wait();
+
+        const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+        const ownerBalanceBefor = await ethers.provider.getBalance(owner.address);
+
+        const withdrawTx = await myBaseERC721.connect(owner).withdraw();
+        await withdrawTx.wait();
+
+        const gasUsed = await getGasUsedForLastTx();
+
+        expect(await ethers.provider.getBalance(myBaseERC721.address))
+            .to.be.equal(BigInt(contractBalanceBefor) - BigInt(amoutPayed));
+        expect(await ethers.provider.getBalance(owner.address))
+            .to.be.equal(BigInt(ownerBalanceBefor) + BigInt(amoutPayed) - gasUsed);
+    });
+
+    it(`TEST withdraw() not owner - FAIL`, async () => {
+        const amoutPayed = ethers.utils.parseEther("0.05");
+        const mintTx = await myBaseERC721.connect(addr1).payToMint(
+            addr1.address, metadataURI, { value: amoutPayed }
+        );
+        await mintTx.wait();
+
+        const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+        const ownerBalanceBefor = await ethers.provider.getBalance(owner.address);
+
+        await expect(
+            myBaseERC721.connect(addr1).withdraw()
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+
+        expect(await ethers.provider.getBalance(myBaseERC721.address))
+            .to.be.equal(BigInt(contractBalanceBefor));
+        expect(await ethers.provider.getBalance(owner.address))
+            .to.be.equal(BigInt(ownerBalanceBefor));
     });
 });
