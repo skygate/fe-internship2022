@@ -4,8 +4,8 @@ const { ethers } = require("hardhat");
 describe("Test base ERC721 Upgradeable", function () {
     const metadataURI = "cid/test.png";
 
-    const DECIMALS = '18'
-    const INITIAL_PRICE = '200000000000000000000'
+    const DECIMALS = '18';
+    const INITIAL_PRICE = '200000000000000000000';
 
     let baseERC721Upgradeable;
     let owner;
