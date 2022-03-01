@@ -13,4 +13,9 @@ const getGasUsedForLastTx = async () => {
     return BigInt(parseInt(lastBlock.gasUsed) * parseInt(txHashAfter.gasPrice));
 }
 
-module.exports = { getGasUsedForLastTx };
+const calculatePercentageInWei = async (amount, percentageInWei) => {
+    const percentage100 = 100000;
+    return BigInt(amount * percentageInWei / percentage100);
+}
+
+module.exports = { getGasUsedForLastTx, calculatePercentageInWei };

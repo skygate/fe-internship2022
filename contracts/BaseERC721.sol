@@ -11,6 +11,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
     AggregatorV3Interface internal priceFeed;
+    uint256 public transactionFee = 1000; // 1000 = 1%
 
     Counters.Counter private _tokenIdCounter;
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
@@ -82,8 +83,8 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return _tokenIdCounter.current();
     }
 
-    function burn(uint256 tokenId) public isOwnerOfToken(tokenId)  {
-        if(tokenIdToPriceOnSale[tokenId] > 0) {
+    function burn(uint256 tokenId) public isOwnerOfToken(tokenId) {
+        if (tokenIdToPriceOnSale[tokenId] > 0) {
             cancelSale(tokenId);
         }
         _burn(tokenId);
@@ -119,10 +120,7 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
             "Pleas provide minimum price of this specific token!"
         );
         _transfer(address(this), msg.sender, tokenId);
-        (bool success, ) = tokenIdToOwnerAddressOnSale[tokenId].call{
-            value: msg.value
-        }("");
-        require(success, "Transfer failed.");
+        splitPayment(tokenIdToOwnerAddressOnSale[tokenId], msg.value);
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
@@ -130,5 +128,23 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     function getLatestPrice() public view returns (int256) {
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         return answer;
+    }
+
+    function splitPayment(address to, uint256 amount) public {
+        (bool success, ) = payable(to).call{
+            value: (amount * (100000 - transactionFee)) / 100000
+        }("");
+        require(success, "Transfer failed.");
+    }
+
+    function setTransactionFee(uint256 _newFee) public onlyOwner {
+        transactionFee = _newFee;
+    }
+
+    function withdraw() public onlyOwner {
+        (bool success, ) = payable(owner()).call{
+            value: address(this).balance
+        }("");
+        require(success, "Transfer failed.");
     }
 }
