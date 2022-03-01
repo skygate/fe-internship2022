@@ -2,6 +2,7 @@
 
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
+require('@openzeppelin/hardhat-upgrades');
 let secret = require("./secret")
 //require('dotenv').config({path:+'/.env'})
 
