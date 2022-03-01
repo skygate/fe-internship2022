@@ -19,9 +19,9 @@ const getTimeStampForLastTx = async () => {
     return blockBefore.timestamp;
 }
 
-const skipt_time = async (seconds) => {
-    network.provider.send("evm_increaseTime", [seconds])
-    network.provider.send("evm_mine")
+const skiptTime = async (seconds) => {
+    network.provider.send("evm_increaseTime", [seconds]);
+    network.provider.send("evm_mine");
 }
 
 const getEventLastTx = async (receipt, eventName) => {
@@ -29,4 +29,4 @@ const getEventLastTx = async (receipt, eventName) => {
     return event.args;
 }
 
-module.exports = { getGasUsedForLastTx, getTimeStampForLastTx, skipt_time, getEventLastTx };
+module.exports = { getGasUsedForLastTx, getTimeStampForLastTx, skiptTime, getEventLastTx };
