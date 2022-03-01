@@ -83,6 +83,10 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return _tokenIdCounter.current();
     }
 
+    function transfer(address from, address to, uint256 tokenId) public {
+        _transfer(from, to, tokenId);
+    }
+
     function burn(uint256 tokenId) public isOwnerOfToken(tokenId) {
         if (tokenIdToPriceOnSale[tokenId] > 0) {
             cancelSale(tokenId);

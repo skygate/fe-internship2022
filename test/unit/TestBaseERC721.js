@@ -30,7 +30,6 @@ describe("Test base ERC721", function () {
 
     it('TEST getLatestPrice() - PASS', async () => {
         let result = await myBaseERC721.getLatestPrice();
-        // console.log('price:' + new ethers.BigNumber.from(result._hex).toString())
         expect((new ethers.BigNumber.from(result._hex).toString())).equals(INITIAL_PRICE).toString()
     });
 
