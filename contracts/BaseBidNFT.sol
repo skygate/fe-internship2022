@@ -2,8 +2,9 @@
 pragma solidity ^0.8.4;
 
 import "./BaseERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BaseBidNFT {
+contract BaseBidNFT is Ownable  {
     enum TOKENSTATUS {
         Started,
         Ended
@@ -32,9 +33,8 @@ contract BaseBidNFT {
 
     address private contractOwner;
 
-    constructor(address _baseERC721adders) {
+    constructor(address _baseERC721adders){
         baseERC721 = BaseERC721(_baseERC721adders);
-        contractOwner = msg.sender;
     }
 
     modifier isOwnerOfToken(uint256 tokenId) {
@@ -146,7 +146,7 @@ contract BaseBidNFT {
         );
         require(
             msg.sender == auctions[tokenId].sellerNft ||
-                contractOwner == msg.sender,
+                owner() == msg.sender,
             "You are not allowed to end this auction."
         );
 
@@ -170,7 +170,7 @@ contract BaseBidNFT {
         );
         require(
             msg.sender == auctions[tokenId].sellerNft ||
-                contractOwner == msg.sender,
+                owner() == msg.sender,
             "You are not allowed to end this auction."
         );
         require(
