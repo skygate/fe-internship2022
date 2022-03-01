@@ -29,4 +29,8 @@ const getEventLastTx = async (receipt, eventName) => {
     return event.args;
 }
 
-module.exports = { getGasUsedForLastTx, getTimeStampForLastTx, skiptTime, getEventLastTx };
+const calculatePercentageInWei = async (amount, percentageInWei) => {
+    const percentage100 = 100000;
+    return BigInt(amount * percentageInWei / percentage100);
+}
+module.exports = { getGasUsedForLastTx, getTimeStampForLastTx, skiptTime, getEventLastTx, calculatePercentageInWei }
