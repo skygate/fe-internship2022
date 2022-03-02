@@ -12,7 +12,8 @@
     'section3 section3 section3'
     'section4 section4 section4'
     'section5 section5 section5'
-    'section6 section6 section6';
+    'section6 section6 section6'
+    'section7 section7 section7';
 }
 
 .section1 {
@@ -32,6 +33,9 @@
 }
 .section6 {
   grid-area: section6;
+}
+.section7 {
+  grid-area: section7;
 }
 
 input[type='text'],

@@ -1,10 +1,9 @@
-import '../mainContext/mainContext.css';
-import { getContractComponents } from '../../helpers.jsx';
+import { getBaseERC721ContractComponents } from '../../helpers.jsx';
 
 const BurnToken = (props) => {
     const burnToken = async () => {
         if (props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
 
             const tokenId = document.getElementById('burnTokenId').value;
             await contract.burn(tokenId)

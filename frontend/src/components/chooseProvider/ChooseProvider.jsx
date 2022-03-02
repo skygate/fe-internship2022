@@ -1,4 +1,3 @@
-import '../mainContext/mainContext.css';
 import React from 'react'
 
 const ChooseProvider = (props) => {

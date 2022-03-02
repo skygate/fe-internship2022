@@ -17,6 +17,10 @@ async function main() {
   const BaseERC721 = await ethers.getContractFactory("BaseERC721");
   const baseERC721 = await BaseERC721.deploy("My base ERC721", "Base ERC721", myMockV3Aggregator.address);
   console.log("BaseERC721 address:", baseERC721.address);
+
+  const BaseBidNFT = await ethers.getContractFactory("BaseBidNFT");
+  const baseBidNFT = await BaseBidNFT.deploy(baseERC721.address);
+  console.log("BaseBidNFT address:", baseBidNFT.address);
 }
 
 main()
