@@ -1,5 +1,6 @@
 import './mainContext.css';
 import Utils from '../utils/Utils';
+import MintNFT from '../mintNFT/MintNFT';
 import StartSale from '../startSale/StartSale';
 import CancelSale from '../cancelSale/CancelSale';
 import BuyToken from '../buyToken/BuyToken';
@@ -15,7 +16,7 @@ const MainContext = (props) => {
             </div>
             <div className="section2">
                 <h2>Mint NFT</h2>
-                {/* <MintNFT /> */}
+                <MintNFT activeAccountProps = {props.activeAccountProps}/>
             </div>
             <div className="section3">
                 <h2>Sell NFT</h2>
