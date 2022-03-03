@@ -181,54 +181,56 @@ describe("Test BaseBidNFT", async () => {
 
     describe("TEST bidAuction()", async () => {
         it("PASS", async () => {
-            const startBalanceOwner = await owner.getBalance();
-            const startBalanceAddres1 = await addr1.getBalance();
-            const startBalanceAddres2 = await addr2.getBalance();
-
-            let agregateOwnerGas = BigInt(0);
+            const startBalanceAddr1 = await addr1.getBalance();
+            const startBalanceAddr2 = await addr2.getBalance();
+            const bidAddr1 = ethers.utils.parseEther("0.2");
+            const bidAddr2 = ethers.utils.parseEther("0.25");
+            let agregateGasAddr1 = BigInt(0);
+            let agregateGasAddr2 = BigInt(0);
 
             await myBaseERC721.connect(owner).safeMint(owner.address, metadataURI);
 
-            balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
-            expect(balance).to.equal(1);
-            agregateOwnerGas += await getGasUsedForLastTx();
+            balance = await myBaseERC721
+                .connect(owner)
+                .balanceOf(owner.address);
 
-            await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            agregateOwnerGas += await getGasUsedForLastTx();
+            await myBaseBidNFT
+                .connect(owner)
+                .createAuction(tokenId, startingBid);
 
             await myBaseBidNFT.connect(addr1).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.2"),
+                value: bidAddr1,
             });
-            const gasUsedAddres1 = await getGasUsedForLastTx();
+            agregateGasAddr1 = await getGasUsedForLastTx();
+
+            expect((await myBaseBidNFT.auctions(0))[1]).to.be.equal(
+                addr1.address
+            );
+            expect((await myBaseBidNFT.auctions(0))[2]).to.be.equal(
+                BigInt(bidAddr1)
+            );
+            expect(await addr1.getBalance()).to.be.equal(
+                BigInt(startBalanceAddr1) -
+                    BigInt(agregateGasAddr1) -
+                    BigInt(bidAddr1)
+            );
 
             await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.25"),
+                value: bidAddr2,
             });
-            const gasUsedAddres2 = await getGasUsedForLastTx();
+            agregateGasAddr2 = await getGasUsedForLastTx();
 
-            await skiptTime(5);
-
-            await myBaseBidNFT.connect(owner).endAuction(tokenId);
-            agregateOwnerGas += await getGasUsedForLastTx();
-
-            await myBaseBidNFT.connect(owner).withdraw(tokenId);
-            agregateOwnerGas += await getGasUsedForLastTx();
-
-            expect(await myBaseERC721.connect(owner).ownerOf(tokenId)).to.equal(addr2.address);
-            expect(await owner.getBalance()).to.equal(
-                BigInt(startBalanceOwner) +
-                    BigInt(ethers.utils.parseEther("0.25")) -
-                    BigInt(agregateOwnerGas)
+            expect((await myBaseBidNFT.auctions(0))[1]).to.be.equal(
+                addr2.address
             );
-            expect(await addr1.getBalance()).to.equal(
-                BigInt(startBalanceAddres1) -
-                    BigInt(ethers.utils.parseEther("0.2")) -
-                    gasUsedAddres1
+            expect((await myBaseBidNFT.auctions(0))[2]).to.be.equal(
+                BigInt(bidAddr2)
+
             );
-            expect(await addr2.getBalance()).to.equal(
-                BigInt(startBalanceAddres2) -
-                    BigInt(ethers.utils.parseEther("0.25")) -
-                    gasUsedAddres2
+            expect(await addr2.getBalance()).to.be.equal(
+                BigInt(startBalanceAddr2) -
+                    BigInt(agregateGasAddr2) -
+                    BigInt(bidAddr2)
             );
         });
 
@@ -403,81 +405,108 @@ describe("Test BaseBidNFT", async () => {
 
     describe("TEST withdraw()", async () => {
         it("PASS -  after ended auction", async () => {
-            const startBalanceOwner = await addr1.getBalance();
+            const startBalanceAddr1 = await addr1.getBalance();
+            const startBalanceAddr2 = await addr2.getBalance();
             const startBalanceAddr3 = await addr3.getBalance();
-            let agregateOwnerGas = BigInt(0);
+            const bidAddr2 = ethers.utils.parseEther("0.2");
+            const bidAddr3 = ethers.utils.parseEther("0.25");
+            let agregateAddr1Gas = BigInt(0);
+            let agregateAddr2Gas = BigInt(0);
             let agregateAddr3Gas = BigInt(0);
 
             await myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI);
 
-            balance = await myBaseERC721.connect(addr1).balanceOf(addr1.address);
-            expect(balance).to.equal(1);
+            await myBaseBidNFT
+                .connect(addr1)
+                .createAuction(tokenId, startingBid);
+            agregateAddr1Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
-            agregateOwnerGas += await getGasUsedForLastTx();
-
-            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.2"),
-            });
-            agregateAddr3Gas += await getGasUsedForLastTx();
 
             await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.25"),
+                value: bidAddr2,
             });
+            agregateAddr2Gas += await getGasUsedForLastTx();
+
+            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, {
+                value: bidAddr3,
+            });
+            agregateAddr3Gas += await getGasUsedForLastTx();
 
             await skiptTime(5);
 
             await myBaseBidNFT.connect(addr1).endAuction(tokenId);
-            agregateOwnerGas += await getGasUsedForLastTx();
+            agregateAddr1Gas += await getGasUsedForLastTx();
+            const feeForContractOwner =
+                BigInt(bidAddr3) -
+                BigInt(
+                    await myBaseERC721.calculateAmoutWithoutFee(
+                        bidAddr3,
+                        await myBaseERC721.transactionFee()
+                    )
+                );
+
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(startBalanceAddr2) -
+                    BigInt(agregateAddr2Gas) -
+                    BigInt(bidAddr2)
+            );
 
             expect(await addr3.getBalance()).to.equal(
                 BigInt(startBalanceAddr3) -
                     BigInt(agregateAddr3Gas) -
-                    BigInt(ethers.utils.parseEther("0.2"))
+                    BigInt(bidAddr3)
             );
 
-            const withdrawTx = await myBaseBidNFT.connect(addr3).withdraw(tokenId);
-            await withdrawTx.wait();
-            agregateAddr3Gas += await getGasUsedForLastTx();
-
-            expect(await addr3.getBalance()).to.equal(
-                BigInt(startBalanceAddr3) - BigInt(agregateAddr3Gas)
-            );
             expect(await addr1.getBalance()).to.equal(
-                BigInt(startBalanceOwner) -
-                    BigInt(agregateOwnerGas) +
-                    BigInt(ethers.utils.parseEther("0.25"))
+                BigInt(startBalanceAddr1) -
+                    BigInt(agregateAddr1Gas) +
+                    BigInt(bidAddr3) -
+                    BigInt(feeForContractOwner)
+            );
+
+            expect(
+                await ethers.provider.getBalance(myBaseBidNFT.address)
+            ).to.be.equal(BigInt(feeForContractOwner) + BigInt(bidAddr2));
+
+            expect(await myBaseBidNFT.ownerFeeToWithdraw()).to.be.equal(
+                BigInt(feeForContractOwner)
             );
         });
 
         it("PASS - after canceled auction", async () => {
+            const startBalanceAddr2 = await addr2.getBalance();
             const startBalanceAddr3 = await addr3.getBalance();
+            let agregateAddr2Gas = BigInt(0);
             let agregateAddr3Gas = BigInt(0);
 
             await myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI);
 
-            balance = await myBaseERC721.connect(addr1).balanceOf(addr1.address);
-            expect(balance).to.equal(1);
+            await myBaseBidNFT
+                .connect(addr1)
+                .createAuction(tokenId, startingBid);
 
-            await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, {
+            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
+
                 value: ethers.utils.parseEther("0.2"),
+            });
+            agregateAddr2Gas += await getGasUsedForLastTx();
+
+            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, {
+                value: ethers.utils.parseEther("0.25"),
             });
             agregateAddr3Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.25"),
-            });
             await myBaseBidNFT.connect(addr1).cancelAuction(tokenId);
 
-            expect(await addr3.getBalance()).to.equal(
-                BigInt(startBalanceAddr3) -
-                    BigInt(agregateAddr3Gas) -
-                    BigInt(ethers.utils.parseEther("0.2"))
+            await myBaseBidNFT.connect(addr2).withdraw(tokenId);
+            agregateAddr2Gas += await getGasUsedForLastTx();
+
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(startBalanceAddr2) - BigInt(agregateAddr2Gas)
             );
 
-            const withdrawTx = await myBaseBidNFT.connect(addr3).withdraw(tokenId);
-            await withdrawTx.wait();
+            await myBaseBidNFT.connect(addr3).withdraw(tokenId);
+
             agregateAddr3Gas += await getGasUsedForLastTx();
 
             expect(await addr3.getBalance()).to.equal(
@@ -486,54 +515,130 @@ describe("Test BaseBidNFT", async () => {
         });
 
         it("FAIL - before auction end", async () => {
-            const startBalanceOwner = await addr1.getBalance();
+            const startBalanceAddr1 = await addr1.getBalance();
+            const startBalanceAddr2 = await addr2.getBalance();
             const startBalanceAddr3 = await addr3.getBalance();
-            let agregateOwnerGas = BigInt(0);
+            const bidAddr2 = ethers.utils.parseEther("0.2");
+            const bidAddr3 = ethers.utils.parseEther("0.25");
+            let agregateAddr1Gas = BigInt(0);
+            let agregateAddr2Gas = BigInt(0);
             let agregateAddr3Gas = BigInt(0);
 
             await myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI);
 
-            balance = await myBaseERC721.connect(addr1).balanceOf(addr1.address);
-            expect(balance).to.equal(1);
+            await myBaseBidNFT
+                .connect(addr1)
+                .createAuction(tokenId, startingBid);
+            agregateAddr1Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
-            agregateOwnerGas += await getGasUsedForLastTx();
+            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
+                value: bidAddr2,
+            });
+            agregateAddr2Gas += await getGasUsedForLastTx();
+
 
             await myBaseBidNFT.connect(addr3).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.2"),
+                value: bidAddr3,
             });
             agregateAddr3Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
-                value: ethers.utils.parseEther("0.25"),
-            });
+            await expect(
+                myBaseBidNFT.connect(addr2).withdraw(tokenId)
+            ).to.be.revertedWith("The bidding period has not ended");
+            agregateAddr2Gas += await getGasUsedForLastTx();
 
             await expect(myBaseBidNFT.connect(addr3).withdraw(tokenId)).to.be.revertedWith(
                 "The bidding period has not ended"
             );
             agregateAddr3Gas += await getGasUsedForLastTx();
 
-            await skiptTime(5);
+            expect(await addr1.getBalance()).to.equal(
+                BigInt(startBalanceAddr1) - BigInt(agregateAddr1Gas)
+            );
 
-            await myBaseBidNFT.connect(addr1).endAuction(tokenId);
-            agregateOwnerGas += await getGasUsedForLastTx();
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(startBalanceAddr2) -
+                    BigInt(agregateAddr2Gas) -
+                    BigInt(bidAddr2)
+            );
 
             expect(await addr3.getBalance()).to.equal(
                 BigInt(startBalanceAddr3) -
                     BigInt(agregateAddr3Gas) -
-                    BigInt(ethers.utils.parseEther("0.2"))
+                    BigInt(bidAddr3)
             );
+        });
+    });
 
-            await myBaseBidNFT.connect(addr3).withdraw(tokenId);
-            agregateAddr3Gas += await getGasUsedForLastTx();
+    describe("TEST withdrawOwnerFee()", async () => {
+        it("PASS", async () => {
+            const startBalanceOwner = BigInt(await owner.getBalance());
+            const bidAddr2 = ethers.utils.parseEther("0.2");
+            const tokenId = 0;
+            let agregateOwnerGas = BigInt(0);
 
-            expect(await addr3.getBalance()).to.equal(
-                BigInt(startBalanceAddr3) - BigInt(agregateAddr3Gas)
+            await myBaseERC721
+                .connect(addr1)
+                .payToMint(addr1.address, metadataURI, { value: bidAddr2 });
+
+            await myBaseBidNFT
+                .connect(addr1)
+                .createAuction(tokenId, startingBid);
+
+            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
+                value: bidAddr2,
+            });
+
+            await skiptTime(5);
+
+            await myBaseBidNFT.connect(addr1).endAuction(tokenId);
+
+            await myBaseBidNFT.connect(owner).withdrawOwnerFee();
+            agregateOwnerGas += await getGasUsedForLastTx();
+
+            const ownerFee =
+                BigInt(bidAddr2) -
+                BigInt(
+                    await myBaseERC721.calculateAmoutWithoutFee(
+                        bidAddr2,
+                        await myBaseERC721.transactionFee()
+                    )
+                );
+
+            expect(await owner.getBalance()).to.be.equal(
+                startBalanceOwner + ownerFee - BigInt(agregateOwnerGas)
             );
-            expect(await addr1.getBalance()).to.equal(
-                BigInt(startBalanceOwner) -
-                    BigInt(agregateOwnerGas) +
-                    BigInt(ethers.utils.parseEther("0.25"))
+            expect(await myBaseBidNFT.ownerFeeToWithdraw()).to.be.equal(0);
+        });
+
+        it("FAIL - not onwer", async () => {
+            const bidAddr2 = ethers.utils.parseEther("0.2");
+            const tokenId = 0;
+
+            await myBaseERC721
+                .connect(addr1)
+                .payToMint(addr1.address, metadataURI, { value: bidAddr2 });
+
+            await myBaseBidNFT
+                .connect(addr1)
+                .createAuction(tokenId, startingBid);
+
+            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, {
+                value: bidAddr2,
+            });
+
+            await skiptTime(5);
+
+            await myBaseBidNFT.connect(addr1).endAuction(tokenId);
+
+            const ownerFee = await myBaseBidNFT.ownerFeeToWithdraw();
+
+            await expect(
+                myBaseBidNFT.connect(addr1).withdrawOwnerFee()
+            ).to.be.revertedWith("Ownable: caller is not the owner");
+
+            expect(await myBaseBidNFT.ownerFeeToWithdraw()).to.be.equal(
+                ownerFee
             );
         });
     });

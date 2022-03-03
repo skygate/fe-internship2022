@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "./BaseERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BaseBidNFT is Ownable  {
+contract BaseBidNFT is Ownable {
     enum TOKENSTATUS {
         Started,
         Ended
@@ -27,13 +27,12 @@ contract BaseBidNFT is Ownable  {
 
     mapping(uint256 => mapping(address => uint256)) private userBalance;
     mapping(uint256 => uint256) private auctionBlance;
-    mapping(uint256 => Auctions) private auctions;
+    mapping(uint256 => Auctions) public auctions;
 
     BaseERC721 private baseERC721;
+    uint256 public ownerFeeToWithdraw;
 
-    address private contractOwner;
-
-    constructor(address _baseERC721adders){
+    constructor(address _baseERC721adders) {
         baseERC721 = BaseERC721(_baseERC721adders);
     }
 
@@ -139,14 +138,19 @@ contract BaseBidNFT is Ownable  {
         emit Withdraw(msg.sender, balance, tokenId);
     }
 
+    function withdrawOwnerFee() public onlyOwner {
+        (bool success, ) = payable(owner()).call{value: ownerFeeToWithdraw}("");
+        require(success, "Transfer failed.");
+        ownerFeeToWithdraw = 0;
+    }
+
     function cancelAuction(uint256 tokenId) public isAuctionNotEnded(tokenId) {
         require(
             auctions[tokenId].tokenStatus == TOKENSTATUS.Started,
             "You cannot cancel an auction that has not started"
         );
         require(
-            msg.sender == auctions[tokenId].sellerNft ||
-                owner() == msg.sender,
+            msg.sender == auctions[tokenId].sellerNft || owner() == msg.sender,
             "You are not allowed to end this auction."
         );
 
@@ -169,8 +173,7 @@ contract BaseBidNFT is Ownable  {
             "You cannot end an auction that has not started"
         );
         require(
-            msg.sender == auctions[tokenId].sellerNft ||
-                owner() == msg.sender,
+            msg.sender == auctions[tokenId].sellerNft || owner() == msg.sender,
             "You are not allowed to end this auction."
         );
         require(
@@ -189,11 +192,20 @@ contract BaseBidNFT is Ownable  {
         userBalance[tokenId][auctions[tokenId].highBidder] = 0;
 
         if (auctions[tokenId].highBidder != address(0)) {
-            (bool success, ) = auctions[tokenId].sellerNft.call{value: balance}(
-                ""
-            );
+            (bool success, ) = auctions[tokenId].sellerNft.call{
+                value: baseERC721.calculateAmoutWithoutFee(
+                    balance,
+                    baseERC721.transactionFee()
+                )
+            }("");
             require(success, "Failed to send Ether");
 
+            ownerFeeToWithdraw +=
+                balance -
+                baseERC721.calculateAmoutWithoutFee(
+                    balance,
+                    baseERC721.transactionFee()
+                );
             baseERC721.transfer(
                 address(this),
                 auctions[tokenId].highBidder,
