@@ -5,6 +5,7 @@ import StartSale from '../startSale/StartSale';
 import CancelSale from '../cancelSale/CancelSale';
 import BuyToken from '../buyToken/BuyToken';
 import BurnToken from '../burnToken/BurnToken';
+import BidNFT from '../bidNFT/BidNFT';
 
 const MainContext = (props) => {
 
@@ -33,6 +34,10 @@ const MainContext = (props) => {
             <div className="section6">
                 <h2>Burn NFT</h2>
                 <BurnToken activeAccountProps = {props.activeAccountProps}/>
+            </div>
+            <div className="section7">
+                <h2>BidNFT NFT</h2>
+                <BidNFT activeAccountProps = {props.activeAccountProps}/>
             </div>
         </div>
     );

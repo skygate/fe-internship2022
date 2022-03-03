@@ -1,12 +1,9 @@
-import '../mainContext/mainContext.css';
-import { getContractComponents } from '../../helpers.jsx';
-import { ethers } from 'ethers';
-
+import { getBaseERC721ContractComponents } from '../../helpers.jsx';
 
 const BuyToken = (props) => {
     const butToken = async () => {
         if(props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
 
             const tokenId = document.getElementById('buyTokenId').value;
             const tokenIdPrice = parseInt((await contract.tokenIdToPriceOnSale(tokenId))._hex);

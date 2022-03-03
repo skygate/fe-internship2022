@@ -1,12 +1,10 @@
-import '../mainContext/mainContext.css';
-import { getContractComponents } from '../../helpers.jsx';
+import { getBaseERC721ContractComponents } from '../../helpers.jsx';
 import { ethers } from 'ethers';
-
 
 const StartSale = (props) => {
     const startSale = async () => {
         if (props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
 
             const tokenId = document.getElementById('sellTokenId').value;
             const price = ethers.utils.parseEther(document.getElementById('sellTokenPrice').value);

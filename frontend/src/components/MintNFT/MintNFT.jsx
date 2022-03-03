@@ -1,5 +1,4 @@
-import "./mintNFT.css";
-import { getContractComponents } from "../../helpers.jsx";
+import { getBaseERC721ContractComponents } from "../../helpers.jsx";
 import { ethers } from "ethers";
 
 const MintNFT = (props) => {
@@ -7,7 +6,7 @@ const MintNFT = (props) => {
 
   const mint = async () => {
     if (props.activeAccountProps) {
-      const [contract] = getContractComponents();
+      const [,,, contract] = getBaseERC721ContractComponents();
 
       await contract
         .payToMint(props.activeAccountProps, metadataURI, {
@@ -27,7 +26,7 @@ const MintNFT = (props) => {
   };
 
   return (
-    <div className="nft">
+    <div>
       <button onClick={mint} type="submit">
         MINT NFT
       </button>

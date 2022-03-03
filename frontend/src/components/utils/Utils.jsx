@@ -1,12 +1,12 @@
 import '../mainContext/mainContext.css';
-import { getContractComponents } from '../../helpers.jsx';
+import { getBaseERC721ContractComponents } from '../../helpers.jsx';
 import { ethers } from 'ethers';
 
 
 const BuyToken = (props) => {
     const getTokenCount = async () => {
         if(props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
 
             await contract.count()
                 .then((result) => { console.log(`>>> Token count: ${parseInt(result._hex)}`); })
@@ -20,7 +20,7 @@ const BuyToken = (props) => {
 
     const getTokenPrice = async () => {
         if(props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
             
             const tokenId = document.getElementById('getTokenIdPrice').value;
             await contract.tokenIdToPriceOnSale(tokenId)
@@ -41,7 +41,7 @@ const BuyToken = (props) => {
 
     const getTokenOwner = async () => {
         if(props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
             
             const tokenId = document.getElementById('getTokenIdOwner').value;
             await contract.ownerOf(tokenId)

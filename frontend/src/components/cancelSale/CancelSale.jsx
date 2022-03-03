@@ -1,10 +1,9 @@
-import '../mainContext/mainContext.css';
-import { getContractComponents } from '../../helpers.jsx';
+import { getBaseERC721ContractComponents } from '../../helpers.jsx';
 
 const CancelSale = (props) => {
     const cancelSale = async () => {
         if (props.activeAccountProps) {
-            const [address, provider, signer, contract] = getContractComponents();
+            const [,,, contract] = getBaseERC721ContractComponents();
 
             const tokenId = document.getElementById('cancelSaleId').value;
             await contract.cancelSale(tokenId)
