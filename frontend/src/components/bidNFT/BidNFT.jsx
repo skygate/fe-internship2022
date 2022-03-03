@@ -1,4 +1,5 @@
 import { getBaseBidNFTContractComponents } from "../../helpers.jsx";
+import { ethers } from 'ethers';
 
 const BidNFT = (props) => {
     const createAuctionNFT = async () => {
@@ -26,7 +27,7 @@ const BidNFT = (props) => {
     
     const bidAuctionNFT = async () => {
         const tokenId = document.getElementById('tokenID').value;
-        const auctionBid = parseInt(document.getElementById('AuctionBid').value);
+        const auctionBid = ethers.utils.parseEther(document.getElementById('AuctionBid').value);
 
         if (props.activeAccountProps && auctionBid !== 0) {
             const [,,, contract] = getBaseBidNFTContractComponents();
@@ -127,7 +128,7 @@ const BidNFT = (props) => {
         <span>Bid send on contract:</span>
         <input id="AuctionBid" type="text"></input><br />
         <button onClick={bidAuctionNFT} type="submit">
-            Bid
+            Bid in ETH
         </button>
         <button onClick={withdrawNFT} type="submit">
             Withdraw Money

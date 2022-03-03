@@ -73,7 +73,7 @@ contract BaseBidNFT is Ownable  {
 
     modifier isBidPossible(uint256 tokenId) {
         require(
-            (msg.value + userBalance[tokenId][msg.sender]) >
+            (msg.value + userBalance[tokenId][msg.sender]) >=
                 auctions[tokenId].startBid,
             "The deposit is lower than the minimum possible bid"
         );

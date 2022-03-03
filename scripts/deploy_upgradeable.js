@@ -1,8 +1,8 @@
 const { ethers, upgrades } = require("hardhat");
 
 async function main() {
-    const DECIMALS = '18'
-    const INITIAL_PRICE = '200000000000000000000'
+    const DECIMALS = "18";
+    const INITIAL_PRICE = "200000000000000000000";
 
     const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
     myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
