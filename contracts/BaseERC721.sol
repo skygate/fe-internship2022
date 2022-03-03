@@ -83,7 +83,11 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return _tokenIdCounter.current();
     }
 
-    function transfer(address from, address to, uint256 tokenId) public {
+    function transfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public {
         _transfer(from, to, tokenId);
     }
 
@@ -124,7 +128,10 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
             "Pleas provide minimum price of this specific token!"
         );
         _transfer(address(this), msg.sender, tokenId);
-        splitPayment(tokenIdToOwnerAddressOnSale[tokenId], msg.value);
+        (bool success, ) = payable(tokenIdToOwnerAddressOnSale[tokenId]).call{
+            value: calculateAmoutWithoutFee(msg.value, transactionFee)
+        }("");
+        require(success, "Transfer failed.");
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
@@ -134,21 +141,22 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return answer;
     }
 
-    function splitPayment(address to, uint256 amount) public {
-        (bool success, ) = payable(to).call{
-            value: (amount * (100000 - transactionFee)) / 100000
-        }("");
-        require(success, "Transfer failed.");
+    function calculateAmoutWithoutFee(uint256 amount, uint256 feeInPercentage)
+        public
+        pure
+        returns (uint256)
+    {
+        return ((amount * (100000 - feeInPercentage)) / 100000);
     }
 
     function setTransactionFee(uint256 _newFee) public onlyOwner {
         transactionFee = _newFee;
     }
 
-    function withdraw() public onlyOwner {
-        (bool success, ) = payable(owner()).call{
-            value: address(this).balance
-        }("");
+    function withdrawOwnerFee() public onlyOwner {
+        (bool success, ) = payable(owner()).call{value: address(this).balance}(
+            ""
+        );
         require(success, "Transfer failed.");
     }
 }

@@ -617,7 +617,7 @@ describe("TEST BaseERC721", async () => {
         });
     });
 
-    describe("TEST withdraw()", async () => {
+    describe("TEST withdrawOwnerFee()", async () => {
         it(`PASS`, async () => {
             const amoutPayed = ethers.utils.parseEther("0.05");
             const mintTx = await myBaseERC721
@@ -632,7 +632,9 @@ describe("TEST BaseERC721", async () => {
                 owner.address
             );
 
-            const withdrawTx = await myBaseERC721.connect(owner).withdraw();
+            const withdrawTx = await myBaseERC721
+                .connect(owner)
+                .withdrawOwnerFee();
             await withdrawTx.wait();
 
             const gasUsed = await getGasUsedForLastTx();
@@ -660,7 +662,7 @@ describe("TEST BaseERC721", async () => {
             );
 
             await expect(
-                myBaseERC721.connect(addr1).withdraw()
+                myBaseERC721.connect(addr1).withdrawOwnerFee()
             ).to.be.revertedWith("Ownable: caller is not the owner");
 
             expect(
