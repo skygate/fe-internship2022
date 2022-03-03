@@ -60,6 +60,18 @@ describe("TEST BaseERC721", async () => {
             const currentCounter = await myBaseERC721.connect(addr1).count();
             expect(currentCounter).to.equal(1);
         });
+
+        it("FAIL - send eth below mintPrice", async () => {
+            expect(await myBaseERC721.count()).to.equal(0);
+
+            await expect(
+                myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+                    value: ethers.utils.parseEther("0.00000005"),
+                })
+            ).to.be.revertedWith("Cant perform this action, you send not enough ETH to mint.");
+
+            expect(await myBaseERC721.count()).to.equal(0);
+        });
     });
 
     describe("TEST safeMint()", async () => {
@@ -481,9 +493,7 @@ describe("TEST BaseERC721", async () => {
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
             const ownerBalanceBefor = await ethers.provider.getBalance(owner.address);
 
-            const withdrawTx = await myBaseERC721
-                .connect(owner)
-                .withdrawOwnerFee();
+            const withdrawTx = await myBaseERC721.connect(owner).withdrawOwnerFee();
             await withdrawTx.wait();
 
             const gasUsed = await getGasUsedForLastTx();
@@ -506,9 +516,9 @@ describe("TEST BaseERC721", async () => {
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
             const ownerBalanceBefor = await ethers.provider.getBalance(owner.address);
 
-            await expect(
-                myBaseERC721.connect(addr1).withdrawOwnerFee()
-            ).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(myBaseERC721.connect(addr1).withdrawOwnerFee()).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            );
 
             expect(await ethers.provider.getBalance(myBaseERC721.address)).to.be.equal(
                 BigInt(contractBalanceBefor)
@@ -516,6 +526,32 @@ describe("TEST BaseERC721", async () => {
             expect(await ethers.provider.getBalance(owner.address)).to.be.equal(
                 BigInt(ownerBalanceBefor)
             );
+        });
+    });
+
+    describe("TEST changeMintPrice()", async () => {
+        it(`PASS`, async () => {
+            const startingMintPrice = ethers.utils.parseEther("0.0005");
+            const newMintPrice = ethers.utils.parseEther("1");
+
+            expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(startingMintPrice));
+
+            await myBaseERC721.connect(owner).changeMintPrice(newMintPrice);
+
+            expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(newMintPrice));
+        });
+
+        it(`FAIL - not owner`, async () => {
+            const startingMintPrice = ethers.utils.parseEther("0.0005");
+            const newMintPrice = ethers.utils.parseEther("1");
+
+            expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(startingMintPrice));
+
+            await expect(
+                myBaseERC721.connect(addr1).changeMintPrice(newMintPrice)
+            ).to.be.revertedWith("Ownable: caller is not the owner");
+
+            expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(startingMintPrice));
         });
     });
 });

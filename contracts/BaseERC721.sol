@@ -12,6 +12,7 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
     AggregatorV3Interface internal priceFeed;
     uint256 public transactionFee = 1000; // 1000 = 1%
+    uint256 public mintPrice = 500000000000000; // 0.0005 ETH
 
     Counters.Counter private _tokenIdCounter;
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
@@ -35,17 +36,13 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
 
     modifier isOwnerOfToken(uint256 tokenId) {
         require(
-            ownerOf(tokenId) == msg.sender ||
-                tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
+            ownerOf(tokenId) == msg.sender || tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
             "Cant perform this action, you must be owner of this token!"
         );
         _;
     }
 
-    function _burn(uint256 tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
 
@@ -70,6 +67,10 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         payable
         returns (uint256)
     {
+        require(
+            msg.value >= mintPrice,
+            "Cant perform this action, you send not enough ETH to mint."
+        );
         uint256 newItemId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
 
@@ -98,31 +99,20 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         _burn(tokenId);
     }
 
-    function startSale(uint256 tokenId, uint256 price)
-        public
-        isOwnerOfToken(tokenId)
-    {
+    function startSale(uint256 tokenId, uint256 price) public isOwnerOfToken(tokenId) {
         require(price > 0, "Can not sale for 0 ETH!");
         tokenIdToPriceOnSale[tokenId] = price;
         tokenIdToOwnerAddressOnSale[tokenId] = msg.sender;
         safeTransferFrom(msg.sender, address(this), tokenId);
     }
 
-    function cancelSale(uint256 tokenId)
-        public
-        isTokenOnSale(tokenId)
-        isOwnerOfToken(tokenId)
-    {
+    function cancelSale(uint256 tokenId) public isTokenOnSale(tokenId) isOwnerOfToken(tokenId) {
         _transfer(address(this), msg.sender, tokenId);
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function buyTokenOnSale(uint256 tokenId)
-        public
-        payable
-        isTokenOnSale(tokenId)
-    {
+    function buyTokenOnSale(uint256 tokenId) public payable isTokenOnSale(tokenId) {
         require(
             tokenIdToPriceOnSale[tokenId] <= msg.value,
             "Pleas provide minimum price of this specific token!"
@@ -154,9 +144,11 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     }
 
     function withdrawOwnerFee() public onlyOwner {
-        (bool success, ) = payable(owner()).call{value: address(this).balance}(
-            ""
-        );
+        (bool success, ) = payable(owner()).call{value: address(this).balance}("");
         require(success, "Transfer failed.");
+    }
+
+    function changeMintPrice(uint256 newMintPrice) public onlyOwner {
+        mintPrice = newMintPrice;
     }
 }
