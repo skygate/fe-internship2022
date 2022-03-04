@@ -133,9 +133,7 @@ describe("TEST BaseERC721", async () => {
             }
 
             await expect(
-                myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
-                    value: ethers.utils.parseEther("0.05"),
-                })
+                myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI)
             ).to.be.revertedWith("Cant perform this action, limit of mint has been reached.");
         });
     });
