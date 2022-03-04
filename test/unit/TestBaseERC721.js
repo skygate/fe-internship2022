@@ -72,6 +72,22 @@ describe("TEST BaseERC721", async () => {
 
             expect(await myBaseERC721.count()).to.equal(0);
         });
+
+        it("FAIL - mint limit reached", async () => {
+            const mintLimit = BigInt(await myBaseERC721.mintLimit());
+
+            while (BigInt(await myBaseERC721.count()) < mintLimit) {
+                await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+                    value: ethers.utils.parseEther("0.05"),
+                });
+            }
+
+            await expect(
+                myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+                    value: ethers.utils.parseEther("0.05"),
+                })
+            ).to.be.revertedWith("Cant perform this action, limit of mint has been reached.");
+        });
     });
 
     describe("TEST safeMint()", async () => {
@@ -107,6 +123,18 @@ describe("TEST BaseERC721", async () => {
 
             const currentCounter = await myBaseERC721.connect(addr2).count();
             expect(currentCounter).to.equal(0);
+        });
+
+        it("FAIL - mint limit reached", async () => {
+            const mintLimit = BigInt(await myBaseERC721.mintLimit());
+
+            while (BigInt(await myBaseERC721.count()) < mintLimit) {
+                await myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI);
+            }
+
+            await expect(
+                myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI)
+            ).to.be.revertedWith("Cant perform this action, limit of mint has been reached.");
         });
     });
 
