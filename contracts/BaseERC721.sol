@@ -13,8 +13,9 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     AggregatorV3Interface internal priceFeed;
     uint256 public transactionFee = 1000; // 1000 = 1%
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
+    uint256 public mintLimit = 10;
 
-    Counters.Counter private _tokenIdCounter;
+    Counters.Counter private tokenIdCounter;
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
 
@@ -42,6 +43,14 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         _;
     }
 
+    modifier isMintPossible() {
+        require(
+            tokenIdCounter.current() < mintLimit,
+            "Cant perform this action, limit of mint has been reached."
+        );
+        _;
+    }
+
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
@@ -55,9 +64,9 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         return super.tokenURI(tokenId);
     }
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+    function safeMint(address to, string memory uri) public onlyOwner isMintPossible {
+        uint256 tokenId = tokenIdCounter.current();
+        tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
@@ -65,14 +74,15 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     function payToMint(address recipients, string memory metadataURI)
         public
         payable
+        isMintPossible
         returns (uint256)
     {
         require(
             msg.value >= mintPrice,
             "Cant perform this action, you send not enough ETH to mint."
         );
-        uint256 newItemId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint256 newItemId = tokenIdCounter.current();
+        tokenIdCounter.increment();
 
         _mint(recipients, newItemId);
         _setTokenURI(newItemId, metadataURI);
@@ -81,7 +91,7 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
     }
 
     function count() public view returns (uint256) {
-        return _tokenIdCounter.current();
+        return tokenIdCounter.current();
     }
 
     function transfer(
