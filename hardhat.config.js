@@ -1,6 +1,8 @@
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
 require('@openzeppelin/hardhat-upgrades');
+require("axios");
+require('recursive-fs');
 let secret = require("./secret")
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -28,6 +30,10 @@ module.exports = {
   },
   etherscan: {
     apiKey: secret.ETHERSCAN_API_KEY
+  },
+  pinata: {
+    pinataApiKey: secret.PINATA_API_KEY,
+    pinataApiSecret: secret.PINATA_API_SECRET
   },
   paths: {
     artifacts: "./frontend/src/artifacts"
