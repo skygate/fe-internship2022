@@ -10,7 +10,7 @@ const MintNFT = (props) => {
 
       await contract
         .payToMint(props.activeAccountProps, metadataURI, {
-          value: ethers.utils.parseEther("0.00"),
+          value: ethers.utils.parseEther("0.0005"),
           maxPriorityFeePerGas: null,
           maxFeePerGas: null,
         })
