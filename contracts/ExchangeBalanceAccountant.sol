@@ -14,7 +14,7 @@ contract ExchangeBalanceAccountant is Ownable {
     uint256 public exchangeETHBalance; // Balance of ethereum of whole exchange.
     uint256 public exchangeWETHBalance; // Balance of wrapperd ethereum of whole exchange.
     uint8 _decimals = 18;
-    uint256 public MAX_AMOUNT = (~uint256(0)) / 2;
+    uint256 public constant MAX_AMOUNT = (~uint256(0)) / 2;
     MockWETH9 wETH;
 
     mapping(address => uint256) public eTHBalances;
@@ -49,38 +49,31 @@ contract ExchangeBalanceAccountant is Ownable {
     }
 
     /// @notice Sends wrapped ethereum from exchange wallet to given address.
-    /// @param to - address from which exchange ethereum value will be send.
     /// @param amount - amount of exchange ethereum that will be burned.
-    function burnETH(address payable to, uint256 amount) public {
+    function burnETH(uint256 amount) public {
         require(
-            eTHBalances[to] >= amount,
+            eTHBalances[payable(msg.sender)] >= amount,
             "This account has too low ethereum balance on exchange to perform 'burn' opreation."
         );
-        eTHBalances[to] -= amount;
+        eTHBalances[payable(msg.sender)] -= amount;
         exchangeETHBalance -= amount;
-        to.transfer(amount);
+        payable(msg.sender).transfer(amount);
     }
 
     /// @notice Sends wrapped ethereum from exchange wallet to given address.
-    /// @param to - address from which exchange ethereum value will be send.
-    function burnWETH(address to, uint256 amount) public {
+    /// @param amount - amount of exchange ethereum value to burn.
+    function burnWETH(uint256 amount) public {
         require(
-            wETHBalances[to] >= amount,
+            wETHBalances[msg.sender] >= amount,
             "This account has too low wrappend etherum balance on exchange to perform 'burn' opreation."
         );
-        wETHBalances[to] -= amount;
+        wETHBalances[msg.sender] -= amount;
         exchangeWETHBalance -= amount;
-        wETH.transfer(to, amount);
+        wETH.transfer(msg.sender, amount);
     }
 
-    function getETHBalance(address _of) public view returns (uint256) {
-        return eTHBalances[_of];
-    }
-
-    function getWETHBalance(address _of) public view returns (uint256) {
-        return wETHBalances[_of];
-    }
-
+    /// @notice Returns value of all types of ethereum on exchange.
+    /// @return uint256 - value of all types of ethereum on exchange
     function totalSupply() public view returns (uint256) {
         return exchangeETHBalance + exchangeWETHBalance;
     }

@@ -16,7 +16,7 @@ describe("Test mock WETH9", function () {
         [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
     });
 
-    it("TEST deposit() - PASS", async () => {
+    it("PASS - TEST deposit()", async () => {
         const weiValue = ethers.utils.parseEther("1");
         convertETHToWETH_Tx = await mockWETH9
             .connect(addr1)
@@ -24,7 +24,7 @@ describe("Test mock WETH9", function () {
 
         expect(await mockWETH9.balanceOf(addr1.address)).equals(weiValue);
     });
-    it("TEST fallback() - PASS", async () => {
+    it("PASS - TEST fallback()", async () => {
         const weiValue = ethers.utils.parseEther("1");
         // convertETHToWETH_Tx = await mockWETH9.connect(addr1).volcanoNamedEyjafjallajokull({ value: weiValue });
         // I have no idea why it's not working ;<.
@@ -34,7 +34,7 @@ describe("Test mock WETH9", function () {
 
         expect(await mockWETH9.balanceOf(addr1.address)).equals(weiValue);
     });
-    it("TEST withdraw() - PASS => FAIL", async () => {
+    it("PASS => FAIL - TEST withdraw()", async () => {
         //TODO
         const weiValue = ethers.utils.parseEther("2");
         const halfOfWeiValue = ethers.utils.parseEther("1");
@@ -50,7 +50,7 @@ describe("Test mock WETH9", function () {
         await expect(mockWETH9.connect(addr1).withdraw({ value: weiValue })).to.be
             .reverted;
     });
-    it("TEST totalSupply() - PASS", async () => {
+    it("PASS - TEST totalSupply()", async () => {
         const weiValue = ethers.utils.parseEther("1");
         const doubleWeiValue = ethers.utils.parseEther("2");
         convertETHToWETH_Tx = await mockWETH9
@@ -63,7 +63,7 @@ describe("Test mock WETH9", function () {
         expect(await mockWETH9.balanceOf(addr2.address)).equals(weiValue);
         expect(await mockWETH9.totalSupply()).equals(doubleWeiValue);
     });
-    it("TEST approve() - PASS", async () => {
+    it("PASS - TEST approve()", async () => {
         const weiValue = ethers.utils.parseEther("1");
         const doubleWeiValue = ethers.utils.parseEther("2");
         convertETHToWETH_Tx = await mockWETH9
@@ -82,7 +82,7 @@ describe("Test mock WETH9", function () {
             weiValue
         );
     });
-    it("TEST transfer() - PASS", async () => {
+    it("PASS - TEST transfer()", async () => {
         const weiValue = ethers.utils.parseEther("1");
         convertETHToWETH_Tx = await mockWETH9
             .connect(addr1)
@@ -94,7 +94,7 @@ describe("Test mock WETH9", function () {
         expect(await mockWETH9.balanceOf(addr2.address)).equals(weiValue);
         expect(await mockWETH9.totalSupply()).equals(weiValue);
     });
-    it("TEST transferFrom() - PASS", async () => {
+    it("PASS - TEST transferFrom()", async () => {
         const weiValue = ethers.utils.parseEther("1");
         const doubleWeiValue = ethers.utils.parseEther("2");
         convertETHToWETH_Tx = await mockWETH9
