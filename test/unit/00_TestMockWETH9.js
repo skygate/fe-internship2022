@@ -2,14 +2,12 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Test mock WETH9", function () {
-    let mockWETH9;
-    let owner;
     let addr1;
     let addr2;
     let addrs;
 
     beforeEach(async () => {
-        const MockWETH9 = await ethers.getContractFactory("MockWETH9");
+        const MockWETH9 = await ethers.getContractFactory("WETH9");
         mockWETH9 = await MockWETH9.deploy();
         await mockWETH9.deployed();
 
@@ -34,15 +32,15 @@ describe("Test mock WETH9", function () {
 
         expect(await mockWETH9.balanceOf(addr1.address)).equals(weiValue);
     });
-    it("PASS => FAIL - TEST withdraw()", async () => {
+    it("FAIL - TEST withdraw()", async () => {
         //TODO
         const weiValue = ethers.utils.parseEther("2");
         const halfOfWeiValue = ethers.utils.parseEther("1");
         convertETHToWETH_Tx = await mockWETH9
             .connect(addr1)
             .deposit({ value: weiValue });
-        zmienna = await mockWETH9.balanceOf(addr1.address);
-        expect(zmienna).to.equal(BigInt(weiValue));
+        balance_Tx = await mockWETH9.balanceOf(addr1.address);
+        expect(balance_Tx).to.equal(BigInt(weiValue));
         convertWETHToETH_Tx = await mockWETH9
             .connect(addr1)
             .withdraw(halfOfWeiValue);

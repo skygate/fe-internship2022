@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./MockWETH9.sol";
 
@@ -13,20 +10,19 @@ import "./MockWETH9.sol";
 contract ExchangeBalanceAccountant is Ownable {
     uint256 public exchangeETHBalance; // Balance of ethereum of whole exchange.
     uint256 public exchangeWETHBalance; // Balance of wrapperd ethereum of whole exchange.
-    uint8 _decimals = 18;
     uint256 public constant MAX_AMOUNT = (~uint256(0)) / 2;
-    MockWETH9 wETH;
+    WETH9 wETH;
 
     mapping(address => uint256) public eTHBalances;
     mapping(address => uint256) public wETHBalances;
 
     constructor(address payable wETH_) {
-        wETH = MockWETH9(wETH_);
+        wETH = WETH9(wETH_);
     }
 
     /// @notice Mints exchange ethereum from normal ethereum. ~Jakub Szymański
     /// @param to - address at which exchange ethereum value will be assigned.
-    function mintETH(address to) public payable {
+    function depositETH(address to) public payable {
         require(
             exchangeETHBalance + msg.value <= MAX_AMOUNT,
             "Maximum ethereum capacity of smartcontract has been reached."
@@ -38,7 +34,7 @@ contract ExchangeBalanceAccountant is Ownable {
     /// @notice Mints Exchange ethereum from wrapped ethereum.
     /// @param to - address at which exchange ethereum value will be assigned.
     /// @param amount - amount of exchange wrapped ethereum that will be minted.
-    function mintWETH(address to, uint256 amount) public {
+    function depositWETH(address to, uint256 amount) public {
         require(
             exchangeWETHBalance + amount <= MAX_AMOUNT,
             "Maximum ethereum capacity of smartcontract has been reached."
@@ -50,7 +46,7 @@ contract ExchangeBalanceAccountant is Ownable {
 
     /// @notice Sends wrapped ethereum from exchange wallet to given address.
     /// @param amount - amount of exchange ethereum that will be burned.
-    function burnETH(uint256 amount) public {
+    function withdrawETH(uint256 amount) public {
         require(
             eTHBalances[payable(msg.sender)] >= amount,
             "This account has too low ethereum balance on exchange to perform 'burn' opreation."
@@ -62,7 +58,7 @@ contract ExchangeBalanceAccountant is Ownable {
 
     /// @notice Sends wrapped ethereum from exchange wallet to given address.
     /// @param amount - amount of exchange ethereum value to burn.
-    function burnWETH(uint256 amount) public {
+    function withdrawWETH(uint256 amount) public {
         require(
             wETHBalances[msg.sender] >= amount,
             "This account has too low wrappend etherum balance on exchange to perform 'burn' opreation."

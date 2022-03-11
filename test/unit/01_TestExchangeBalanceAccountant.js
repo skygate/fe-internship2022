@@ -3,16 +3,12 @@ const { ethers } = require("hardhat");
 
 describe("Test ExchangeBalanceAccountant", async () => {
 
-    let mockWETH9;
-    let exchangeBalanceAccountant;
-    let owner;
     let addr1;
     let addr2;
-    let addr3;
     let addrs;
 
     beforeEach(async () => {
-        const MockWETH9 = await ethers.getContractFactory("MockWETH9");
+        const MockWETH9 = await ethers.getContractFactory("WETH9");
         mockWETH9 = await MockWETH9.deploy();
         await mockWETH9.deployed();
 
@@ -23,26 +19,24 @@ describe("Test ExchangeBalanceAccountant", async () => {
         [owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners();
     });
 
-    describe("TEST mintETH()", async () => {
+    describe("TEST depositETH()", async () => {
         it('PASS', async () => {
             const weiValue = ethers.utils.parseEther('1');
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintETH(addr1.address, { value: weiValue });
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositETH(addr1.address, { value: weiValue });
             await mint_Tx.wait();
-            // console.log(await exchangeBalanceAccountant.eTHBalances(addr1.address))
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(weiValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(weiValue);
         });
     });
 
-    describe("TEST mintWETH()", async () => {
+    describe("TEST depositWETH()", async () => {
         it('PASS - Same values', async () => {
             const weiValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: weiValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, weiValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, weiValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, weiValue);
             await mint_Tx.wait();
-            // console.log(await exchangeBalanceAccountant.eTHBalances(addr1.address))
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(weiValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(weiValue);
@@ -54,7 +48,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const lessThanProperValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: lessThanProperValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, properValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, lessThanProperValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, lessThanProperValue);
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
@@ -66,7 +60,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const lessThanProperValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: properValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, lessThanProperValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, lessThanProperValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, lessThanProperValue);
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
@@ -79,7 +73,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: lessThanProperValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, lessThanProperValue);
             await expect(
-                exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, properValue)
+                exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, properValue)
             ).to.be.reverted
         });
 
@@ -90,7 +84,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: lessThanProperValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, properValue);
             await expect(
-                exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, properValue)
+                exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, properValue)
             ).to.be.reverted
         });
 
@@ -101,7 +95,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: properValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, lessThanProperValue);
             await expect(
-                exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, properValue)
+                exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, properValue)
             ).to.be.reverted
         });
 
@@ -111,24 +105,24 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const lessThanProperValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: properValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, properValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, lessThanProperValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, lessThanProperValue);
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
         });
     });
 
-    describe("TEST burnETH()", async () => {
+    describe("TEST withdrawETH()", async () => {
         // <
         it('PASS - burn < deposit', async () => {
             const properValue = ethers.utils.parseEther('2');
-            mintETH_Tx = await exchangeBalanceAccountant.connect(addr1).mintETH(addr1.address, { value: properValue });
+            mintETH_Tx = await exchangeBalanceAccountant.connect(addr1).depositETH(addr1.address, { value: properValue });
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(properValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(properValue);
 
             const lessThanProperValue = ethers.utils.parseEther('1');
-            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).burnETH(lessThanProperValue)
+            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).withdrawETH(lessThanProperValue)
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
@@ -137,12 +131,12 @@ describe("Test ExchangeBalanceAccountant", async () => {
         // =
         it('PASS - burn = deposit', async () => {
             const weiValue = ethers.utils.parseEther('2');
-            mintETH_Tx = await exchangeBalanceAccountant.connect(addr1).mintETH(addr1.address, { value: weiValue });
+            mintETH_Tx = await exchangeBalanceAccountant.connect(addr1).depositETH(addr1.address, { value: weiValue });
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(weiValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(weiValue);
 
-            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).burnETH(weiValue)
+            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).withdrawETH(weiValue)
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(0);
@@ -151,31 +145,31 @@ describe("Test ExchangeBalanceAccountant", async () => {
         // >
         it('FAIL - burn > deposit', async () => {
             const weiValue = ethers.utils.parseEther('1');
-            mintETH_Tx = await exchangeBalanceAccountant.connect(addr1).mintETH(addr1.address, { value: weiValue });
+            mintETH_Tx = await exchangeBalanceAccountant.connect(addr1).depositETH(addr1.address, { value: weiValue });
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(weiValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(weiValue);
 
             await expect(
-                exchangeBalanceAccountant.connect(addr1).burnETH(ethers.utils.parseEther('2'))
+                exchangeBalanceAccountant.connect(addr1).withdrawETH(ethers.utils.parseEther('2'))
             ).to.be.revertedWith("This account has too low ethereum balance on exchange to perform 'burn' opreation.");
         });
     });
 
-    describe("TEST burnWETH()", async () => {
+    describe("TEST withdrawWETH()", async () => {
         // <
         it('PASS - burn < deposit', async () => {
             const properValue = ethers.utils.parseEther('2');
             const lessThanProperValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: properValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, properValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, properValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, properValue);
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(properValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(properValue);
 
-            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).burnWETH(lessThanProperValue)
+            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).withdrawWETH(lessThanProperValue)
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
@@ -187,13 +181,13 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const lessThanProperValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: properValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, properValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, properValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, properValue);
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(properValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(properValue);
 
-            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).burnWETH(lessThanProperValue)
+            burnETH_Tx = await exchangeBalanceAccountant.connect(addr1).withdrawWETH(lessThanProperValue)
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
@@ -205,24 +199,24 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const lessThanProperValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: lessThanProperValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, lessThanProperValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, lessThanProperValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, lessThanProperValue);
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(lessThanProperValue);
             expect(await exchangeBalanceAccountant.totalSupply()).equals(lessThanProperValue);
 
             await expect(
-                exchangeBalanceAccountant.connect(addr1).burnWETH(properValue)
+                exchangeBalanceAccountant.connect(addr1).withdrawWETH(properValue)
             ).to.be.revertedWith("This account has too low wrappend etherum balance on exchange to perform 'burn' opreation.");
         });
     });
 
-    describe("TEST transfer()", async () => {
+    describe("TEST innerTransfer()", async () => {
         //0,0
         it('PASS - mint > transfer, ETH', async () => {
             const weiValue = ethers.utils.parseEther('2');
             const halfOfWeiValue = ethers.utils.parseEther('1');
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintETH(addr1.address, { value: weiValue });
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositETH(addr1.address, { value: weiValue });
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(weiValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
@@ -244,7 +238,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const halfOfWeiValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: weiValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, weiValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, weiValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, weiValue);
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(weiValue);
@@ -264,7 +258,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
         it('FAIL - mint < transfer, ETH', async () => {
             const weiValue = ethers.utils.parseEther('2');
             const halfOfWeiValue = ethers.utils.parseEther('1');
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintETH(addr1.address, { value: halfOfWeiValue });
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositETH(addr1.address, { value: halfOfWeiValue });
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(halfOfWeiValue);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(0);
@@ -283,7 +277,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             const halfOfWeiValue = ethers.utils.parseEther('1');
             convertETHToWETH_Tx = await mockWETH9.connect(addr1).deposit({ value: halfOfWeiValue });
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, halfOfWeiValue);
-            mint_Tx = await exchangeBalanceAccountant.connect(addr1).mintWETH(addr1.address, halfOfWeiValue);
+            mint_Tx = await exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, halfOfWeiValue);
             await mint_Tx.wait();
             expect(await exchangeBalanceAccountant.eTHBalances(addr1.address)).equals(0);
             expect(await exchangeBalanceAccountant.wETHBalances(addr1.address)).equals(halfOfWeiValue);

@@ -21,7 +21,7 @@
 
 pragma solidity ^0.8.4;
 
-contract MockWETH9 {
+contract WETH9 {
     string public constant name = "Wrapped Ether";
     string public constant symbol = "WETH";
     uint8 public constant decimals = 18;
