@@ -1,28 +1,91 @@
-import './App.css';
-import Header from './components/header/Header'
-import MainContext from './components/mainContext/MainContext'
-import ChooseProvider from './components/chooseProvider/ChooseProvider';
-import MintNFT from './components/mintNFT/MintNFT';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import React, {useState} from 'react'
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "./App.css";
+import MainTemplate from "./components/templates/main/index";
+import ChooseProvider from "./components/organisms/chooseProvider/ChooseProvider";
+import MintNFT from "./components/pages/mintNFT/MintNFT";
+import StartSale from "./components/pages/startSale/StartSale";
+import CancelSale from "./components/pages/cancelSale/CancelSale";
+import BuyToken from "./components/pages/buyToken/BuyToken";
+import BurnToken from "./components/pages/burnToken/BurnToken";
+import BidNFT from "./components/pages/bidNFT/BidNFT";
+import Utils from "./components/pages/utils/Utils.jsx";
+import GlobalStyles from "./theme/GlobalStyles";
 
-const App = () => { 
-  const [activeAccount, setActiveAccount] = useState(null);
+import { Navbar } from "./components/molecules/navbar/Navbar";
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "./theme/theme";
 
-  return (
-    <Router>
-      <div className="App">
-        <Header activeAccountProps = {activeAccount}/>
-        <div className="content">
-          <Routes>
-            <Route exact path="/" element={<MainContext activeAccountProps = {activeAccount}/>}/>
-            <Route path="/MintNFT" element={<MintNFT activeAccountProps = {activeAccount} />}/>
-            <Route path="/login" element={<ChooseProvider changeActiveAccount ={activeAccount => setActiveAccount(activeAccount)} />}/>
-          </Routes>
-        </div>
-      </div>
-    </Router>
-  );
-}
+const App = () => {
+    const [activeAccount, setActiveAccount] = useState(null);
+
+    return (
+        <>
+            <GlobalStyles />
+            <ThemeProvider theme={theme}>
+                <Router>
+                    <div className="App">
+                        <Navbar activeAccountProps={activeAccount} />
+                        <div className="content">
+                            <Routes>
+                                <Route
+                                    exact
+                                    path="/"
+                                    element={<MainTemplate activeAccountProps={activeAccount} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/mintNFT"
+                                    element={
+                                        <>
+                                            <MintNFT activeAccountProps={activeAccount} />{" "}
+                                            <BurnToken activeAccountProps={activeAccount} />
+                                        </>
+                                    }
+                                />
+                                <Route
+                                    exact
+                                    path="/login"
+                                    element={
+                                        <ChooseProvider
+                                            changeActiveAccount={(activeAccount) =>
+                                                setActiveAccount(activeAccount)
+                                            }
+                                        />
+                                    }
+                                />
+                                <Route
+                                    exact
+                                    path="/sale"
+                                    element={
+                                        <>
+                                            <StartSale activeAccountProps={activeAccount} />
+                                            <CancelSale activeAccountProps={activeAccount} />
+                                        </>
+                                    }
+                                />
+                                <Route
+                                    exact
+                                    path="/buy"
+                                    element={<BuyToken activeAccountProps={activeAccount} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/bid"
+                                    element={<BidNFT activeAccountProps={activeAccount} />}
+                                />
+                                <Route
+                                    exact
+                                    path="/utils"
+                                    element={<Utils activeAccountProps={activeAccount} />}
+                                />
+                            </Routes>
+                        </div>
+                    </div>
+                </Router>
+            </ThemeProvider>
+        </>
+    );
+};
 
 export default App;
