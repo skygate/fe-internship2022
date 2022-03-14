@@ -1,4 +1,4 @@
-import { getBaseERC721ContractComponents } from "../../helpers.jsx";
+import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
 import { ethers } from "ethers";
 
 const MintNFT = (props) => {
@@ -27,6 +27,7 @@ const MintNFT = (props) => {
 
     return (
         <div>
+            <h2>Mint NFT</h2>
             <button onClick={mint} type="submit">
                 MINT NFT
             </button>
