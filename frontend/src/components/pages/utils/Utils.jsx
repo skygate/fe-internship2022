@@ -1,5 +1,4 @@
 import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
-import { ethers } from "ethers";
 
 const BuyToken = (props) => {
     const getTokenCount = async () => {
