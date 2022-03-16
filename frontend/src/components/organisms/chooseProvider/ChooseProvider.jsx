@@ -60,6 +60,7 @@ const ChooseProvider = (props) => {
 
         const handleAccountsChanged = (newAccount) => {
             props.changeActiveAccount(newAccount);
+            props.changeProviderGlobal(selectedProvider);
         };
         if (selectedProvider !== null) {
             await manageOnReload();

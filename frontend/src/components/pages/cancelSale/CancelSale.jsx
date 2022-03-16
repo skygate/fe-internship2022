@@ -1,19 +1,27 @@
-import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
 
 const CancelSale = (props) => {
     const cancelSale = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
-
+            const [, , signer, contract] = getBaseERC721ContractComponents(
+                props.activeProviderGlobalProps
+            );
             const tokenId = document.getElementById("cancelSaleId").value;
-            await contract
-                .cancelSale(tokenId)
-                .then(() => {
-                    console.log(`>>> Token ${tokenId} sale has been cancelled!`);
-                })
-                .catch((error) => {
-                    console.log(error.data.message);
-                });
+            if (
+                await signMessageWithTxDetails(
+                    signer,
+                    `Do you want to cancel sale of token with tokenID ${tokenId}?`
+                )
+            ) {
+                await contract
+                    .cancelSale(tokenId)
+                    .then(() => {
+                        console.log(`>>> Token ${tokenId} sale has been cancelled!`);
+                    })
+                    .catch((error) => {
+                        console.log(error.data.message);
+                    });
+            }
         } else {
             console.log(">>> Please login to perform this action!");
         }

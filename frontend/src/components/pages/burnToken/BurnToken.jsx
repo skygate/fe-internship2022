@@ -1,20 +1,28 @@
-import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
 import { useState } from "react";
 
 const BurnToken = (props) => {
     const [burnTokenId, setBurnTokenId] = useState("");
     const burnToken = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
-
-            await contract
-                .burn(burnTokenId)
-                .then(() => {
-                    console.log(`>>> Token ${burnTokenId} has been burned!`);
-                })
-                .catch((error) => {
-                    console.log(error.data.message);
-                });
+            const [, , signer, contract] = getBaseERC721ContractComponents(
+                props.activeProviderGlobalProps
+            );
+            if (
+                await signMessageWithTxDetails(
+                    signer,
+                    `Do you want to burn token with tokenID ${burnTokenId}?`
+                )
+            ) {
+                await contract
+                    .burn(burnTokenId)
+                    .then(() => {
+                        console.log(`>>> Token ${burnTokenId} has been burned!`);
+                    })
+                    .catch((error) => {
+                        console.log(error.data.message);
+                    });
+            }
         } else {
             console.log(">>> Please login to perform this action!");
         }
