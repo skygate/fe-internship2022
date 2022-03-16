@@ -3,7 +3,7 @@ import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
 const BuyToken = (props) => {
     const getTokenCount = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , , contract] = getBaseERC721ContractComponents(props.activeProviderGlobalProps);
 
             await contract
                 .count()
@@ -21,7 +21,7 @@ const BuyToken = (props) => {
 
     const getTokenPrice = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , , contract] = getBaseERC721ContractComponents(props.activeProviderGlobalProps);
 
             const tokenId = document.getElementById("getTokenIdPrice").value;
             await contract
@@ -43,7 +43,7 @@ const BuyToken = (props) => {
 
     const getTokenOwner = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , , contract] = getBaseERC721ContractComponents(props.activeProviderGlobalProps);
 
             const tokenId = document.getElementById("getTokenIdOwner").value;
             await contract

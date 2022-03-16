@@ -18,6 +18,7 @@ import { theme } from "./theme/theme";
 
 const App = () => {
     const [activeAccount, setActiveAccount] = useState(null);
+    const [selectedProviderGlobal, setActiveProviderGlobal] = useState(null);
 
     return (
         <>
@@ -38,8 +39,14 @@ const App = () => {
                                     path="/mintNFT"
                                     element={
                                         <>
-                                            <MintNFT activeAccountProps={activeAccount} />{" "}
-                                            <BurnToken activeAccountProps={activeAccount} />
+                                            <MintNFT
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />{" "}
+                                            <BurnToken
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
                                         </>
                                     }
                                 />
@@ -51,6 +58,9 @@ const App = () => {
                                             changeActiveAccount={(activeAccount) =>
                                                 setActiveAccount(activeAccount)
                                             }
+                                            changeProviderGlobal={(selectedProviderGlobal) =>
+                                                setActiveProviderGlobal(selectedProviderGlobal)
+                                            }
                                         />
                                     }
                                 />
@@ -59,25 +69,46 @@ const App = () => {
                                     path="/sale"
                                     element={
                                         <>
-                                            <StartSale activeAccountProps={activeAccount} />
-                                            <CancelSale activeAccountProps={activeAccount} />
+                                            <StartSale
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <CancelSale
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
                                         </>
                                     }
                                 />
                                 <Route
                                     exact
                                     path="/buy"
-                                    element={<BuyToken activeAccountProps={activeAccount} />}
+                                    element={
+                                        <BuyToken
+                                            activeAccountProps={activeAccount}
+                                            activeProviderGlobalProps={selectedProviderGlobal}
+                                        />
+                                    }
                                 />
                                 <Route
                                     exact
                                     path="/bid"
-                                    element={<BidNFT activeAccountProps={activeAccount} />}
+                                    element={
+                                        <BidNFT
+                                            activeAccountProps={activeAccount}
+                                            activeProviderGlobalProps={selectedProviderGlobal}
+                                        />
+                                    }
                                 />
                                 <Route
                                     exact
                                     path="/utils"
-                                    element={<Utils activeAccountProps={activeAccount} />}
+                                    element={
+                                        <Utils 
+                                            activeAccountProps={activeAccount}
+                                            activeProviderGlobalProps={selectedProviderGlobal}
+                                        />
+                                    }
                                 />
                             </Routes>
                         </div>

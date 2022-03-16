@@ -1,4 +1,4 @@
-import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
 import { ethers } from "ethers";
 
 const MintNFT = (props) => {
@@ -6,20 +6,24 @@ const MintNFT = (props) => {
 
     const mint = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , signer, contract] = getBaseERC721ContractComponents(
+                props.activeProviderGlobalProps
+            );
 
-            await contract
-                .payToMint(props.activeAccountProps, metadataURI, {
-                    value: ethers.utils.parseEther("0.005"),
-                    maxPriorityFeePerGas: null,
-                    maxFeePerGas: null,
-                })
-                .then(() => {
-                    console.log(`>>> Token is minted!`);
-                })
-                .catch((error) => {
-                    console.log(error.data.message);
-                });
+            if (await signMessageWithTxDetails(signer, "Do you want to mint new NFT?")) {
+                await contract
+                    .payToMint(props.activeAccountProps, metadataURI, {
+                        value: ethers.utils.parseEther("0.005"),
+                        maxPriorityFeePerGas: null,
+                        maxFeePerGas: null,
+                    })
+                    .then(() => {
+                        console.log(`>>> Token is minted!`);
+                    })
+                    .catch((error) => {
+                        console.log(error.data.message);
+                    });
+            }
         } else {
             console.log(">>> Please login to perform this action!");
         }

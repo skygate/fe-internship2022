@@ -1,22 +1,36 @@
-import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
 
 const BuyToken = (props) => {
     const butToken = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , signer, contract] = getBaseERC721ContractComponents(
+                props.activeProviderGlobalProps
+            );
 
             const tokenId = document.getElementById("buyTokenId").value;
             const tokenIdPrice = parseInt((await contract.tokenIdToPriceOnSale(tokenId))._hex);
-            await contract
-                .buyTokenOnSale(tokenId, { value: tokenIdPrice.toString() })
-                .then(() => {
-                    console.log(
-                        `>>> Token ${tokenId} has been bougth for ${tokenIdPrice / 10 ** 18} ETH!`
-                    );
-                })
-                .catch((error) => {
-                    console.log(error.data.message);
-                });
+
+            if (
+                await signMessageWithTxDetails(
+                    signer,
+                    `Do you want to buy token with tokenID ${tokenId}  for ${
+                        tokenIdPrice / 10 ** 18
+                    } ETH?`
+                )
+            ) {
+                await contract
+                    .buyTokenOnSale(tokenId, { value: tokenIdPrice.toString() })
+                    .then(() => {
+                        console.log(
+                            `>>> Token ${tokenId} has been bougth for ${
+                                tokenIdPrice / 10 ** 18
+                            } ETH!`
+                        );
+                    })
+                    .catch((error) => {
+                        console.log(error.data.message);
+                    });
+            }
         } else {
             console.log(">>> Please login to perform this action!");
         }
