@@ -25,6 +25,21 @@ async function main() {
     const BaseBidNFT = await ethers.getContractFactory("BaseBidNFT");
     const baseBidNFT = await BaseBidNFT.deploy(baseERC721.address);
     console.log("BaseBidNFT address:", baseBidNFT.address);
+
+    await mintNFT(baseERC721);
+}
+
+async function mintNFT(baseERC721Contract) {
+    const metadataURI = "ipfs://QmRVzknJwDpYJMEEZosebni5rHWHVpZDnK1jZ2pyj4jAde/1.json";
+    const [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+    await baseERC721Contract.connect(owner).safeMint(owner.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(owner.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(owner.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(addr1.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(addr1.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(addr2.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(addr2.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(addr2.address, metadataURI);
 }
 
 main()
