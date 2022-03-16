@@ -21,7 +21,7 @@ const BuyToken = (props) => {
 
     const getTokenPrice = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , , contract] = getBaseERC721ContractComponents(props.activeProviderGlobalProps);
 
             const tokenId = document.getElementById("getTokenIdPrice").value;
             await contract
@@ -43,7 +43,7 @@ const BuyToken = (props) => {
 
     const getTokenOwner = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , , contract] = getBaseERC721ContractComponents(props.activeProviderGlobalProps);
 
             const tokenId = document.getElementById("getTokenIdOwner").value;
             await contract
