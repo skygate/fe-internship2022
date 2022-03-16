@@ -103,7 +103,12 @@ const App = () => {
                                 <Route
                                     exact
                                     path="/utils"
-                                    element={<Utils activeAccountProps={activeAccount} />}
+                                    element={
+                                        <Utils 
+                                            activeAccountProps={activeAccount}
+                                            activeProviderGlobalProps={selectedProviderGlobal}
+                                        />
+                                    }
                                 />
                             </Routes>
                         </div>

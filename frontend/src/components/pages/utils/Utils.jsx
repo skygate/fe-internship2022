@@ -3,7 +3,7 @@ import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
 const BuyToken = (props) => {
     const getTokenCount = async () => {
         if (props.activeAccountProps) {
-            const [, , , contract] = getBaseERC721ContractComponents();
+            const [, , , contract] = getBaseERC721ContractComponents(props.activeProviderGlobalProps);
 
             await contract
                 .count()
