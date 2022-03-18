@@ -1,5 +1,7 @@
 import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
 import { ethers } from "ethers";
+import { Card, Grid, CardContent, CardActions } from "@mui/material";
+import { ButtonElement } from "../../atoms/button";
 
 const MintNFT = (props) => {
     const metadataURI = "ipfs://QmT8nzbH2Rr9WA55Rsv2uWFRBRCF4yGJWr44xSUrZGjTGc";
@@ -30,12 +32,16 @@ const MintNFT = (props) => {
     };
 
     return (
-        <div>
-            <h2>Mint NFT</h2>
-            <button onClick={mint} type="submit">
-                MINT NFT
-            </button>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>Mint NFT</h2>
+                </CardContent>
+                <CardActions>
+                    <ButtonElement onClick={mint}>MINT NFT</ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

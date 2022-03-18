@@ -44,16 +44,16 @@ const App = () => {
                                     exact
                                     path="/mintNFT"
                                     element={
-                                        <>
+                                        <MainTemplate activeAccountProps={activeAccount}>
                                             <MintNFT
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                             />
                                             <BurnToken
-                                                activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
+                                                activeAccountProps={activeAccount}
                                             />
-                                        </>
+                                        </MainTemplate>
                                     }
                                 />
                                 <Route
@@ -74,7 +74,7 @@ const App = () => {
                                     exact
                                     path="/sale"
                                     element={
-                                        <>
+                                        <MainTemplate activeAccountProps={activeAccount}>
                                             <StartSale
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
@@ -83,24 +83,26 @@ const App = () => {
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                             />
-                                        </>
+                                        </MainTemplate>
                                     }
                                 />
                                 <Route
                                     exact
                                     path="/buy"
                                     element={
-                                        <BuyToken
-                                            activeAccountProps={activeAccount}
-                                            activeProviderGlobalProps={selectedProviderGlobal}
-                                        />
+                                        <MainTemplate activeAccountProps={activeAccount}>
+                                            <BuyToken
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                activeAccountProps={activeAccount}
+                                            />
+                                        </MainTemplate>
                                     }
                                 />
                                 <Route
                                     exact
                                     path="/bid"
                                     element={
-                                        <>
+                                        <MainTemplate activeAccountProps={activeAccount}>
                                             <CreateAuction
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
@@ -121,14 +123,14 @@ const App = () => {
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                             />
-                                        </>
+                                        </MainTemplate>
                                     }
                                 />
                                 <Route
                                     exact
                                     path="/utils"
                                     element={
-                                        <>
+                                        <MainTemplate activeAccountProps={activeAccount}>
                                             <TokenCount
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
@@ -141,7 +143,7 @@ const App = () => {
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                             />
-                                        </>
+                                        </MainTemplate>
                                     }
                                 />
                             </Routes>

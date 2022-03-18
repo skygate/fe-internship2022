@@ -1,4 +1,7 @@
 import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { Grid, Card, CardContent, CardActions } from "@mui/material";
+import { ButtonElement } from "../../atoms/button";
+import { InputElement } from "../../atoms/input";
 
 const CancelSale = (props) => {
     const cancelSale = async () => {
@@ -28,17 +31,21 @@ const CancelSale = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>Cancel Sale NFT</h2>
-            <div>
-                <label>token ID:</label>
-                <input id="cancelSaleId" type="text"></input>
-                <br />
-                <button onClick={cancelSale} type="submit">
-                    Cancel Sale of NFT
-                </button>
-            </div>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>Cancel Sale NFT</h2>
+                </CardContent>
+                <CardActions>
+                    <label>token ID:</label>
+                    <InputElement id="cancelSaleId" type="text" />
+                    <br />
+                    <ButtonElement onClick={cancelSale} type="submit">
+                        Cancel Sale NFT
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

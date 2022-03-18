@@ -1,7 +1,14 @@
-import "./mainContext.css";
+import * as React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
 
-const MainContext = (props) => {
-    return <div className="container"></div>;
-};
-
-export default MainContext;
+export default function MainContext({ children }) {
+    return (
+        <React.Fragment>
+            <CssBaseline />
+            <Grid container columnSpacing={2}>
+                {children}
+            </Grid>
+        </React.Fragment>
+    );
+}
