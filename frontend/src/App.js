@@ -8,8 +8,14 @@ import StartSale from "./components/pages/startSale/StartSale";
 import CancelSale from "./components/pages/cancelSale/CancelSale";
 import BuyToken from "./components/pages/buyToken/BuyToken";
 import BurnToken from "./components/pages/burnToken/BurnToken";
-import BidNFT from "./components/pages/bidNFT/BidNFT";
-import Utils from "./components/pages/utils/Utils.jsx";
+import CreateAuction from "./components/pages/bidNFT/CreateAuction";
+import BidAuction from "./components/pages/bidNFT/BidAuction";
+import CancelAuction from "./components/pages/bidNFT/CancelAuction";
+import EndAuction from "./components/pages/bidNFT/EndAuction";
+import WithdrawFromAuction from "./components/pages/bidNFT/WithdrawFromAuction";
+import TokenCount from "./components/pages/utils/TokenCount.jsx";
+import TokenOwner from "./components/pages/utils/TokenOwner.jsx";
+import TokenPriceOnSale from "./components/pages/utils/TokenPriceOnSale.jsx";
 import GlobalStyles from "./theme/GlobalStyles";
 
 import { Navbar } from "./components/molecules/navbar/Navbar";
@@ -42,7 +48,7 @@ const App = () => {
                                             <MintNFT
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
-                                            />{" "}
+                                            />
                                             <BurnToken
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
@@ -94,20 +100,48 @@ const App = () => {
                                     exact
                                     path="/bid"
                                     element={
-                                        <BidNFT
-                                            activeAccountProps={activeAccount}
-                                            activeProviderGlobalProps={selectedProviderGlobal}
-                                        />
+                                        <>
+                                            <CreateAuction
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <BidAuction
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <CancelAuction
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <EndAuction
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <WithdrawFromAuction
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                        </>
                                     }
                                 />
                                 <Route
                                     exact
                                     path="/utils"
                                     element={
-                                        <Utils 
-                                            activeAccountProps={activeAccount}
-                                            activeProviderGlobalProps={selectedProviderGlobal}
-                                        />
+                                        <>
+                                            <TokenCount
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <TokenOwner
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <TokenPriceOnSale
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                        </>
                                     }
                                 />
                             </Routes>
