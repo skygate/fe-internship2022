@@ -96,7 +96,7 @@ describe("Test ExchangeBalanceAccountant", async () => {
             approve_Tx = await mockWETH9.connect(addr1).approve(exchangeBalanceAccountant.address, lessThanProperValue);
             await expect(
                 exchangeBalanceAccountant.connect(addr1).depositWETH(addr1.address, properValue)
-            ).to.be.reverted
+            ).to.be.reverted;
         });
 
         //1,1,0
