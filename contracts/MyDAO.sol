@@ -42,7 +42,7 @@ contract MyDAO {
     
     /// @notice Minting the governance tokens.
     /// @param _amount - uint type
-    function deposit(uint _amount) external payable {
+    function deposit(uint _amount) external {
         shares[msg.sender] += _amount;
         totalShares += _amount;
         token.transferFrom(msg.sender, address(this), _amount);
