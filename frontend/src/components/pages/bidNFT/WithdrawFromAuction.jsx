@@ -38,7 +38,7 @@ const WithdrawFromAuction = (props) => {
     };
 
     return (
-        <Grid>
+        <Grid item xs={6}>
             <Card>
                 <CardContent>
                     <h2>Withdraw from auction</h2>

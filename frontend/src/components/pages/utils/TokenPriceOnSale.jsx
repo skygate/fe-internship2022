@@ -32,7 +32,7 @@ const TokenPriceOnSale = (props) => {
     };
 
     return (
-        <Grid item xs={4}>
+        <Grid item xs={6}>
             <Card>
                 <CardContent>
                     <h2>Get token price on sale</h2>

@@ -39,7 +39,7 @@ const CreateAuction = (props) => {
     };
 
     return (
-        <Grid item xs={2}>
+        <Grid item xs={6}>
             <Card>
                 <CardContent>
                     <h2>Create auction</h2>
