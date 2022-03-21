@@ -6,7 +6,7 @@ const FormData = require("form-data");
 const recursive = require("recursive-fs");
 
 // number of files to upload
-const fileCounter = 3;
+const fileCounter = 9;
 
 async function main() {
     // uplod PNG files and get IPFS Hash
@@ -15,12 +15,12 @@ async function main() {
     console.log(`PNG files uploded on pinata on ${pngDirHash}`);
 
     // Update matadata with PNG IPFS Hash
-    for (let i = 1; i <= fileCounter; i++) {
+    for (let i = 0; i <= fileCounter; i++) {
         const rawData = fs.readFileSync(
             path.join(path.dirname(__dirname), "metadata\\json", `${i}.json`)
         );
         let parsedData = JSON.parse(rawData);
-        parsedData["image"] = `ipfs://${pngDirHash}/${i}.png`;
+        parsedData["image"] = `ipfs://${pngDirHash}/${i}`;
         fs.writeFileSync(
             path.join(path.dirname(__dirname), "metadata\\json", `${i}.json`),
             JSON.stringify(parsedData, null, 2)
@@ -39,9 +39,9 @@ async function pinDirectoryToIPFS(dirPath) {
     let data = new FormData();
     let ipfsHash;
 
-    for (let i = 1; i <= fileCounter; i++) {
+    for (let i = 0; i <= fileCounter; i++) {
         data.append("file", fs.createReadStream(dirPath + `/${i}.${fileType}`), {
-            filepath: `/${fileType}/${i}.${fileType}`,
+            filepath: `/${fileType}/${i}`,
         });
     }
 

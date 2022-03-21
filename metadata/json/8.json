@@ -1,27 +1,27 @@
 {
-  "name": "SkyGate NFT Internship #1",
+  "name": "SkyGate NFT Internship #8",
   "description": "This projects is created on internship for SkyGate company",
-  "image": "ipfs://QmYgTGWNppetjieMgayTU1amnGpoSR8pmbHEwhiAurXXG4/1",
+  "image": "ipfs://QmYgTGWNppetjieMgayTU1amnGpoSR8pmbHEwhiAurXXG4/8",
   "attributes": [
     {
       "trait_type": "Background",
-      "value": "Purple"
+      "value": "Yellow"
     },
     {
       "trait_type": "Head",
-      "value": "Square"
-    },
-    {
-      "trait_type": "Hat",
       "value": "Basic"
     },
     {
+      "trait_type": "Hat",
+      "value": "Fulcap"
+    },
+    {
       "trait_type": "Eyes",
-      "value": "Big"
+      "value": "Basic"
     },
     {
       "trait_type": "Mouth",
-      "value": "Neutral"
+      "value": "Happy"
     }
   ]
 }

@@ -3,12 +3,12 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
+contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
     AggregatorV3Interface internal priceFeed;
     uint256 public transactionFee = 1000; // 1000 = 1%
@@ -51,42 +51,24 @@ contract BaseERC721 is ERC721, ERC721URIStorage, ERC721Holder, Ownable {
         _;
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-        super._burn(tokenId);
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function safeMint(address to, string memory uri) public onlyOwner isMintPossible {
+    function safeMint(address to) public onlyOwner isMintPossible {
         uint256 tokenId = tokenIdCounter.current();
         tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
     }
 
-    function payToMint(address recipients, string memory metadataURI)
-        public
-        payable
-        isMintPossible
-        returns (uint256)
-    {
+    function payToMint(address recipients) public payable isMintPossible returns (uint256) {
         require(
             msg.value >= mintPrice,
             "Cant perform this action, you send not enough ETH to mint."
         );
         uint256 newItemId = tokenIdCounter.current();
         tokenIdCounter.increment();
-
         _mint(recipients, newItemId);
-        _setTokenURI(newItemId, metadataURI);
-
         return newItemId;
     }
 

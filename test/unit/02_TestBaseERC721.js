@@ -3,11 +3,10 @@ const { ethers } = require("hardhat");
 const { getGasUsedForLastTx, calculatePercentageInWei } = require("../utils");
 
 describe("TEST BaseERC721", async () => {
-    const metadataURI = "cid/test.png";
     const addrNull = "0x0000000000000000000000000000000000000000";
-
     const DECIMALS = "18";
     const INITIAL_PRICE = "200000000000000000000";
+    const baseURI = "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
 
     let myBaseERC721;
     let owner;
@@ -44,11 +43,9 @@ describe("TEST BaseERC721", async () => {
             let balance = await myBaseERC721.connect(addr1).balanceOf(addr1.address);
             expect(balance).to.equal(0);
 
-            const newlyMintedToken = await myBaseERC721
-                .connect(addr1)
-                .payToMint(addr1.address, metadataURI, {
-                    value: ethers.utils.parseEther("0.05"),
-                });
+            const newlyMintedToken = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: ethers.utils.parseEther("0.05"),
+            });
             await newlyMintedToken.wait();
 
             balance = await myBaseERC721.connect(addr1).balanceOf(addr1.address);
@@ -59,13 +56,17 @@ describe("TEST BaseERC721", async () => {
 
             const currentCounter = await myBaseERC721.connect(addr1).count();
             expect(currentCounter).to.equal(1);
+
+            expect(await myBaseERC721.tokenURI(currentCounter - 1)).to.be.equal(
+                baseURI + (currentCounter - 1)
+            );
         });
 
         it("FAIL - send eth below mintPrice", async () => {
             expect(await myBaseERC721.count()).to.equal(0);
 
             await expect(
-                myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+                myBaseERC721.connect(addr1).payToMint(addr1.address, {
                     value: ethers.utils.parseEther("0.00000005"),
                 })
             ).to.be.revertedWith("Cant perform this action, you send not enough ETH to mint.");
@@ -77,13 +78,13 @@ describe("TEST BaseERC721", async () => {
             const mintLimit = BigInt(await myBaseERC721.mintLimit());
 
             while (BigInt(await myBaseERC721.count()) < mintLimit) {
-                await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+                await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                     value: ethers.utils.parseEther("0.05"),
                 });
             }
 
             await expect(
-                myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+                myBaseERC721.connect(addr1).payToMint(addr1.address, {
                     value: ethers.utils.parseEther("0.05"),
                 })
             ).to.be.revertedWith("Cant perform this action, limit of mint has been reached.");
@@ -95,9 +96,7 @@ describe("TEST BaseERC721", async () => {
             let balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
             expect(balance).to.equal(0);
 
-            const newlyMintedToken = await myBaseERC721
-                .connect(owner)
-                .safeMint(owner.address, metadataURI);
+            const newlyMintedToken = await myBaseERC721.connect(owner).safeMint(owner.address);
             await newlyMintedToken.wait();
 
             balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
@@ -114,9 +113,9 @@ describe("TEST BaseERC721", async () => {
             let balance = await myBaseERC721.connect(addr2).balanceOf(addr2.address);
             expect(balance).to.equal(0);
 
-            await expect(
-                myBaseERC721.connect(addr2).safeMint(addr2.address, metadataURI)
-            ).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(myBaseERC721.connect(addr2).safeMint(addr2.address)).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            );
 
             balance = await myBaseERC721.connect(addr2).balanceOf(addr2.address);
             expect(balance).to.equal(0);
@@ -129,12 +128,23 @@ describe("TEST BaseERC721", async () => {
             const mintLimit = BigInt(await myBaseERC721.mintLimit());
 
             while (BigInt(await myBaseERC721.count()) < mintLimit) {
-                await myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI);
+                await myBaseERC721.connect(owner).safeMint(addr1.address);
             }
 
-            await expect(
-                myBaseERC721.connect(owner).safeMint(addr1.address, metadataURI)
-            ).to.be.revertedWith("Cant perform this action, limit of mint has been reached.");
+            await expect(myBaseERC721.connect(owner).safeMint(addr1.address)).to.be.revertedWith(
+                "Cant perform this action, limit of mint has been reached."
+            );
+        });
+    });
+
+    describe("TEST _baseURI()", async () => {
+        it("PASS - test incrementing", async () => {
+            const mintLimit = BigInt(await myBaseERC721.mintLimit());
+
+            for (counter = 0; counter < mintLimit; counter++) {
+                await myBaseERC721.connect(owner).safeMint(addr1.address);
+                expect(await myBaseERC721.tokenURI(counter)).to.be.equal(baseURI + counter);
+            }
         });
     });
 
@@ -142,7 +152,7 @@ describe("TEST BaseERC721", async () => {
         it("PASS", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -164,7 +174,7 @@ describe("TEST BaseERC721", async () => {
         it("FAIL - not onwer of token", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -182,7 +192,7 @@ describe("TEST BaseERC721", async () => {
 
         it("FAIL - sale for 0 ETH", async () => {
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -203,7 +213,7 @@ describe("TEST BaseERC721", async () => {
         it("PASS", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -224,7 +234,7 @@ describe("TEST BaseERC721", async () => {
         it("FAIL - not onwer of token", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -249,7 +259,7 @@ describe("TEST BaseERC721", async () => {
 
         it("FAIL - sale not started", async () => {
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -270,7 +280,7 @@ describe("TEST BaseERC721", async () => {
         it("PASS", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -309,7 +319,7 @@ describe("TEST BaseERC721", async () => {
         it("FAIL - token not for sale", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: ethers.utils.parseEther("0.05"),
             });
             await mintTx.wait();
@@ -332,7 +342,7 @@ describe("TEST BaseERC721", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const sendEthAmount = ethers.utils.parseEther("0.05");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: sendEthAmount,
             });
             await mintTx.wait();
@@ -369,7 +379,7 @@ describe("TEST BaseERC721", async () => {
         it("PASS - token not on sale", async () => {
             const sendEthAmount = ethers.utils.parseEther("0.05");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: sendEthAmount,
             });
             await mintTx.wait();
@@ -388,7 +398,7 @@ describe("TEST BaseERC721", async () => {
             const sendEthAmount = ethers.utils.parseEther("0.05");
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: sendEthAmount,
             });
             await mintTx.wait();
@@ -414,7 +424,7 @@ describe("TEST BaseERC721", async () => {
             const sendEthAmount = ethers.utils.parseEther("0.05");
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
-            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, metadataURI, {
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: sendEthAmount,
             });
             await mintTx.wait();
@@ -471,11 +481,9 @@ describe("TEST BaseERC721", async () => {
             it(`PASS - transactionFee ${fee / 1000}%`, async () => {
                 const sellPrice = ethers.utils.parseEther("0.5");
                 const tokenId = 0;
-                const mintTx = await myBaseERC721
-                    .connect(addr1)
-                    .payToMint(addr1.address, metadataURI, {
-                        value: ethers.utils.parseEther("0.05"),
-                    });
+                const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                    value: ethers.utils.parseEther("0.05"),
+                });
                 await mintTx.wait();
 
                 const setFeeTx = await myBaseERC721.connect(owner).setTransactionFee(fee);
@@ -515,7 +523,7 @@ describe("TEST BaseERC721", async () => {
             const amoutPayed = ethers.utils.parseEther("0.05");
             const mintTx = await myBaseERC721
                 .connect(addr1)
-                .payToMint(addr1.address, metadataURI, { value: amoutPayed });
+                .payToMint(addr1.address, { value: amoutPayed });
             await mintTx.wait();
 
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
@@ -538,7 +546,7 @@ describe("TEST BaseERC721", async () => {
             const amoutPayed = ethers.utils.parseEther("0.05");
             const mintTx = await myBaseERC721
                 .connect(addr1)
-                .payToMint(addr1.address, metadataURI, { value: amoutPayed });
+                .payToMint(addr1.address, { value: amoutPayed });
             await mintTx.wait();
 
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);

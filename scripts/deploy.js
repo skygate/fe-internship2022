@@ -30,16 +30,15 @@ async function main() {
 }
 
 async function mintNFT(baseERC721Contract) {
-    const metadataURI = "ipfs://QmRVzknJwDpYJMEEZosebni5rHWHVpZDnK1jZ2pyj4jAde/1.json";
     const [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
-    await baseERC721Contract.connect(owner).safeMint(owner.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(owner.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(owner.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(addr1.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(addr1.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(addr2.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(addr2.address, metadataURI);
-    await baseERC721Contract.connect(owner).safeMint(addr2.address, metadataURI);
+    await baseERC721Contract.connect(owner).safeMint(owner.address);
+    await baseERC721Contract.connect(owner).safeMint(owner.address);
+    await baseERC721Contract.connect(owner).safeMint(owner.address);
+    await baseERC721Contract.connect(owner).safeMint(addr1.address);
+    await baseERC721Contract.connect(owner).safeMint(addr1.address);
+    await baseERC721Contract.connect(owner).safeMint(addr2.address);
+    await baseERC721Contract.connect(owner).safeMint(addr2.address);
+    await baseERC721Contract.connect(owner).safeMint(addr2.address);
 }
 
 main()
