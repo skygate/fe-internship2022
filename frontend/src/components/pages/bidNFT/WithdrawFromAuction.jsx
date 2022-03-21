@@ -1,5 +1,8 @@
 import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
 import { useState } from "react";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
+import { InputElement } from "../../atoms/input";
+import { ButtonElement } from "../../atoms/button";
 
 const WithdrawFromAuction = (props) => {
     const [withdrawFromAuctionTokenId, setWithdrawFromAuctionTokenId] = useState("");
@@ -35,20 +38,26 @@ const WithdrawFromAuction = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>Withdraw from auction</h2>
-            <label>Token ID:</label>
-            <input
-                onChange={(e) => setWithdrawFromAuctionTokenId(e.target.value)}
-                value={withdrawFromAuctionTokenId}
-                id="withdrawFromAuctionTokenId"
-                type="text"
-            ></input>
-            <br />
-            <button onClick={withdrawFromAuction} type="submit">
-                Withdraw
-            </button>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>Withdraw from auction</h2>
+                </CardContent>
+                <CardActions>
+                    <label>Token ID:</label>
+                    <InputElement
+                        onChange={(e) => setWithdrawFromAuctionTokenId(e.target.value)}
+                        value={withdrawFromAuctionTokenId}
+                        id="withdrawFromAuctionTokenId"
+                        type="text"
+                    ></InputElement>
+                    <br />
+                    <ButtonElement onClick={withdrawFromAuction} type="submit">
+                        Withdraw
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

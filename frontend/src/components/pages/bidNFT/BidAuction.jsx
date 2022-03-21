@@ -1,5 +1,8 @@
 import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
 import { useState } from "react";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
+import { InputElement } from "../../atoms/input";
+import { ButtonElement } from "../../atoms/button";
 
 const BidAuction = (props) => {
     const [bidAuctionTokenId, setBidAuctionTokenId] = useState("");
@@ -37,28 +40,34 @@ const BidAuction = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>Place bid on auction</h2>
-            <label>Token ID:</label>
-            <input
-                onChange={(e) => setBidAuctionTokenId(e.target.value)}
-                value={bidAuctionTokenId}
-                id="bidAuctionTokenId"
-                type="text"
-            ></input>
-            <br />
-            <label>Bid value:</label>
-            <input
-                onChange={(e) => setBidAuctionValue(e.target.value)}
-                value={bidAuctionValue}
-                id="bidAuctionValue"
-                type="text"
-            ></input>
-            <br />
-            <button onClick={bidAuction} type="submit">
-                Bid auction
-            </button>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>Place bid on auction</h2>
+                </CardContent>
+                <CardActions>
+                    <label>Token ID:</label>
+                    <InputElement
+                        onChange={(e) => setBidAuctionTokenId(e.target.value)}
+                        value={bidAuctionTokenId}
+                        id="bidAuctionTokenId"
+                        type="text"
+                    ></InputElement>
+                    <br />
+                    <label>Bid value:</label>
+                    <InputElement
+                        onChange={(e) => setBidAuctionValue(e.target.value)}
+                        value={bidAuctionValue}
+                        id="bidAuctionValue"
+                        type="text"
+                    ></InputElement>
+                    <br />
+                    <ButtonElement onClick={bidAuction} type="submit">
+                        Bid auction
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

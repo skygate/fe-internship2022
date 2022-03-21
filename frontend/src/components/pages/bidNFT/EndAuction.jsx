@@ -1,5 +1,8 @@
 import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
 import { useState } from "react";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
+import { InputElement } from "../../atoms/input";
+import { ButtonElement } from "../../atoms/button";
 
 const EndAuction = (props) => {
     const [endAuctionTokenId, setEndAuctionTokenId] = useState("");
@@ -35,20 +38,26 @@ const EndAuction = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>End auction</h2>
-            <label>Token ID:</label>
-            <input
-                onChange={(e) => setEndAuctionTokenId(e.target.value)}
-                value={endAuctionTokenId}
-                id="endAuctionTokenId"
-                type="text"
-            ></input>
-            <br />
-            <button onClick={endAuction} type="submit">
-                End auction
-            </button>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>End auction</h2>
+                </CardContent>
+                <CardActions>
+                    <label>Token ID:</label>
+                    <InputElement
+                        onChange={(e) => setEndAuctionTokenId(e.target.value)}
+                        value={endAuctionTokenId}
+                        id="endAuctionTokenId"
+                        type="text"
+                    ></InputElement>
+                    <br />
+                    <ButtonElement onClick={endAuction} type="submit">
+                        End auction
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 
