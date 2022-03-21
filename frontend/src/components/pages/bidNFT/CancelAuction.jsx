@@ -1,5 +1,8 @@
 import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
 import { useState } from "react";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
+import { InputElement } from "../../atoms/input";
+import { ButtonElement } from "../../atoms/button";
 
 const CancelAuction = (props) => {
     const [cancelAuctionTokenId, setCancelAuctionTokenId] = useState("");
@@ -35,20 +38,26 @@ const CancelAuction = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>Cancel auction</h2>
-            <label>Token ID:</label>
-            <input
-                onChange={(e) => setCancelAuctionTokenId(e.target.value)}
-                value={cancelAuctionTokenId}
-                id="cancelAuctionTokenId"
-                type="text"
-            ></input>
-            <br />
-            <button onClick={cancelAuction} type="submit">
-                Cancel auction
-            </button>
-        </div>
+        <Grid item xs={2}>
+            <Card>
+                <CardContent>
+                    <h2>Cancel auction</h2>
+                </CardContent>
+                <CardActions>
+                    <label>Token ID:</label>
+                    <InputElement
+                        onChange={(e) => setCancelAuctionTokenId(e.target.value)}
+                        value={cancelAuctionTokenId}
+                        id="cancelAuctionTokenId"
+                        type="text"
+                    ></InputElement>
+                    <br />
+                    <ButtonElement onClick={cancelAuction} type="submit">
+                        Cancel auction
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

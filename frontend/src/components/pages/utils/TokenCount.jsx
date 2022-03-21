@@ -1,4 +1,6 @@
 import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
+import { ButtonElement } from "../../atoms/button";
 
 const TokenCount = (props) => {
     const getTokenCount = async () => {
@@ -22,14 +24,18 @@ const TokenCount = (props) => {
     };
 
     return (
-        <div className="center">
-            <div>
-                <h2>Get token count</h2>
-                <button onClick={getTokenCount} type="submit">
-                    Get token count
-                </button>
-            </div>
-        </div>
+        <Grid item xs={4}>
+            <Card>
+                <CardContent>
+                    <h2>Get token count</h2>
+                </CardContent>
+                <CardActions>
+                    <ButtonElement onClick={getTokenCount} type="submit">
+                        Get token count
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

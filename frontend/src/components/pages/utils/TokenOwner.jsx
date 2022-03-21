@@ -1,5 +1,8 @@
 import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
 import { useState } from "react";
+import { Grid, Card, CardContent, CardActions } from "@mui/material";
+import { ButtonElement } from "../../atoms/button";
+import { InputElement } from "../../atoms/input";
 
 const TokenOwner = (props) => {
     const [ownerTokenId, setOwnerTokenId] = useState("");
@@ -24,21 +27,25 @@ const TokenOwner = (props) => {
     };
 
     return (
-        <div className="center">
-            <div>
-                <h2>Get token owner</h2>
-                <input
-                    onChange={(e) => setOwnerTokenId(e.target.value)}
-                    value={ownerTokenId}
-                    id="ownerTokenId"
-                    type="text"
-                ></input>
-                <br />
-                <button onClick={getTokenOwner} type="submit">
-                    Get token owner
-                </button>
-            </div>
-        </div>
+        <Grid item xs={4}>
+            <Card>
+                <CardContent>
+                    <h2>Get token owner</h2>
+                </CardContent>
+                <CardActions>
+                    <InputElement
+                        onChange={(e) => setOwnerTokenId(e.target.value)}
+                        value={ownerTokenId}
+                        id="ownerTokenId"
+                        type="text"
+                    ></InputElement>
+                    <br />
+                    <ButtonElement onClick={getTokenOwner} type="submit">
+                        Get token owner
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 
