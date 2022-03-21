@@ -4,8 +4,6 @@ import { Card, Grid, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 
 const MintNFT = (props) => {
-    const metadataURI = "ipfs://QmT8nzbH2Rr9WA55Rsv2uWFRBRCF4yGJWr44xSUrZGjTGc";
-
     const mint = async () => {
         if (props.activeAccountProps) {
             const [, , signer, contract] = getBaseERC721ContractComponents(
@@ -14,7 +12,7 @@ const MintNFT = (props) => {
 
             if (await signMessageWithTxDetails(signer, "Do you want to mint new NFT?")) {
                 await contract
-                    .payToMint(props.activeAccountProps, metadataURI, {
+                    .payToMint(props.activeAccountProps, {
                         value: ethers.utils.parseEther("0.005"),
                         maxPriorityFeePerGas: null,
                         maxFeePerGas: null,

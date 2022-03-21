@@ -3,7 +3,6 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
@@ -13,7 +12,6 @@ contract BaseERC721Upgradeable is
     Initializable,
     ERC721Upgradeable,
     ERC721HolderUpgradeable,
-    ERC721URIStorageUpgradeable,
     OwnableUpgradeable,
     UUPSUpgradeable
 {
@@ -47,55 +45,29 @@ contract BaseERC721Upgradeable is
 
     modifier isOwnerOfToken(uint256 tokenId) virtual {
         require(
-            ownerOf(tokenId) == msg.sender ||
-                tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
+            ownerOf(tokenId) == msg.sender || tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
             "Cant perform this action, you must be owner of this token!"
         );
         _;
     }
 
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        override
-        onlyOwner
-    {}
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-    function _burn(uint256 tokenId)
-        internal
-        virtual
-        override(ERC721Upgradeable, ERC721URIStorageUpgradeable)
-    {
-        super._burn(tokenId);
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override(ERC721Upgradeable, ERC721URIStorageUpgradeable)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function safeMint(address to, string memory uri) public virtual onlyOwner {
+    function safeMint(address to) public virtual onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
     }
 
-    function payToMint(address recipients, string memory metadataURI)
-        public
-        payable
-        virtual
-        returns (uint256)
-    {
+    function payToMint(address recipients) public payable virtual returns (uint256) {
         uint256 newItemId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
 
         _mint(recipients, newItemId);
-        _setTokenURI(newItemId, metadataURI);
 
         return newItemId;
     }
@@ -111,11 +83,7 @@ contract BaseERC721Upgradeable is
         _burn(tokenId);
     }
 
-    function startSale(uint256 tokenId, uint256 price)
-        public
-        virtual
-        isOwnerOfToken(tokenId)
-    {
+    function startSale(uint256 tokenId, uint256 price) public virtual isOwnerOfToken(tokenId) {
         require(price > 0, "Can not sale for 0 ETH!");
         tokenIdToPriceOnSale[tokenId] = price;
         tokenIdToOwnerAddressOnSale[tokenId] = msg.sender;
@@ -133,12 +101,7 @@ contract BaseERC721Upgradeable is
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function buyTokenOnSale(uint256 tokenId)
-        public
-        payable
-        virtual
-        isTokenOnSale(tokenId)
-    {
+    function buyTokenOnSale(uint256 tokenId) public payable virtual isTokenOnSale(tokenId) {
         require(
             tokenIdToPriceOnSale[tokenId] <= msg.value,
             "Pleas provide minimum price of this specific token!"
@@ -155,9 +118,9 @@ contract BaseERC721Upgradeable is
     }
 
     function splitPayment(address to, uint256 amount) public virtual {
-        (bool success, ) = payable(to).call{
-            value: (amount * (100000 - transactionFee)) / 100000
-        }("");
+        (bool success, ) = payable(to).call{value: (amount * (100000 - transactionFee)) / 100000}(
+            ""
+        );
         require(success, "Transfer failed.");
     }
 
@@ -166,9 +129,7 @@ contract BaseERC721Upgradeable is
     }
 
     function withdraw() public virtual onlyOwner {
-        (bool success, ) = payable(owner()).call{value: address(this).balance}(
-            ""
-        );
+        (bool success, ) = payable(owner()).call{value: address(this).balance}("");
         require(success, "Transfer failed.");
     }
 }
@@ -176,8 +137,7 @@ contract BaseERC721Upgradeable is
 contract BaseERC721UpgradeableV2 is BaseERC721Upgradeable {
     modifier isOwnerOfToken(uint256 tokenId) virtual override {
         require(
-            ownerOf(tokenId) == msg.sender ||
-                tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
+            ownerOf(tokenId) == msg.sender || tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
             "BaseERC721 Error: Can't perform this action, you must be owner of this token!"
         );
         _;

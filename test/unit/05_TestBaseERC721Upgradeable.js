@@ -2,8 +2,6 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Test BaseERC721Upgradeable", async () => {
-    const metadataURI = "cid/test.png";
-
     const DECIMALS = "18";
     const INITIAL_PRICE = "200000000000000000000";
 
@@ -32,7 +30,7 @@ describe("Test BaseERC721Upgradeable", async () => {
         const tokenId = 0;
         const mintTx = await baseERC721Upgradeable
             .connect(addr1)
-            .payToMint(addr1.address, metadataURI, { value: sendEthAmount });
+            .payToMint(addr1.address, { value: sendEthAmount });
         await mintTx.wait();
 
         await expect(baseERC721Upgradeable.connect(addr2).burn(tokenId)).to.be.revertedWith(

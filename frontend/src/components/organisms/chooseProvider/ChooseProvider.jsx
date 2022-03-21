@@ -110,17 +110,17 @@ const ChooseProvider = (props) => {
     return (
         <div className="container">
             <div className="section1">
-                <ButtonElement data={() => selectProvider("MetaMask")}>
+                <ButtonElement onClick={() => selectProvider("MetaMask")}>
                     Connect to MetaMask
                 </ButtonElement>
             </div>
             <div className="section2">
-                <ButtonElement data={() => selectProvider("Coinbase")}>
+                <ButtonElement onClick={() => selectProvider("Coinbase")}>
                     Connect to Coinbase Wallet
                 </ButtonElement>
             </div>
             <div className="section3">
-                <ButtonElement data={() => selectProvider("Wallet Connect")}>
+                <ButtonElement onClick={() => selectProvider("Wallet Connect")}>
                     Connect to Wallet Connect
                 </ButtonElement>
             </div>
