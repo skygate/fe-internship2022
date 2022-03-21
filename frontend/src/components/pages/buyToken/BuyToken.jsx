@@ -1,4 +1,7 @@
 import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
+import { InputElement } from "../../atoms/input";
+import { ButtonElement } from "../../atoms/button";
 
 const BuyToken = (props) => {
     const butToken = async () => {
@@ -37,17 +40,21 @@ const BuyToken = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>Buy NFT</h2>
-            <div>
-                <label>token ID:</label>
-                <input id="buyTokenId" type="text"></input>
-                <br />
-                <button onClick={butToken} type="submit">
-                    Sell NFT
-                </button>
-            </div>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>Buy NFT</h2>
+                </CardContent>
+                <CardActions>
+                    <label>token ID:</label>
+                    <InputElement id="buyTokenId" type="text" />
+                    <br />
+                    <ButtonElement onClick={butToken} type="submit">
+                        Sell NFT
+                    </ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 

@@ -1,5 +1,8 @@
 import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
 import { useState } from "react";
+import { InputElement } from "../../atoms/input";
+import { ButtonElement } from "../../atoms/button";
+import { Card, Grid, CardActions, CardContent } from "@mui/material";
 
 const BurnToken = (props) => {
     const [burnTokenId, setBurnTokenId] = useState("");
@@ -29,22 +32,25 @@ const BurnToken = (props) => {
     };
 
     return (
-        <div className="center">
-            <h2>Burn NFT</h2>
-            <div>
-                <label>token ID:</label>
-                <input
-                    onChange={(e) => setBurnTokenId(e.target.value)}
-                    value={burnTokenId}
-                    id="burnTokenId"
-                    type="text"
-                ></input>
-                <br />
-                <button onClick={burnToken} type="submit">
-                    Burn NFT
-                </button>
-            </div>
-        </div>
+        <Grid item xs={6}>
+            <Card>
+                <CardContent>
+                    <h2>Burn NFT</h2>
+                </CardContent>
+
+                <CardActions>
+                    <label>token ID:</label>
+                    <InputElement
+                        onChange={(e) => setBurnTokenId(e.target.value)}
+                        value={burnTokenId}
+                        id="burnTokenId"
+                        type="text"
+                    />
+                    <br />
+                    <ButtonElement onClick={burnToken}>Burn NFT</ButtonElement>
+                </CardActions>
+            </Card>
+        </Grid>
     );
 };
 
