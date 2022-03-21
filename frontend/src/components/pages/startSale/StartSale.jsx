@@ -3,28 +3,32 @@ import { ethers } from "ethers";
 import { Grid, Card, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 import { InputElement } from "../../atoms/input";
+import { useState } from "react";
 
 const StartSale = (props) => {
+    const [startSaleTokenId, setStartSaleTokenId] = useState("");
+    const [startSalePrice, setStartSalePrice] = useState("");
     const startSale = async () => {
         if (props.activeAccountProps) {
             const [, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
-            const tokenId = document.getElementById("sellTokenId").value;
-            const price = ethers.utils.parseEther(document.getElementById("sellTokenPrice").value);
+
             if (
                 await signMessageWithTxDetails(
                     signer,
-                    `Do you want to start sale of token with tokenId ${tokenId} for price ${
-                        price / 10 ** 18
+                    `Do you want to start sale of token with tokenId ${startSaleTokenId} for price ${
+                        startSalePrice / 10 ** 18
                     } ETH?`
                 )
             ) {
                 await contract
-                    .startSale(tokenId, price)
+                    .startSale(startSaleTokenId, startSalePrice)
                     .then(() => {
                         console.log(
-                            `>>> Token ${tokenId} has been put on sale for ${price / 10 ** 18} ETH!`
+                            `>>> Token ${startSaleTokenId} has been put on sale for ${
+                                startSalePrice / 10 ** 18
+                            } ETH!`
                         );
                     })
                     .catch((error) => {
@@ -44,10 +48,20 @@ const StartSale = (props) => {
                 </CardContent>
                 <CardActions>
                     <label>token ID:</label>
-                    <InputElement id="sellTokenId" type="text" />
+                    <InputElement
+                        onChange={(e) => setStartSaleTokenId(e.target.value)}
+                        value={startSaleTokenId}
+                        id="startSaleTokenId"
+                        type="text"
+                    />
                     <br />
                     <label>ETH price: </label>
-                    <InputElement id="sellTokenPrice" type="text"></InputElement>
+                    <InputElement
+                        onChange={(e) => setStartSalePrice(e.target.value)}
+                        value={startSalePrice}
+                        id="startSalePrice"
+                        type="text"
+                    />
                     <br />
                     <ButtonElement onClick={startSale} type="submit">
                         Sell NFT

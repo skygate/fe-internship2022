@@ -2,30 +2,31 @@ import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../..
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
 import { ButtonElement } from "../../atoms/button";
+import { useState } from "react";
 
 const BuyToken = (props) => {
+    const [buyTokenId, setBuyTokenId] = useState("");
     const butToken = async () => {
         if (props.activeAccountProps) {
             const [, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
 
-            const tokenId = document.getElementById("buyTokenId").value;
-            const tokenIdPrice = parseInt((await contract.tokenIdToPriceOnSale(tokenId))._hex);
+            const tokenIdPrice = parseInt((await contract.tokenIdToPriceOnSale(buyTokenId))._hex);
 
             if (
                 await signMessageWithTxDetails(
                     signer,
-                    `Do you want to buy token with tokenID ${tokenId}  for ${
+                    `Do you want to buy token with tokenID ${buyTokenId}  for ${
                         tokenIdPrice / 10 ** 18
                     } ETH?`
                 )
             ) {
                 await contract
-                    .buyTokenOnSale(tokenId, { value: tokenIdPrice.toString() })
+                    .buyTokenOnSale(buyTokenId, { value: tokenIdPrice.toString() })
                     .then(() => {
                         console.log(
-                            `>>> Token ${tokenId} has been bougth for ${
+                            `>>> Token ${buyTokenId} has been bougth for ${
                                 tokenIdPrice / 10 ** 18
                             } ETH!`
                         );
@@ -47,7 +48,12 @@ const BuyToken = (props) => {
                 </CardContent>
                 <CardActions>
                     <label>token ID:</label>
-                    <InputElement id="buyTokenId" type="text" />
+                    <InputElement
+                        onChange={(e) => setBuyTokenId(e.target.value)}
+                        value={buyTokenId}
+                        id="buyTokenId"
+                        type="text"
+                    />
                     <br />
                     <ButtonElement onClick={butToken} type="submit">
                         Sell NFT
