@@ -9,14 +9,24 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
+    Counters.Counter private tokenIdCounter;
     AggregatorV3Interface internal priceFeed;
+
     uint256 public transactionFee = 1000; // 1000 = 1%
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
     uint256 public mintLimit = 10;
+    uint256 public basicTicketPrice = 10**17;
+    uint256 public maxAcumulativeValueOfTransactions = 10 * 10 * 18;
 
-    Counters.Counter private tokenIdCounter;
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
+    mapping(address => BasicTicket) public addressToBasicTicket;
+    mapping(address => bool) public addressToPremiumTicket;
+
+    struct BasicTicket {
+        uint256 acumulativeValueOfTransactions;
+        uint256 ticketExpirationDate;
+    }
 
     constructor(
         string memory _name,
@@ -105,14 +115,20 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
 
     function buyTokenOnSale(uint256 tokenId) public payable isTokenOnSale(tokenId) {
         require(
-            tokenIdToPriceOnSale[tokenId] <= msg.value,
+            tokenIdToPriceOnSale[tokenId] +
+                (
+                    checkIfUserHasDiscount(msg.sender)
+                        ? 0
+                        : calculateTransactionFee(tokenIdToPriceOnSale[tokenId])
+                ) <=
+                msg.value,
             "Pleas provide minimum price of this specific token!"
         );
         _transfer(address(this), msg.sender, tokenId);
         (bool success, ) = payable(tokenIdToOwnerAddressOnSale[tokenId]).call{
-            value: calculateAmoutWithoutFee(msg.value, transactionFee)
+            value: tokenIdToPriceOnSale[tokenId]
         }("");
-        require(success, "Transfer failed.");
+        require(success, "Failed to send Ether");
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
@@ -122,12 +138,8 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         return answer;
     }
 
-    function calculateAmoutWithoutFee(uint256 amount, uint256 feeInPercentage)
-        public
-        pure
-        returns (uint256)
-    {
-        return ((amount * (100000 - feeInPercentage)) / 100000);
+    function calculateTransactionFee(uint256 amount) public view returns (uint256) {
+        return ((amount / 100000) * transactionFee);
     }
 
     function setTransactionFee(uint256 _newFee) public onlyOwner {
@@ -141,5 +153,35 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
 
     function changeMintPrice(uint256 newMintPrice) public onlyOwner {
         mintPrice = newMintPrice;
+    }
+
+    function buyBasicTicket() public payable {
+        require(
+            msg.value >= basicTicketPrice,
+            "Cant perform this action, amount send to buy basic ticket to low!"
+        );
+        addressToBasicTicket[msg.sender] = BasicTicket(0, block.timestamp + 1095 days);
+    }
+
+    function buyPremiumTicket() public payable {
+        require(
+            msg.value >= basicTicketPrice * 10,
+            "Cant perform this action, amount send to buy premium ticket to low!"
+        );
+        addressToPremiumTicket[msg.sender] = true;
+    }
+
+    function checkIfUserHasDiscount(address user) public view returns (bool) {
+        if (
+            addressToBasicTicket[user].ticketExpirationDate > block.timestamp &&
+            addressToBasicTicket[user].acumulativeValueOfTransactions <
+            maxAcumulativeValueOfTransactions
+        ) {
+            return true;
+        } else if (addressToPremiumTicket[user]) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
