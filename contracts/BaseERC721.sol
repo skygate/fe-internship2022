@@ -12,11 +12,12 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     Counters.Counter private tokenIdCounter;
     AggregatorV3Interface internal priceFeed;
 
+    uint256 public ownerFeeToWithdraw;
     uint256 public transactionFee = 1000; // 1000 = 1%
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
-    uint256 public maxAcumulativeValueOfTransactions = 10 * 10 * 18;
+    uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
 
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
@@ -78,6 +79,7 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         uint256 newItemId = tokenIdCounter.current();
         tokenIdCounter.increment();
         _mint(recipients, newItemId);
+        ownerFeeToWithdraw += msg.value;
         return newItemId;
     }
 
@@ -116,11 +118,7 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     function buyTokenOnSale(uint256 tokenId) public payable isTokenOnSale(tokenId) {
         require(
             tokenIdToPriceOnSale[tokenId] +
-                (
-                    checkIfUserHasDiscount(msg.sender)
-                        ? 0
-                        : calculateTransactionFee(tokenIdToPriceOnSale[tokenId])
-                ) <=
+                calculateTransactionFee(msg.sender, tokenIdToPriceOnSale[tokenId]) <=
                 msg.value,
             "Pleas provide minimum price of this specific token!"
         );
@@ -129,6 +127,10 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
             value: tokenIdToPriceOnSale[tokenId]
         }("");
         require(success, "Failed to send Ether");
+        if (addressToBasicTicket[msg.sender].ticketExpirationDate > block.timestamp) {
+            increaseAcumulativeValueOfTransactions(msg.sender, tokenIdToPriceOnSale[tokenId]);
+        }
+        ownerFeeToWithdraw += msg.value - tokenIdToPriceOnSale[tokenId];
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
@@ -138,8 +140,8 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         return answer;
     }
 
-    function calculateTransactionFee(uint256 amount) public view returns (uint256) {
-        return ((amount / 100000) * transactionFee);
+    function calculateTransactionFee(address user, uint256 amount) public view returns (uint256) {
+        return checkIfUserHasDiscount(user) ? 0 : ((amount / 100000) * transactionFee);
     }
 
     function setTransactionFee(uint256 _newFee) public onlyOwner {
@@ -147,7 +149,7 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     }
 
     function withdrawOwnerFee() public onlyOwner {
-        (bool success, ) = payable(owner()).call{value: address(this).balance}("");
+        (bool success, ) = payable(owner()).call{value: ownerFeeToWithdraw}("");
         require(success, "Transfer failed.");
     }
 
@@ -179,9 +181,14 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         ) {
             return true;
         } else if (addressToPremiumTicket[user]) {
+            // unimplemented tokens for marketplace
             return true;
         } else {
             return false;
         }
+    }
+
+    function increaseAcumulativeValueOfTransactions(address user, uint256 amount) internal {
+        addressToBasicTicket[user].acumulativeValueOfTransactions += amount;
     }
 }

@@ -45,50 +45,37 @@ contract BaseBidNFT is Ownable {
     }
 
     modifier isAuctionNotEnded(uint256 tokenId) {
-        require(
-            auctions[tokenId].tokenStatus == TOKENSTATUS.Started,
-            "The bidding period is over"
-        );
-        require(
-            block.timestamp <= auctions[tokenId].endAt,
-            "The bidding period is over"
-        );
+        require(auctions[tokenId].tokenStatus == TOKENSTATUS.Started, "The bidding period is over");
+        require(block.timestamp <= auctions[tokenId].endAt, "The bidding period is over");
 
         _;
     }
 
     modifier isAuctionEnded(uint256 tokenId) {
+        require(auctions[tokenId].tokenStatus == TOKENSTATUS.Started, "The bidding period is over");
+        require(block.timestamp >= auctions[tokenId].endAt, "The bidding period has not ended");
+
+        _;
+    }
+
+    modifier isBidPossible(uint256 tokenId, uint256 bidAmount) {
         require(
-            auctions[tokenId].tokenStatus == TOKENSTATUS.Started,
-            "The bidding period is over"
+            (bidAmount + userBalance[tokenId][msg.sender]) >= auctions[tokenId].startBid,
+            "The deposit is lower than the minimum possible bid"
         );
         require(
-            block.timestamp >= auctions[tokenId].endAt,
-            "The bidding period has not ended"
+            (bidAmount + userBalance[tokenId][msg.sender]) > auctions[tokenId].highestBid,
+            "The deposit is lower than the minimum possible bid"
+        );
+        require(
+            msg.value >= bidAmount + baseERC721.calculateTransactionFee(msg.sender, bidAmount),
+            "You send not enougth ETH to pay for admin fee!"
         );
 
         _;
     }
 
-    modifier isBidPossible(uint256 tokenId) {
-        require(
-            (msg.value + userBalance[tokenId][msg.sender]) >=
-                auctions[tokenId].startBid,
-            "The deposit is lower than the minimum possible bid"
-        );
-        require(
-            (msg.value + userBalance[tokenId][msg.sender]) >
-                auctions[tokenId].highestBid,
-            "The deposit is lower than the minimum possible bid"
-        );
-
-        _;
-    }
-
-    function createAuction(uint256 tokenId, uint256 _startingBid)
-        public
-        isOwnerOfToken(tokenId)
-    {
+    function createAuction(uint256 tokenId, uint256 _startingBid) public isOwnerOfToken(tokenId) {
         baseERC721.transfer(msg.sender, address(this), tokenId);
 
         uint256 auctionendAt = block.timestamp + 5 seconds;
@@ -105,22 +92,22 @@ contract BaseBidNFT is Ownable {
         emit Start(msg.sender, auctions[tokenId], tokenId);
     }
 
-    function bidAuction(uint256 tokenId)
+    function bidAuction(uint256 tokenId, uint256 bidAmount)
         public
         payable
-        isBidPossible(tokenId)
+        isBidPossible(tokenId, bidAmount)
         isAuctionNotEnded(tokenId)
     {
         auctions[tokenId].highBidder = msg.sender;
 
         if (auctions[tokenId].highBidder != address(0)) {
-            auctions[tokenId].highestBid = (msg.value +
-                userBalance[tokenId][msg.sender]);
-            auctionBlance[tokenId] += msg.value;
-            userBalance[tokenId][msg.sender] += msg.value;
+            auctions[tokenId].highestBid = (bidAmount + userBalance[tokenId][msg.sender]);
+            auctionBlance[tokenId] += bidAmount;
+            userBalance[tokenId][msg.sender] += bidAmount;
+            ownerFeeToWithdraw += msg.value - bidAmount;
         }
 
-        emit Bid(msg.sender, msg.value, tokenId);
+        emit Bid(msg.sender, bidAmount, tokenId);
     }
 
     function withdraw(uint256 tokenId) public isAuctionEnded(tokenId) {
@@ -157,28 +144,20 @@ contract BaseBidNFT is Ownable {
         uint256 balance = userBalance[tokenId][auctions[tokenId].highBidder];
         auctions[tokenId].tokenStatus = TOKENSTATUS.Ended;
 
-        baseERC721.transfer(
-            address(this),
-            auctions[tokenId].sellerNft,
-            tokenId
-        );
+        baseERC721.transfer(address(this), auctions[tokenId].sellerNft, tokenId);
 
         emit Cancel(auctions[tokenId].highBidder, balance, tokenId);
         delete auctions[tokenId];
     }
 
     function endAuction(uint256 tokenId) public isAuctionEnded(tokenId) {
-        require(
-            auctions[tokenId].endAt != 0,
-            "You cannot end an auction that has not started"
-        );
+        require(auctions[tokenId].endAt != 0, "You cannot end an auction that has not started");
         require(
             msg.sender == auctions[tokenId].sellerNft || owner() == msg.sender,
             "You are not allowed to end this auction."
         );
         require(
-            userBalance[tokenId][auctions[tokenId].highBidder] ==
-                auctions[tokenId].highestBid,
+            userBalance[tokenId][auctions[tokenId].highBidder] == auctions[tokenId].highestBid,
             "Highest bidder withdraw money befor end auction"
         );
 
@@ -186,37 +165,15 @@ contract BaseBidNFT is Ownable {
         uint256 balance = auctions[tokenId].highestBid;
         auctions[tokenId].highestBid = 0;
 
-        auctionBlance[tokenId] -= userBalance[tokenId][
-            auctions[tokenId].highBidder
-        ];
+        auctionBlance[tokenId] -= userBalance[tokenId][auctions[tokenId].highBidder];
         userBalance[tokenId][auctions[tokenId].highBidder] = 0;
 
         if (auctions[tokenId].highBidder != address(0)) {
-            (bool success, ) = auctions[tokenId].sellerNft.call{
-                value: baseERC721.calculateAmoutWithoutFee(
-                    balance,
-                    baseERC721.transactionFee()
-                )
-            }("");
+            (bool success, ) = auctions[tokenId].sellerNft.call{value: balance}("");
             require(success, "Failed to send Ether");
-
-            ownerFeeToWithdraw +=
-                balance -
-                baseERC721.calculateAmoutWithoutFee(
-                    balance,
-                    baseERC721.transactionFee()
-                );
-            baseERC721.transfer(
-                address(this),
-                auctions[tokenId].highBidder,
-                tokenId
-            );
+            baseERC721.transfer(address(this), auctions[tokenId].highBidder, tokenId);
         } else {
-            baseERC721.transfer(
-                address(this),
-                auctions[tokenId].sellerNft,
-                tokenId
-            );
+            baseERC721.transfer(address(this), auctions[tokenId].sellerNft, tokenId);
         }
 
         emit End(auctions[tokenId].highBidder, balance, tokenId);
