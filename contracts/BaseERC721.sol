@@ -11,6 +11,7 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIdCounter;
     AggregatorV3Interface internal priceFeed;
+    address baseBidNFTAddress;
 
     uint256 public ownerFeeToWithdraw;
     uint256 public transactionFee = 1000; // 1000 = 1%
@@ -35,6 +36,14 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         address _priceFeedAddress
     ) ERC721(_name, _symbol) {
         priceFeed = AggregatorV3Interface(_priceFeedAddress);
+    }
+
+    modifier isCallAllowed() {
+        require(
+            msg.sender == address(this) || msg.sender == baseBidNFTAddress,
+            "Cant perform this action, you dont have permission!"
+        );
+        _;
     }
 
     modifier isTokenOnSale(uint256 tokenId) {
@@ -127,9 +136,7 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
             value: tokenIdToPriceOnSale[tokenId]
         }("");
         require(success, "Failed to send Ether");
-        if (addressToBasicTicket[msg.sender].ticketExpirationDate > block.timestamp) {
-            increaseAcumulativeValueOfTransactions(msg.sender, tokenIdToPriceOnSale[tokenId]);
-        }
+        this.increaseAcumulativeValueOfTransactions(msg.sender, tokenIdToPriceOnSale[tokenId]);
         ownerFeeToWithdraw += msg.value - tokenIdToPriceOnSale[tokenId];
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
@@ -155,6 +162,10 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
 
     function changeMintPrice(uint256 newMintPrice) public onlyOwner {
         mintPrice = newMintPrice;
+    }
+
+    function setBaseBidNFTAddress(address _baseBidNFTAddress) public onlyOwner {
+        baseBidNFTAddress = _baseBidNFTAddress;
     }
 
     function buyBasicTicket() public payable {
@@ -188,7 +199,12 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         }
     }
 
-    function increaseAcumulativeValueOfTransactions(address user, uint256 amount) internal {
-        addressToBasicTicket[user].acumulativeValueOfTransactions += amount;
+    function increaseAcumulativeValueOfTransactions(address user, uint256 amount)
+        public
+        isCallAllowed
+    {
+        if (addressToBasicTicket[user].ticketExpirationDate > block.timestamp) {
+            addressToBasicTicket[user].acumulativeValueOfTransactions += amount;
+        }
     }
 }

@@ -39,13 +39,15 @@ describe("Test BaseBidNFT", async () => {
             "Base ERC721",
             myMockV3Aggregator.address
         );
-        const myBaseERC721address = await myBaseERC721.deployed();
+        await myBaseERC721.deployed();
 
         const BaseBidNFT = await ethers.getContractFactory("BaseBidNFT");
-        myBaseBidNFT = await BaseBidNFT.deploy(myBaseERC721address.address);
+        myBaseBidNFT = await BaseBidNFT.deploy(myBaseERC721.address);
         await myBaseBidNFT.deployed();
-
+    
         [owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners();
+
+        await myBaseERC721.connect(owner).setBaseBidNFTAddress(myBaseBidNFT.address);
     });
 
     describe("TEST emit events", async () => {

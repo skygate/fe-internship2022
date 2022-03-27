@@ -105,6 +105,7 @@ contract BaseBidNFT is Ownable {
             auctionBlance[tokenId] += bidAmount;
             userBalance[tokenId][msg.sender] += bidAmount;
             ownerFeeToWithdraw += msg.value - bidAmount;
+            baseERC721.increaseAcumulativeValueOfTransactions(msg.sender, tokenId);
         }
 
         emit Bid(msg.sender, bidAmount, tokenId);
