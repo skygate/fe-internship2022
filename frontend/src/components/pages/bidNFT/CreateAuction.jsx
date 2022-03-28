@@ -1,5 +1,6 @@
 import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
 import { useState } from "react";
+import { ethers } from "ethers";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
 import { ButtonElement } from "../../atoms/button";
@@ -20,10 +21,14 @@ const CreateAuction = (props) => {
                 )
             ) {
                 await contract
-                    .createAuction(createAuctionTokenId, createAuctionValue, {
-                        maxPriorityFeePerGas: null,
-                        maxFeePerGas: null,
-                    })
+                    .createAuction(
+                        createAuctionTokenId,
+                        ethers.utils.parseEther(createAuctionValue),
+                        {
+                            maxPriorityFeePerGas: null,
+                            maxFeePerGas: null,
+                        }
+                    )
                     .then(() => {
                         console.log(
                             `>>> You created auction of token with tokenID ${createAuctionTokenId} with minimal price ${createAuctionValue} ETH!`

@@ -7,6 +7,8 @@ import MintNFT from "./components/pages/mintNFT/MintNFT";
 import StartSale from "./components/pages/startSale/StartSale";
 import CancelSale from "./components/pages/cancelSale/CancelSale";
 import BuyToken from "./components/pages/buyToken/BuyToken";
+import BuyBasicTicket from "./components/pages/buyToken/BuyBasicTicket";
+import BuyPremiumTicket from "./components/pages/buyToken/BuyPremiumTicket";
 import BurnToken from "./components/pages/burnToken/BurnToken";
 import CreateAuction from "./components/pages/bidNFT/CreateAuction";
 import BidAuction from "./components/pages/bidNFT/BidAuction";
@@ -92,6 +94,14 @@ const App = () => {
                                     element={
                                         <MainTemplate activeAccountProps={activeAccount}>
                                             <BuyToken
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                activeAccountProps={activeAccount}
+                                            />
+                                            <BuyBasicTicket
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                activeAccountProps={activeAccount}
+                                            />
+                                            <BuyPremiumTicket
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                                 activeAccountProps={activeAccount}
                                             />
