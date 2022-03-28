@@ -8,6 +8,10 @@ describe("TEST BaseERC721", async () => {
     const INITIAL_PRICE = "200000000000000000000";
     const baseURI = "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
 
+    const basicTicketPrice = ethers.utils.parseEther("0.1");
+    const premiumTicketPrice = ethers.utils.parseEther("1");
+    const mintValue = ethers.utils.parseEther("0.05");
+
     let myBaseERC721;
     let owner;
     let addr1;
@@ -44,7 +48,7 @@ describe("TEST BaseERC721", async () => {
             expect(balance).to.equal(0);
 
             const newlyMintedToken = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await newlyMintedToken.wait();
 
@@ -79,13 +83,13 @@ describe("TEST BaseERC721", async () => {
 
             while (BigInt(await myBaseERC721.count()) < mintLimit) {
                 await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                    value: ethers.utils.parseEther("0.05"),
+                    value: mintValue,
                 });
             }
 
             await expect(
                 myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                    value: ethers.utils.parseEther("0.05"),
+                    value: mintValue,
                 })
             ).to.be.revertedWith("Cant perform this action, limit of mint has been reached.");
         });
@@ -153,7 +157,7 @@ describe("TEST BaseERC721", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -175,7 +179,7 @@ describe("TEST BaseERC721", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -193,7 +197,7 @@ describe("TEST BaseERC721", async () => {
         it("FAIL - sale for 0 ETH", async () => {
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -214,7 +218,7 @@ describe("TEST BaseERC721", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -235,7 +239,7 @@ describe("TEST BaseERC721", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -260,7 +264,7 @@ describe("TEST BaseERC721", async () => {
         it("FAIL - sale not started", async () => {
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -277,11 +281,11 @@ describe("TEST BaseERC721", async () => {
     });
 
     describe("TEST buyTokenOnSale()", async () => {
-        it("PASS", async () => {
+        it("PASS - without ticket", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -292,12 +296,18 @@ describe("TEST BaseERC721", async () => {
             const addr2BalanceBefor = await addr2.getBalance();
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
 
-            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
+            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, {
+                value: String(
+                    parseInt(sellPrice) +
+                        parseInt(
+                            await myBaseERC721.calculateTransactionFee(addr2.address, sellPrice)
+                        )
+                ),
+            });
 
             const gasUsed = await getGasUsedForLastTx();
-            const ethersForContract = await calculatePercentageInWei(
-                sellPrice,
-                await myBaseERC721.transactionFee()
+            const ethersForContract = BigInt(
+                await myBaseERC721.calculateTransactionFee(addr2.address, sellPrice)
             );
 
             expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
@@ -306,21 +316,102 @@ describe("TEST BaseERC721", async () => {
                 addrNull
             );
             expect(await addr1.getBalance()).to.equal(
-                BigInt(addr1BalanceBefor) + BigInt(sellPrice) - ethersForContract
+                BigInt(addr1BalanceBefor) + BigInt(sellPrice)
             );
             expect(await addr2.getBalance()).to.equal(
-                BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed
+                BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed - ethersForContract
             );
             expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
                 BigInt(contractBalanceBefor) + ethersForContract
             );
+            expect((await myBaseERC721.addressToBasicTicket(addr2.address))[0]).to.be.equal(0);
+        });
+
+        it("PASS - with basic ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+
+            await myBaseERC721.connect(addr2).buyBasicTicket({ value: basicTicketPrice });
+            let gasUsed = await getGasUsedForLastTx();
+
+            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, {
+                value: sellPrice,
+            });
+            gasUsed += await getGasUsedForLastTx();
+
+            expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
+            expect(await myBaseERC721.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseERC721.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+            expect(await addr1.getBalance()).to.equal(
+                BigInt(addr1BalanceBefor) + BigInt(sellPrice)
+            );
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed - BigInt(basicTicketPrice)
+            );
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
+                BigInt(contractBalanceBefor) + BigInt(basicTicketPrice)
+            );
+            expect((await myBaseERC721.addressToBasicTicket(addr2.address))[0]).to.be.equal(
+                sellPrice
+            );
+        });
+
+        it("PASS - with premium ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+
+            await myBaseERC721.connect(addr2).buyPremiumTicket({ value: premiumTicketPrice });
+            let gasUsed = await getGasUsedForLastTx();
+
+            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
+            gasUsed += await getGasUsedForLastTx();
+
+            expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
+            expect(await myBaseERC721.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseERC721.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+            expect(await addr1.getBalance()).to.equal(
+                BigInt(addr1BalanceBefor) + BigInt(sellPrice)
+            );
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed - BigInt(premiumTicketPrice)
+            );
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
+                BigInt(contractBalanceBefor) + BigInt(premiumTicketPrice)
+            );
+            expect((await myBaseERC721.addressToBasicTicket(addr2.address))[0]).to.be.equal(0);
         });
 
         it("FAIL - token not for sale", async () => {
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: ethers.utils.parseEther("0.05"),
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -373,14 +464,48 @@ describe("TEST BaseERC721", async () => {
             expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
             expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
         });
+
+        it("FAIL - send only price without transcation fee and active ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+
+            await expect(
+                myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice })
+            ).to.be.revertedWith("Pleas provide minimum price of this specific token!");
+
+            const gasForRevertedTx = await getGasUsedForLastTx();
+
+            expect(
+                await myBaseERC721.connect(myBaseERC721.address).tokenIdToPriceOnSale(tokenId)
+            ).to.equal(sellPrice);
+            expect(
+                await myBaseERC721
+                    .connect(myBaseERC721.address)
+                    .tokenIdToOwnerAddressOnSale(tokenId)
+            ).to.equal(addr1.address);
+            expect(await myBaseERC721.connect(myBaseERC721.address).ownerOf(tokenId)).to.equal(
+                myBaseERC721.address
+            );
+            expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
+        });
     });
 
     describe("TEST burn()", async () => {
         it("PASS - token not on sale", async () => {
-            const sendEthAmount = ethers.utils.parseEther("0.05");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: sendEthAmount,
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -395,11 +520,10 @@ describe("TEST BaseERC721", async () => {
         });
 
         it("PASS - token on sale", async () => {
-            const sendEthAmount = ethers.utils.parseEther("0.05");
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: sendEthAmount,
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -421,11 +545,10 @@ describe("TEST BaseERC721", async () => {
         });
 
         it("FAIL - not owner of token", async () => {
-            const sendEthAmount = ethers.utils.parseEther("0.05");
             const sellPrice = ethers.utils.parseEther("0.5");
             const tokenId = 0;
             const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                value: sendEthAmount,
+                value: mintValue,
             });
             await mintTx.wait();
 
@@ -478,11 +601,11 @@ describe("TEST BaseERC721", async () => {
 
     describe("TEST transactionFee", async () => {
         feeParematers.forEach(({ fee, expected }) => {
-            it(`PASS - transactionFee ${fee / 1000}%`, async () => {
+            it(`PASS - transactionFee transactions ${fee / 1000}%`, async () => {
                 const sellPrice = ethers.utils.parseEther("0.5");
                 const tokenId = 0;
                 const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
-                    value: ethers.utils.parseEther("0.05"),
+                    value: mintValue,
                 });
                 await mintTx.wait();
 
@@ -496,34 +619,53 @@ describe("TEST BaseERC721", async () => {
                 const addr2BalanceBefor = await addr2.getBalance();
                 const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
 
-                await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, { value: sellPrice });
+                await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, {
+                    value: String(
+                        parseInt(sellPrice) +
+                            parseInt(
+                                await myBaseERC721.calculateTransactionFee(addr2.address, sellPrice)
+                            )
+                    ),
+                });
 
                 const gasUsed = await getGasUsedForLastTx();
-                const ethersForContract = await calculatePercentageInWei(
-                    sellPrice,
-                    await myBaseERC721.transactionFee()
+                const ethersForContract = BigInt(
+                    await myBaseERC721.calculateTransactionFee(addr2.address, sellPrice)
                 );
 
                 expect(expected).to.be.equal(Number(ethersForContract));
                 expect(await addr1.getBalance()).to.equal(
-                    BigInt(addr1BalanceBefor) + BigInt(sellPrice) - ethersForContract
+                    BigInt(addr1BalanceBefor) + BigInt(sellPrice)
                 );
                 expect(await addr2.getBalance()).to.equal(
-                    BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed
+                    BigInt(addr2BalanceBefor) - BigInt(sellPrice) - gasUsed - ethersForContract
                 );
                 expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
                     BigInt(contractBalanceBefor) + ethersForContract
                 );
             });
         });
+        it("PASS - transaction fee payToMint()", async () => {
+            const ownerFeeBefore = await myBaseERC721.ownerFeeToWithdraw();
+
+            await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+
+            balance = await myBaseERC721.connect(addr1).balanceOf(addr1.address);
+            expect(balance).to.equal(1);
+
+            expect(await myBaseERC721.ownerFeeToWithdraw()).to.be.equal(
+                BigInt(ownerFeeBefore) + BigInt(mintValue)
+            );
+        });
     });
 
     describe("TEST withdrawOwnerFee()", async () => {
         it(`PASS`, async () => {
-            const amoutPayed = ethers.utils.parseEther("0.05");
             const mintTx = await myBaseERC721
                 .connect(addr1)
-                .payToMint(addr1.address, { value: amoutPayed });
+                .payToMint(addr1.address, { value: mintValue });
             await mintTx.wait();
 
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
@@ -535,18 +677,17 @@ describe("TEST BaseERC721", async () => {
             const gasUsed = await getGasUsedForLastTx();
 
             expect(await ethers.provider.getBalance(myBaseERC721.address)).to.be.equal(
-                BigInt(contractBalanceBefor) - BigInt(amoutPayed)
+                BigInt(contractBalanceBefor) - BigInt(mintValue)
             );
             expect(await ethers.provider.getBalance(owner.address)).to.be.equal(
-                BigInt(ownerBalanceBefor) + BigInt(amoutPayed) - gasUsed
+                BigInt(ownerBalanceBefor) + BigInt(mintValue) - gasUsed
             );
         });
 
         it(`FAIL - not owner`, async () => {
-            const amoutPayed = ethers.utils.parseEther("0.05");
             const mintTx = await myBaseERC721
                 .connect(addr1)
-                .payToMint(addr1.address, { value: amoutPayed });
+                .payToMint(addr1.address, { value: mintValue });
             await mintTx.wait();
 
             const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
@@ -588,6 +729,87 @@ describe("TEST BaseERC721", async () => {
             ).to.be.revertedWith("Ownable: caller is not the owner");
 
             expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(startingMintPrice));
+        });
+    });
+
+    describe("TEST buyBasicTicket()", async () => {
+        it("PASS", async () => {
+            await myBaseERC721.connect(addr1).buyBasicTicket({ value: basicTicketPrice });
+
+            const blockNumBefore = await ethers.provider.getBlockNumber();
+            const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+            const timestampBefore = blockBefore.timestamp;
+
+            expect((await myBaseERC721.addressToBasicTicket(addr1.address))[0]).to.be.equal(0);
+            expect(
+                parseInt((await myBaseERC721.addressToBasicTicket(addr1.address))[1])
+            ).to.be.greaterThan(parseInt(timestampBefore));
+        });
+
+        it("FAIL - value to low", async () => {
+            const belowBasicTicketPrice = ethers.utils.parseEther("0.01");
+
+            await expect(
+                myBaseERC721.connect(addr1).buyBasicTicket({ value: belowBasicTicketPrice })
+            ).to.be.revertedWith(
+                "Cant perform this action, amount send to buy basic ticket to low!"
+            );
+
+            expect((await myBaseERC721.addressToBasicTicket(addr1.address))[0]).to.be.equal(0);
+            expect(
+                parseInt((await myBaseERC721.addressToBasicTicket(addr1.address))[1])
+            ).to.be.equal(0);
+        });
+    });
+
+    describe("TEST buyPremiumTicket()", async () => {
+        it("PASS", async () => {
+            await myBaseERC721.connect(addr1).buyPremiumTicket({ value: premiumTicketPrice });
+
+            expect(await myBaseERC721.addressToPremiumTicket(addr1.address)).to.be.equal(true);
+        });
+
+        it("FAIL - value to low", async () => {
+            const belowPremiumTicketPrice = ethers.utils.parseEther("0.01");
+
+            await expect(
+                myBaseERC721.connect(addr1).buyPremiumTicket({ value: belowPremiumTicketPrice })
+            ).to.be.revertedWith(
+                "Cant perform this action, amount send to buy premium ticket to low!"
+            );
+
+            expect(await myBaseERC721.addressToPremiumTicket(addr1.address)).to.be.equal(false);
+        });
+    });
+
+    describe("TEST increaseAcumulativeValueOfTransactions()", async () => {
+        it("PASS", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+
+            await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await myBaseERC721.connect(addr2).buyBasicTicket({ value: basicTicketPrice });
+
+            const acumulativeValueOfTransactionsBefore = (
+                await myBaseERC721.addressToBasicTicket(addr2.address)
+            ).acumulativeValueOfTransactions;
+
+            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, {
+                value: sellPrice,
+            });
+            expect(
+                (await myBaseERC721.addressToBasicTicket(addr2.address))
+                    .acumulativeValueOfTransactions
+            ).to.be.equal(BigInt(acumulativeValueOfTransactionsBefore) + BigInt(sellPrice));
+        });
+
+        it("FAIL - lack of permission", async () => {
+            await expect(
+                myBaseERC721.connect(owner).increaseAcumulativeValueOfTransactions(addr2.address, 1)
+            ).to.be.revertedWith("Cant perform this action, you dont have permission!");
         });
     });
 });
