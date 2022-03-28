@@ -17,18 +17,14 @@ const StartSale = (props) => {
             if (
                 await signMessageWithTxDetails(
                     signer,
-                    `Do you want to start sale of token with tokenId ${startSaleTokenId} for price ${
-                        startSalePrice / 10 ** 18
-                    } ETH?`
+                    `Do you want to start sale of token with tokenId ${startSaleTokenId} for price ${startSalePrice} ETH?`
                 )
             ) {
                 await contract
-                    .startSale(startSaleTokenId, startSalePrice)
+                    .startSale(startSaleTokenId, ethers.utils.parseEther(startSalePrice))
                     .then(() => {
                         console.log(
-                            `>>> Token ${startSaleTokenId} has been put on sale for ${
-                                startSalePrice / 10 ** 18
-                            } ETH!`
+                            `>>> Token ${startSaleTokenId} has been put on sale for ${startSalePrice} ETH!`
                         );
                     })
                     .catch((error) => {

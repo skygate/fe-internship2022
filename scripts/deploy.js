@@ -26,6 +26,7 @@ async function main() {
     const baseBidNFT = await BaseBidNFT.deploy(baseERC721.address);
     console.log("BaseBidNFT address:", baseBidNFT.address);
 
+    await baseERC721.setBaseBidNFTAddress(baseBidNFT.address);
     await mintNFT(baseERC721);
 }
 

@@ -13,17 +13,25 @@ const BuyToken = (props) => {
             );
 
             const tokenIdPrice = parseInt((await contract.tokenIdToPriceOnSale(buyTokenId))._hex);
+            const tokenTotalCost =
+                tokenIdPrice +
+                parseInt(
+                    await contract.calculateTransactionFee(
+                        props.activeAccountProps,
+                        tokenIdPrice.toString()
+                    )
+                );
 
             if (
                 await signMessageWithTxDetails(
                     signer,
                     `Do you want to buy token with tokenID ${buyTokenId}  for ${
                         tokenIdPrice / 10 ** 18
-                    } ETH?`
+                    } with ${(tokenTotalCost - tokenIdPrice) / 10 ** 18} ETH fee?`
                 )
             ) {
                 await contract
-                    .buyTokenOnSale(buyTokenId, { value: tokenIdPrice.toString() })
+                    .buyTokenOnSale(buyTokenId, { value: tokenTotalCost.toString() })
                     .then(() => {
                         console.log(
                             `>>> Token ${buyTokenId} has been bougth for ${
@@ -56,7 +64,7 @@ const BuyToken = (props) => {
                     />
                     <br />
                     <ButtonElement onClick={butToken} type="submit">
-                        Sell NFT
+                        Buy
                     </ButtonElement>
                 </CardActions>
             </Card>
