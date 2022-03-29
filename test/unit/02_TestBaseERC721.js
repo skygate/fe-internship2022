@@ -113,12 +113,14 @@ describe("TEST BaseERC721", async () => {
             expect(currentCounter).to.equal(1);
         });
 
-        it("FAIL - for not owner", async () => {
+        it("FAIL - for non MITNER_ROLE", async () => {
             let balance = await myBaseERC721.connect(addr2).balanceOf(addr2.address);
             expect(balance).to.equal(0);
 
             await expect(myBaseERC721.connect(addr2).safeMint(addr2.address)).to.be.revertedWith(
-                "Ownable: caller is not the owner"
+                `VM Exception while processing transaction: reverted with reason string 'AccessControl: account ${String(
+                    addr2.address
+                ).toLowerCase()} is missing role 0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6'`
             );
 
             balance = await myBaseERC721.connect(addr2).balanceOf(addr2.address);
@@ -593,7 +595,9 @@ describe("TEST BaseERC721", async () => {
         it(`FAIL - not owner`, async () => {
             expect(await myBaseERC721.transactionFee()).to.be.equal(BigInt(1000));
             await expect(myBaseERC721.connect(addr1).setTransactionFee(1)).to.be.revertedWith(
-                "Ownable: caller is not the owner"
+                `VM Exception while processing transaction: reverted with reason string 'AccessControl: account ${String(
+                    addr1.address
+                ).toLowerCase()} is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775'`
             );
             expect(await myBaseERC721.transactionFee()).to.be.equal(BigInt(1000));
         });
@@ -694,7 +698,9 @@ describe("TEST BaseERC721", async () => {
             const ownerBalanceBefor = await ethers.provider.getBalance(owner.address);
 
             await expect(myBaseERC721.connect(addr1).withdrawOwnerFee()).to.be.revertedWith(
-                "Ownable: caller is not the owner"
+                `VM Exception while processing transaction: reverted with reason string 'AccessControl: account ${String(
+                    addr1.address
+                ).toLowerCase()} is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775`
             );
 
             expect(await ethers.provider.getBalance(myBaseERC721.address)).to.be.equal(
@@ -726,7 +732,11 @@ describe("TEST BaseERC721", async () => {
 
             await expect(
                 myBaseERC721.connect(addr1).changeMintPrice(newMintPrice)
-            ).to.be.revertedWith("Ownable: caller is not the owner");
+            ).to.be.revertedWith(
+                `VM Exception while processing transaction: reverted with reason string 'AccessControl: account ${String(
+                    addr1.address
+                ).toLowerCase()} is missing role 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775'`
+            );
 
             expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(startingMintPrice));
         });

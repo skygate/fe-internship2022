@@ -3,11 +3,12 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-contract BaseERC721 is ERC721, ERC721Holder, Ownable {
+contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIdCounter;
     AggregatorV3Interface internal priceFeed;
@@ -19,7 +20,11 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
     uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
-
+    
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant ASSOCIATED_CONTRACT = keccak256("ASSOCIATED_CONTRACT");
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
     mapping(address => BasicTicket) public addressToBasicTicket;
@@ -36,6 +41,11 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         address _priceFeedAddress
     ) ERC721(_name, _symbol) {
         priceFeed = AggregatorV3Interface(_priceFeedAddress);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        grantRole(ADMIN_ROLE, msg.sender);
+        grantRole(MINTER_ROLE, msg.sender);
+        grantRole(MINTER_ROLE, address(this));
+        grantRole(ASSOCIATED_CONTRACT, address(this));
     }
 
     modifier isCallAllowed() {
@@ -74,7 +84,16 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         return "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
     }
 
-    function safeMint(address to) public onlyOwner isMintPossible {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, AccessControl)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function safeMint(address to) public onlyRole(MINTER_ROLE) isMintPossible {
         uint256 tokenId = tokenIdCounter.current();
         tokenIdCounter.increment();
         _safeMint(to, tokenId);
@@ -151,21 +170,23 @@ contract BaseERC721 is ERC721, ERC721Holder, Ownable {
         return checkIfUserHasDiscount(user) ? 0 : ((amount / 100000) * transactionFee);
     }
 
-    function setTransactionFee(uint256 _newFee) public onlyOwner {
+    function setTransactionFee(uint256 _newFee) public onlyRole(ADMIN_ROLE) {
         transactionFee = _newFee;
     }
 
-    function withdrawOwnerFee() public onlyOwner {
-        (bool success, ) = payable(owner()).call{value: ownerFeeToWithdraw}("");
+    function withdrawOwnerFee() public onlyRole(ADMIN_ROLE) {
+        (bool success, ) = payable(msg.sender).call{value: ownerFeeToWithdraw}("");
         require(success, "Transfer failed.");
     }
 
-    function changeMintPrice(uint256 newMintPrice) public onlyOwner {
+    function changeMintPrice(uint256 newMintPrice) public onlyRole(ADMIN_ROLE) {
         mintPrice = newMintPrice;
     }
 
-    function setBaseBidNFTAddress(address _baseBidNFTAddress) public onlyOwner {
+    function setBaseBidNFTAddress(address _baseBidNFTAddress) public onlyRole(ADMIN_ROLE) {
+        revokeRole(ASSOCIATED_CONTRACT, baseBidNFTAddress);
         baseBidNFTAddress = _baseBidNFTAddress;
+        grantRole(ASSOCIATED_CONTRACT, _baseBidNFTAddress);
     }
 
     function buyBasicTicket() public payable {
