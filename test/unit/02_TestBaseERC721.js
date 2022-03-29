@@ -113,7 +113,7 @@ describe("TEST BaseERC721", async () => {
             expect(currentCounter).to.equal(1);
         });
 
-        it("FAIL - for non MITNER_ROLE", async () => {
+        it("FAIL - for not MITNER_ROLE", async () => {
             let balance = await myBaseERC721.connect(addr2).balanceOf(addr2.address);
             expect(balance).to.equal(0);
 
@@ -592,7 +592,7 @@ describe("TEST BaseERC721", async () => {
             });
         });
 
-        it(`FAIL - not owner`, async () => {
+        it(`FAIL - not ADMIN_ROLE`, async () => {
             expect(await myBaseERC721.transactionFee()).to.be.equal(BigInt(1000));
             await expect(myBaseERC721.connect(addr1).setTransactionFee(1)).to.be.revertedWith(
                 `VM Exception while processing transaction: reverted with reason string 'AccessControl: account ${String(
@@ -688,7 +688,7 @@ describe("TEST BaseERC721", async () => {
             );
         });
 
-        it(`FAIL - not owner`, async () => {
+        it(`FAIL - not ADMIN_ROLE`, async () => {
             const mintTx = await myBaseERC721
                 .connect(addr1)
                 .payToMint(addr1.address, { value: mintValue });
@@ -724,7 +724,7 @@ describe("TEST BaseERC721", async () => {
             expect(await myBaseERC721.mintPrice()).to.be.equal(BigInt(newMintPrice));
         });
 
-        it(`FAIL - not owner`, async () => {
+        it(`FAIL - not ADMIN_ROLE`, async () => {
             const startingMintPrice = ethers.utils.parseEther("0.0005");
             const newMintPrice = ethers.utils.parseEther("1");
 
