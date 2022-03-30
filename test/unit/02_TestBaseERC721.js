@@ -1,6 +1,8 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const { getGasUsedForLastTx, calculatePercentageInWei } = require("../utils");
+const { getGasUsedForLastTx } = require("../utils");
+const { MerkleTree } = require("merkletreejs");
+const { keccak256 } = require("@ethersproject/keccak256");
 
 describe("TEST BaseERC721", async () => {
     const addrNull = "0x0000000000000000000000000000000000000000";
@@ -8,9 +10,9 @@ describe("TEST BaseERC721", async () => {
     const INITIAL_PRICE = "200000000000000000000";
     const baseURI = "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
 
-    const basicTicketPrice = ethers.utils.parseEther("0.1");
-    const premiumTicketPrice = ethers.utils.parseEther("1");
-    const mintValue = ethers.utils.parseEther("0.05");
+    const basicTicketPrice = ethers.utils.parseEther("0.1"); // value set in BaseERC721.js
+    const premiumTicketPrice = ethers.utils.parseEther("1"); // basicTicketPrice * 10
+    const mintValue = ethers.utils.parseEther("0.05"); // value set in BaseERC721.js
 
     let myBaseERC721;
     let owner;
@@ -819,7 +821,111 @@ describe("TEST BaseERC721", async () => {
         it("FAIL - lack of permission", async () => {
             await expect(
                 myBaseERC721.connect(owner).increaseAcumulativeValueOfTransactions(addr2.address, 1)
-            ).to.be.revertedWith("Cant perform this action, you dont have permission!");
+            ).to.be.revertedWith(
+                `VM Exception while processing transaction: reverted with reason string 'AccessControl: account ${String(
+                    owner.address
+                ).toLowerCase()} is missing role 0xb8f2027c75f0a7a9433db22e18b163cd7b918d8cafe4716a1cdb96e5866e3cd0'`
+            );
+        });
+    });
+
+    describe("TEST claimTokenFromAirdrop()", async () => {
+        it("PASS", async () => {
+            const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+                hashLeaves: true,
+                sortPairs: true,
+            });
+            const root = merkleTree.getHexRoot();
+
+            await myBaseERC721.connect(owner).setMerkleRoot(root);
+
+            const proof1 = merkleTree.getHexProof(keccak256(addr1.address));
+            const proof2 = merkleTree.getHexProof(keccak256(addr2.address));
+            const proof3 = merkleTree.getHexProof(keccak256(addrs[0].address));
+
+            expect(await myBaseERC721.claimed(addr1.address)).to.eq(false);
+            expect(await myBaseERC721.claimed(addr2.address)).to.eq(false);
+            expect(await myBaseERC721.claimed(addrs[0].address)).to.eq(false);
+
+            expect(await myBaseERC721.canClaim(addr1.address, proof1)).to.eq(true);
+            expect(await myBaseERC721.canClaim(addr2.address, proof2)).to.eq(true);
+            expect(await myBaseERC721.canClaim(addrs[0].address, proof3)).to.eq(true);
+
+            const tokenCount = BigInt(await myBaseERC721.count());
+
+            await myBaseERC721.connect(addr1).claimTokenFromAirdrop(proof1);
+            await myBaseERC721.connect(addr2).claimTokenFromAirdrop(proof2);
+            await myBaseERC721.connect(addrs[0]).claimTokenFromAirdrop(proof3);
+
+            expect(await myBaseERC721.count()).to.be.equal(tokenCount + BigInt(3));
+            expect(await myBaseERC721.ownerOf(0)).to.be.equal(addr1.address);
+            expect(await myBaseERC721.ownerOf(1)).to.be.equal(addr2.address);
+            expect(await myBaseERC721.ownerOf(2)).to.be.equal(addrs[0].address);
+
+            expect(await myBaseERC721.claimed(addr1.address)).to.eq(true);
+            expect(await myBaseERC721.claimed(addr2.address)).to.eq(true);
+            expect(await myBaseERC721.claimed(addrs[0].address)).to.eq(true);
+
+            expect(await myBaseERC721.canClaim(addr1.address, proof1)).to.eq(false);
+            expect(await myBaseERC721.canClaim(addr2.address, proof2)).to.eq(false);
+            expect(await myBaseERC721.canClaim(addrs[0].address, proof3)).to.eq(false);
+        });
+
+        it("FAIL - multiple claim by same address", async () => {
+            const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+                hashLeaves: true,
+                sortPairs: true,
+            });
+            const root = merkleTree.getHexRoot();
+
+            await myBaseERC721.connect(owner).setMerkleRoot(root);
+
+            const proof = merkleTree.getHexProof(keccak256(addr1.address));
+
+            await myBaseERC721.connect(addr1).claimTokenFromAirdrop(proof);
+            const tokenCount = BigInt(await myBaseERC721.count());
+            await expect(
+                myBaseERC721.connect(addr1).claimTokenFromAirdrop(proof)
+            ).to.be.revertedWith("MerkleAirdrop: Address is not a candidate for claim");
+            expect(await myBaseERC721.count()).to.be.equal(tokenCount);
+        });
+
+        it("FAIL - claim witout entering airdrop", async () => {
+            const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+                hashLeaves: true,
+                sortPairs: true,
+            });
+            const root = merkleTree.getHexRoot();
+
+            await myBaseERC721.connect(owner).setMerkleRoot(root);
+
+            const proof = merkleTree.getHexProof(keccak256(addrs[1].address));
+
+            const tokenCount = BigInt(await myBaseERC721.count());
+            await expect(
+                myBaseERC721.connect(addrs[1]).claimTokenFromAirdrop(proof)
+            ).to.be.revertedWith("MerkleAirdrop: Address is not a candidate for claim");
+            expect(await myBaseERC721.count()).to.be.equal(tokenCount);
+        });
+
+        it("FAIL - merkleRoot not set", async () => {
+            const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+                hashLeaves: true,
+                sortPairs: true,
+            });
+            const root = merkleTree.getHexRoot();
+
+            const proof = merkleTree.getHexProof(keccak256(addr1.address));
+            const tokenCount = BigInt(await myBaseERC721.count());
+
+            await expect(
+                myBaseERC721.connect(addrs[1]).claimTokenFromAirdrop(proof)
+            ).to.be.revertedWith("MerkleAirdrop: Address is not a candidate for claim");
+            expect(await myBaseERC721.count()).to.be.equal(tokenCount);
         });
     });
 });

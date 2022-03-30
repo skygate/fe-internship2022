@@ -20,15 +20,18 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
     uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
-    
+    uint256 public maxAirDrop = 3;
+
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant ASSOCIATED_CONTRACT = keccak256("ASSOCIATED_CONTRACT");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    
+    bytes32 public merkleRoot;
+
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
     mapping(address => BasicTicket) public addressToBasicTicket;
     mapping(address => bool) public addressToPremiumTicket;
+    mapping(address => bool) public claimed;
 
     struct BasicTicket {
         uint256 acumulativeValueOfTransactions;
@@ -46,14 +49,6 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         grantRole(MINTER_ROLE, msg.sender);
         grantRole(MINTER_ROLE, address(this));
         grantRole(ASSOCIATED_CONTRACT, address(this));
-    }
-
-    modifier isCallAllowed() {
-        require(
-            msg.sender == address(this) || msg.sender == baseBidNFTAddress,
-            "Cant perform this action, you dont have permission!"
-        );
-        _;
     }
 
     modifier isTokenOnSale(uint256 tokenId) {
@@ -189,6 +184,10 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         grantRole(ASSOCIATED_CONTRACT, _baseBidNFTAddress);
     }
 
+    function setMerkleRoot(bytes32 _merkleRoot) public onlyRole(ADMIN_ROLE) {
+        merkleRoot = _merkleRoot;
+    }
+
     function buyBasicTicket() public payable {
         require(
             msg.value >= basicTicketPrice,
@@ -222,10 +221,26 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
 
     function increaseAcumulativeValueOfTransactions(address user, uint256 amount)
         public
-        isCallAllowed
+        onlyRole(ASSOCIATED_CONTRACT)
     {
         if (addressToBasicTicket[user].ticketExpirationDate > block.timestamp) {
             addressToBasicTicket[user].acumulativeValueOfTransactions += amount;
         }
+    }
+
+    function claimTokenFromAirdrop(bytes32[] calldata merkleProof) external {
+        require(
+            canClaim(msg.sender, merkleProof),
+            "MerkleAirdrop: Address is not a candidate for claim"
+        );
+
+        claimed[msg.sender] = true;
+        this.safeMint(msg.sender);
+    }
+
+    function canClaim(address claimer, bytes32[] calldata merkleProof) public view returns (bool) {
+        return
+            !claimed[claimer] &&
+            MerkleProof.verify(merkleProof, merkleRoot, keccak256(abi.encodePacked(claimer)));
     }
 }
