@@ -2,7 +2,6 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { getGasUsedForLastTx } = require("../utils");
 const { MerkleTree } = require("merkletreejs");
-const { keccak256 } = require("@ethersproject/keccak256");
 
 describe("TEST BaseERC721", async () => {
     const addrNull = "0x0000000000000000000000000000000000000000";
@@ -832,7 +831,7 @@ describe("TEST BaseERC721", async () => {
     describe("TEST claimTokenFromAirdrop()", async () => {
         it("PASS", async () => {
             const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
-            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), ethers.utils.keccak256, {
                 hashLeaves: true,
                 sortPairs: true,
             });
@@ -840,9 +839,9 @@ describe("TEST BaseERC721", async () => {
 
             await myBaseERC721.connect(owner).setMerkleRoot(root);
 
-            const proof1 = merkleTree.getHexProof(keccak256(addr1.address));
-            const proof2 = merkleTree.getHexProof(keccak256(addr2.address));
-            const proof3 = merkleTree.getHexProof(keccak256(addrs[0].address));
+            const proof1 = merkleTree.getHexProof(ethers.utils.keccak256(addr1.address));
+            const proof2 = merkleTree.getHexProof(ethers.utils.keccak256(addr2.address));
+            const proof3 = merkleTree.getHexProof(ethers.utils.keccak256(addrs[0].address));
 
             expect(await myBaseERC721.claimed(addr1.address)).to.eq(false);
             expect(await myBaseERC721.claimed(addr2.address)).to.eq(false);
@@ -874,7 +873,7 @@ describe("TEST BaseERC721", async () => {
 
         it("FAIL - multiple claim by same address", async () => {
             const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
-            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), ethers.utils.keccak256, {
                 hashLeaves: true,
                 sortPairs: true,
             });
@@ -882,7 +881,7 @@ describe("TEST BaseERC721", async () => {
 
             await myBaseERC721.connect(owner).setMerkleRoot(root);
 
-            const proof = merkleTree.getHexProof(keccak256(addr1.address));
+            const proof = merkleTree.getHexProof(ethers.utils.keccak256(addr1.address));
 
             await myBaseERC721.connect(addr1).claimTokenFromAirdrop(proof);
             const tokenCount = BigInt(await myBaseERC721.count());
@@ -894,7 +893,7 @@ describe("TEST BaseERC721", async () => {
 
         it("FAIL - claim witout entering airdrop", async () => {
             const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
-            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), ethers.utils.keccak256, {
                 hashLeaves: true,
                 sortPairs: true,
             });
@@ -902,7 +901,7 @@ describe("TEST BaseERC721", async () => {
 
             await myBaseERC721.connect(owner).setMerkleRoot(root);
 
-            const proof = merkleTree.getHexProof(keccak256(addrs[1].address));
+            const proof = merkleTree.getHexProof(ethers.utils.keccak256(addrs[1].address));
 
             const tokenCount = BigInt(await myBaseERC721.count());
             await expect(
@@ -913,13 +912,13 @@ describe("TEST BaseERC721", async () => {
 
         it("FAIL - merkleRoot not set", async () => {
             const addressesInAirdrop = [addr1.address, addr2.address, addrs[0].address];
-            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), keccak256, {
+            const merkleTree = new MerkleTree(addressesInAirdrop.concat(owner.address), ethers.utils.keccak256, {
                 hashLeaves: true,
                 sortPairs: true,
             });
             const root = merkleTree.getHexRoot();
 
-            const proof = merkleTree.getHexProof(keccak256(addr1.address));
+            const proof = merkleTree.getHexProof(ethers.utils.keccak256(addr1.address));
             const tokenCount = BigInt(await myBaseERC721.count());
 
             await expect(
