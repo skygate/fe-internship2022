@@ -18,6 +18,9 @@ import WithdrawFromAuction from "./components/pages/bidNFT/WithdrawFromAuction";
 import TokenCount from "./components/pages/utils/TokenCount.jsx";
 import TokenOwner from "./components/pages/utils/TokenOwner.jsx";
 import TokenPriceOnSale from "./components/pages/utils/TokenPriceOnSale.jsx";
+import JoinAirdrop from "./components/pages/airdrop/JoinAirdrop";
+import SetMerkleRoot from "./components/pages/airdrop/SetMerkleRoot";
+import ClaimAirdrop from "./components/pages/airdrop/ClaimAirdrop";
 import GlobalStyles from "./theme/GlobalStyles";
 
 import { Navbar } from "./components/molecules/navbar/Navbar";
@@ -27,6 +30,8 @@ import { theme } from "./theme/theme";
 const App = () => {
     const [activeAccount, setActiveAccount] = useState(null);
     const [selectedProviderGlobal, setActiveProviderGlobal] = useState(null);
+    const [airdropAddresses, setAirdropAddresses] = useState([]);
+    const [merkelTree, setMerkelTree] = useState([]);
 
     return (
         <>
@@ -152,6 +157,37 @@ const App = () => {
                                             <TokenPriceOnSale
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                        </MainTemplate>
+                                    }
+                                />
+                                <Route
+                                    exact
+                                    path="/airdrop"
+                                    element={
+                                        <MainTemplate activeAccountProps={activeAccount}>
+                                            <JoinAirdrop
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                setAirdropAddresses={(airdropAddresses) =>
+                                                    setAirdropAddresses(airdropAddresses)
+                                                }
+                                                airdropAddressesProps={airdropAddresses}
+                                            />
+                                            <ClaimAirdrop
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                airdropAddressesProps={airdropAddresses}
+                                                merkelTreeProps={merkelTree}
+                                            />
+                                            <SetMerkleRoot
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                airdropAddressesProps={airdropAddresses}
+                                                setMerkelTree={(merkelTree) =>
+                                                    setMerkelTree(merkelTree)
+                                                }
+                                                merkelTreeProps={merkelTree}
                                             />
                                         </MainTemplate>
                                     }
