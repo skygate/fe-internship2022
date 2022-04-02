@@ -16,6 +16,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
 
     uint256 public ownerFeeToWithdraw;
     uint256 public transactionFee = 1000; // 1000 = 1%
+    uint256 public royaltiesFee = 1000; // 1000 = 1%
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
@@ -76,7 +77,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
+        return "ipfs://QmZxyuVa643bQSSgshdeZbixuiM3Fh8V9CRKCvuSnM9CsV/";
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -156,7 +157,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function getLatestPrice() public view returns (int256) {
+    function getLatestPrice() public view returns (int256) { 
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         return answer;
     }
@@ -167,6 +168,10 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
 
     function setTransactionFee(uint256 _newFee) public onlyRole(ADMIN_ROLE) {
         transactionFee = _newFee;
+    }
+
+    function setRoyaltiesFee(uint256 _newFee) public onlyRole(ADMIN_ROLE) {
+        royaltiesFee = _newFee;
     }
 
     function withdrawOwnerFee() public onlyRole(ADMIN_ROLE) {

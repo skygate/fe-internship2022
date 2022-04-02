@@ -1,19 +1,25 @@
 {
   "name": "SkyGate NFT Internship #9",
   "description": "This projects is created on internship for SkyGate company",
-  "image": "ipfs://QmYgTGWNppetjieMgayTU1amnGpoSR8pmbHEwhiAurXXG4/9",
+  "image": "ipfs://QmdsaeGXA4KTsoUcftEZW2z6ngeYtPae8smsfaSnQXSdnD/9",
+  "creators": [
+    {
+      "address": "0xbcd4042de499d14e55001ccbb24a551f3b954096",
+      "share": 100
+    }
+  ],
   "attributes": [
     {
       "trait_type": "Background",
-      "value": "Purple"
+      "value": "BlueSun"
     },
     {
       "trait_type": "Head",
-      "value": "Square"
+      "value": "Basic"
     },
     {
       "trait_type": "Hat",
-      "value": "Winter"
+      "value": "Fulcap"
     },
     {
       "trait_type": "Eyes",

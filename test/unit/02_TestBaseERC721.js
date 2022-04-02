@@ -8,7 +8,7 @@ describe("TEST BaseERC721", async () => {
     const addrNull = "0x0000000000000000000000000000000000000000";
     const DECIMALS = "18";
     const INITIAL_PRICE = "200000000000000000000";
-    const baseURI = "ipfs://QmVrAoaZAeX5c7mECGbFS5wSbwFW748F2F6wsjZyLtfhgM/";
+    const baseURI = "ipfs://QmZxyuVa643bQSSgshdeZbixuiM3Fh8V9CRKCvuSnM9CsV/";
 
     const basicTicketPrice = ethers.utils.parseEther("0.1"); // value set in BaseERC721.js
     const premiumTicketPrice = ethers.utils.parseEther("1"); // basicTicketPrice * 10
