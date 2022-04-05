@@ -20,7 +20,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
-    // uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
+    uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
     uint256 public maxAirDrop = 3;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -236,7 +236,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     function checkIfUserHasDiscount(address user) public view returns (bool) {
         if (
             addressToBasicTicket[user].ticketExpirationDate > block.timestamp &&
-            addressToBasicTicket[user].acumulativeValueOfTransactions < 10 * 10**18
+            addressToBasicTicket[user].acumulativeValueOfTransactions < maxAcumulativeValueOfTransactions
         ) {
             return true;
         } else if (addressToPremiumTicket[user]) {
