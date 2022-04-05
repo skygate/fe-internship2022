@@ -30,7 +30,7 @@ contract BaseBidNFT is Ownable {
     mapping(uint256 => Auctions) public auctions;
 
     BaseERC721 private baseERC721;
-    uint256 public ownerFeeToWithdraw;
+    uint256 public adminFeeToWithdraw;
 
     constructor(address _baseERC721adders) {
         baseERC721 = BaseERC721(_baseERC721adders);
@@ -68,7 +68,10 @@ contract BaseBidNFT is Ownable {
             "The deposit is lower than the minimum possible bid"
         );
         require(
-            msg.value >= bidAmount + baseERC721.calculateTransactionFee(msg.sender, bidAmount),
+            msg.value >=
+                bidAmount +
+                    baseERC721.calculateAdminFee(msg.sender, bidAmount) +
+                    baseERC721.calculateRoyaltiesFee(bidAmount),
             "You send not enougth ETH to pay for admin fee!"
         );
 
@@ -92,19 +95,24 @@ contract BaseBidNFT is Ownable {
         emit Start(msg.sender, auctions[tokenId], tokenId);
     }
 
-    function bidAuction(uint256 tokenId, uint256 bidAmount)
-        public
-        payable
-        isBidPossible(tokenId, bidAmount)
-        isAuctionNotEnded(tokenId)
-    {
+    function bidAuction(
+        uint256 tokenId,
+        uint256 bidAmount,
+        address creatorArtist
+    ) public payable isBidPossible(tokenId, bidAmount) isAuctionNotEnded(tokenId) {
+        uint256 adminFee = baseERC721.calculateAdminFee(msg.sender, bidAmount);
+        uint256 royaltiesFee = baseERC721.calculateRoyaltiesFee(bidAmount);
         auctions[tokenId].highBidder = msg.sender;
 
         if (auctions[tokenId].highBidder != address(0)) {
             auctions[tokenId].highestBid = (bidAmount + userBalance[tokenId][msg.sender]);
             auctionBlance[tokenId] += bidAmount;
             userBalance[tokenId][msg.sender] += bidAmount;
-            ownerFeeToWithdraw += msg.value - bidAmount;
+            adminFeeToWithdraw += adminFee;
+            (bool success, ) = payable(creatorArtist).call{
+                value: royaltiesFee
+            }("");
+            require(success, "Failed to send Ether");
             baseERC721.increaseAcumulativeValueOfTransactions(msg.sender, tokenId);
         }
 
@@ -126,10 +134,10 @@ contract BaseBidNFT is Ownable {
         emit Withdraw(msg.sender, balance, tokenId);
     }
 
-    function withdrawOwnerFee() public onlyOwner {
-        (bool success, ) = payable(owner()).call{value: ownerFeeToWithdraw}("");
+    function withdrawAdminFee() public onlyOwner {
+        (bool success, ) = payable(owner()).call{value: adminFeeToWithdraw}("");
         require(success, "Transfer failed.");
-        ownerFeeToWithdraw = 0;
+        adminFeeToWithdraw = 0;
     }
 
     function cancelAuction(uint256 tokenId) public isAuctionNotEnded(tokenId) {

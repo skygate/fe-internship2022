@@ -14,9 +14,9 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     AggregatorV3Interface internal priceFeed;
     address baseBidNFTAddress;
 
-    uint256 public ownerFeeToWithdraw;
-    uint256 public transactionFee = 1000; // 1000 = 1%
-    uint256 public royaltiesFee = 1000; // 1000 = 1%
+    uint256 public adminFeeToWithdraw;
+    uint256 public adminFeePercentage = 1000; // 1000 = 1%
+    uint256 public royaltiesFeePercentage = 1000; // 1000 = 1%
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
@@ -26,7 +26,8 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant ASSOCIATED_CONTRACT = keccak256("ASSOCIATED_CONTRACT");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    bytes32 public merkleRoot;
+    bytes32 public airdropMerkleRoot;
+    bytes32 public artistMerkleRoot;
 
     mapping(uint256 => uint256) public tokenIdToPriceOnSale;
     mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
@@ -42,9 +43,11 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     constructor(
         string memory _name,
         string memory _symbol,
-        address _priceFeedAddress
+        address _priceFeedAddress,
+        bytes32 _artistMerkleRoot
     ) ERC721(_name, _symbol) {
         priceFeed = AggregatorV3Interface(_priceFeedAddress);
+        artistMerkleRoot = _artistMerkleRoot;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         grantRole(ADMIN_ROLE, msg.sender);
         grantRole(MINTER_ROLE, msg.sender);
@@ -76,6 +79,22 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         _;
     }
 
+    modifier isArtist(
+        uint256 tokenId,
+        address creatorArtist,
+        bytes32[] calldata proof
+    ) {
+        require(
+            MerkleProof.verify(
+                proof,
+                artistMerkleRoot,
+                keccak256(abi.encodePacked(tokenId, creatorArtist))
+            ),
+            "Invalid artist merkle proof"
+        );
+        _;
+    }
+
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://QmZxyuVa643bQSSgshdeZbixuiM3Fh8V9CRKCvuSnM9CsV/";
     }
@@ -103,7 +122,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         uint256 newItemId = tokenIdCounter.current();
         tokenIdCounter.increment();
         _mint(recipients, newItemId);
-        ownerFeeToWithdraw += msg.value;
+        adminFeeToWithdraw += msg.value;
         return newItemId;
     }
 
@@ -139,11 +158,15 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function buyTokenOnSale(uint256 tokenId) public payable isTokenOnSale(tokenId) {
+    function buyTokenOnSale(
+        uint256 tokenId,
+        address creatorArtist,
+        bytes32[] calldata proof
+    ) public payable isTokenOnSale(tokenId) {
+        uint256 adminFee = calculateAdminFee(msg.sender, tokenIdToPriceOnSale[tokenId]);
+        uint256 royaltiesFee = calculateRoyaltiesFee(tokenIdToPriceOnSale[tokenId]);
         require(
-            tokenIdToPriceOnSale[tokenId] +
-                calculateTransactionFee(msg.sender, tokenIdToPriceOnSale[tokenId]) <=
-                msg.value,
+            tokenIdToPriceOnSale[tokenId] + adminFee + royaltiesFee <= msg.value,
             "Pleas provide minimum price of this specific token!"
         );
         _transfer(address(this), msg.sender, tokenId);
@@ -152,30 +175,46 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         }("");
         require(success, "Failed to send Ether");
         this.increaseAcumulativeValueOfTransactions(msg.sender, tokenIdToPriceOnSale[tokenId]);
-        ownerFeeToWithdraw += msg.value - tokenIdToPriceOnSale[tokenId];
+        adminFeeToWithdraw += adminFee;
+        (success, ) = payable(creatorArtist).call{value: royaltiesFee}("");
+        require(success, "Failed to send Ether");
         delete tokenIdToPriceOnSale[tokenId];
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function getLatestPrice() public view returns (int256) { 
+    function getLatestPrice() public view returns (int256) {
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         return answer;
     }
 
-    function calculateTransactionFee(address user, uint256 amount) public view returns (uint256) {
-        return checkIfUserHasDiscount(user) ? 0 : ((amount / 100000) * transactionFee);
+    function calculateAdminFee(address user, uint256 amount) public view returns (uint256) {
+        return checkIfUserHasDiscount(user) ? 0 : ((amount / 100000) * adminFeePercentage);
     }
 
-    function setTransactionFee(uint256 _newFee) public onlyRole(ADMIN_ROLE) {
-        transactionFee = _newFee;
+    /**
+        @dev Users with tickest doesn't need to pay royalties fee when token is sold.
+     */
+    // function calculateRoyaltiesFee(address user, uint256 amount) public view returns (uint256) {
+    //     return checkIfUserHasDiscount(user) ? 0 : ((amount / 100000) * royaltiesFeePercentage);
+    // }
+
+    /**
+        @dev Users with tickest still need to pay royalities fee when token is sold.
+     */
+    function calculateRoyaltiesFee(uint256 amount) public view returns (uint256) {
+        return ((amount / 100000) * royaltiesFeePercentage);
+    }
+
+    function setAdminFee(uint256 _newFee) public onlyRole(ADMIN_ROLE) {
+        adminFeePercentage = _newFee;
     }
 
     function setRoyaltiesFee(uint256 _newFee) public onlyRole(ADMIN_ROLE) {
-        royaltiesFee = _newFee;
+        royaltiesFeePercentage = _newFee;
     }
 
-    function withdrawOwnerFee() public onlyRole(ADMIN_ROLE) {
-        (bool success, ) = payable(msg.sender).call{value: ownerFeeToWithdraw}("");
+    function withdrawAdminFee() public onlyRole(ADMIN_ROLE) {
+        (bool success, ) = payable(msg.sender).call{value: adminFeeToWithdraw}("");
         require(success, "Transfer failed.");
     }
 
@@ -189,8 +228,8 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         grantRole(ASSOCIATED_CONTRACT, _baseBidNFTAddress);
     }
 
-    function setMerkleRoot(bytes32 _merkleRoot) public onlyRole(ADMIN_ROLE) {
-        merkleRoot = _merkleRoot;
+    function setAirdropMerkleRoot(bytes32 _airdropMerkleRoot) public onlyRole(ADMIN_ROLE) {
+        airdropMerkleRoot = _airdropMerkleRoot;
     }
 
     function buyBasicTicket() public payable {
@@ -246,6 +285,10 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     function canClaim(address claimer, bytes32[] calldata merkleProof) public view returns (bool) {
         return
             !claimed[claimer] &&
-            MerkleProof.verify(merkleProof, merkleRoot, keccak256(abi.encodePacked(claimer)));
+            MerkleProof.verify(
+                merkleProof,
+                airdropMerkleRoot,
+                keccak256(abi.encodePacked(claimer))
+            );
     }
 }
