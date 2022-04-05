@@ -20,7 +20,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     uint256 public mintPrice = 500000000000000; // 0.0005 ETH
     uint256 public mintLimit = 10;
     uint256 public basicTicketPrice = 10**17;
-    uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
+    // uint256 public maxAcumulativeValueOfTransactions = 10 * 10**18;
     uint256 public maxAirDrop = 3;
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -75,22 +75,6 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         require(
             tokenIdCounter.current() < mintLimit,
             "Cant perform this action, limit of mint has been reached."
-        );
-        _;
-    }
-
-    modifier isArtist(
-        uint256 tokenId,
-        address creatorArtist,
-        bytes32[] calldata proof
-    ) {
-        require(
-            MerkleProof.verify(
-                proof,
-                artistMerkleRoot,
-                keccak256(abi.encodePacked(tokenId, creatorArtist))
-            ),
-            "Invalid artist merkle proof"
         );
         _;
     }
@@ -161,10 +145,11 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     function buyTokenOnSale(
         uint256 tokenId,
         address creatorArtist,
-        bytes32[] calldata proof
-    ) public payable isTokenOnSale(tokenId) {
+        bytes32[] memory proof
+    ) external payable isTokenOnSale(tokenId) {
         uint256 adminFee = calculateAdminFee(msg.sender, tokenIdToPriceOnSale[tokenId]);
         uint256 royaltiesFee = calculateRoyaltiesFee(tokenIdToPriceOnSale[tokenId]);
+        require(isArtist(tokenId, creatorArtist, proof), "Invalid artist address!");
         require(
             tokenIdToPriceOnSale[tokenId] + adminFee + royaltiesFee <= msg.value,
             "Pleas provide minimum price of this specific token!"
@@ -251,8 +236,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     function checkIfUserHasDiscount(address user) public view returns (bool) {
         if (
             addressToBasicTicket[user].ticketExpirationDate > block.timestamp &&
-            addressToBasicTicket[user].acumulativeValueOfTransactions <
-            maxAcumulativeValueOfTransactions
+            addressToBasicTicket[user].acumulativeValueOfTransactions < 10 * 10**18
         ) {
             return true;
         } else if (addressToPremiumTicket[user]) {
@@ -272,7 +256,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         }
     }
 
-    function claimTokenFromAirdrop(bytes32[] calldata merkleProof) external {
+    function claimTokenFromAirdrop(bytes32[] memory merkleProof) external {
         require(
             canClaim(msg.sender, merkleProof),
             "MerkleAirdrop: Address is not a candidate for claim"
@@ -282,13 +266,26 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         this.safeMint(msg.sender);
     }
 
-    function canClaim(address claimer, bytes32[] calldata merkleProof) public view returns (bool) {
+    function canClaim(address claimer, bytes32[] memory merkleProof) public view returns (bool) {
         return
             !claimed[claimer] &&
             MerkleProof.verify(
                 merkleProof,
                 airdropMerkleRoot,
                 keccak256(abi.encodePacked(claimer))
+            );
+    }
+
+    function isArtist(
+        uint256 tokenId,
+        address creatorArtist,
+        bytes32[] memory proof
+    ) public view returns (bool) {
+        return
+            MerkleProof.verify(
+                proof,
+                artistMerkleRoot,
+                keccak256(abi.encodePacked(tokenId, creatorArtist))
             );
     }
 }

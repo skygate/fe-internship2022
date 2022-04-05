@@ -98,8 +98,10 @@ contract BaseBidNFT is Ownable {
     function bidAuction(
         uint256 tokenId,
         uint256 bidAmount,
-        address creatorArtist
+        address creatorArtist,
+        bytes32[] memory proof
     ) public payable isBidPossible(tokenId, bidAmount) isAuctionNotEnded(tokenId) {
+        require(baseERC721.isArtist(tokenId, creatorArtist, proof), "Invalid artist address!");
         uint256 adminFee = baseERC721.calculateAdminFee(msg.sender, bidAmount);
         uint256 royaltiesFee = baseERC721.calculateRoyaltiesFee(bidAmount);
         auctions[tokenId].highBidder = msg.sender;
@@ -109,9 +111,7 @@ contract BaseBidNFT is Ownable {
             auctionBlance[tokenId] += bidAmount;
             userBalance[tokenId][msg.sender] += bidAmount;
             adminFeeToWithdraw += adminFee;
-            (bool success, ) = payable(creatorArtist).call{
-                value: royaltiesFee
-            }("");
+            (bool success, ) = payable(creatorArtist).call{value: royaltiesFee}("");
             require(success, "Failed to send Ether");
             baseERC721.increaseAcumulativeValueOfTransactions(msg.sender, tokenId);
         }

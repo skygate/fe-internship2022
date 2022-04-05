@@ -21,6 +21,9 @@ describe("TEST BaseERC721", async () => {
     let addr2;
     let addrs;
 
+    let artistMerkleTree;
+    let tokenZeroProof;
+
     beforeEach(async () => {
         const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
         myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
@@ -30,11 +33,12 @@ describe("TEST BaseERC721", async () => {
         for (let i = 0; i < 10; i++) {
             artistAddressPerTokenId[i] = creatorArtist;
         }
-        const artistMerkleTree = new MerkleTree(
+        artistMerkleTree = new MerkleTree(
             Object.entries(artistAddressPerTokenId).map((token) => hashToken(...token)),
             keccak256,
             { sortPairs: true }
         );
+        tokenZeroProof = artistMerkleTree.getHexProof(hashToken(0, creatorArtist));
 
         const BaseERC721 = await ethers.getContractFactory("BaseERC721");
         myBaseERC721 = await BaseERC721.deploy(
@@ -317,9 +321,11 @@ describe("TEST BaseERC721", async () => {
             );
             const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
 
-            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, {
-                value: String(parseInt(sellPrice) + adminFee + royaltyFee),
-            });
+            await myBaseERC721
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                });
 
             const gasUsed = await getGasUsedForLastTx();
 
@@ -367,9 +373,11 @@ describe("TEST BaseERC721", async () => {
             await myBaseERC721.connect(addr2).buyBasicTicket({ value: basicTicketPrice });
             let gasUsed = await getGasUsedForLastTx();
 
-            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, {
-                value: String(parseInt(sellPrice) + royaltyFee),
-            });
+            await myBaseERC721
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(parseInt(sellPrice) + royaltyFee),
+                });
             gasUsed += await getGasUsedForLastTx();
 
             expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
@@ -418,9 +426,11 @@ describe("TEST BaseERC721", async () => {
             await myBaseERC721.connect(addr2).buyPremiumTicket({ value: premiumTicketPrice });
             let gasUsed = await getGasUsedForLastTx();
 
-            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, {
-                value: String(parseInt(sellPrice) + royaltyFee),
-            });
+            await myBaseERC721
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(parseInt(sellPrice) + royaltyFee),
+                });
             gasUsed += await getGasUsedForLastTx();
 
             expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
@@ -462,7 +472,7 @@ describe("TEST BaseERC721", async () => {
             await expect(
                 myBaseERC721
                     .connect(addr2)
-                    .buyTokenOnSale(tokenId, creatorArtist, { value: sellPrice })
+                    .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, { value: sellPrice })
             ).to.be.revertedWith("Cant perform this action, token is not on sale!");
 
             const gasForRevertedTx = await getGasUsedForLastTx();
@@ -492,9 +502,9 @@ describe("TEST BaseERC721", async () => {
             const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
 
             await expect(
-                myBaseERC721
-                    .connect(addr2)
-                    .buyTokenOnSale(tokenId, creatorArtist, { value: sendEthAmount })
+                myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: sendEthAmount,
+                })
             ).to.be.revertedWith("Pleas provide minimum price of this specific token!");
 
             const gasForRevertedTx = await getGasUsedForLastTx();
@@ -535,7 +545,7 @@ describe("TEST BaseERC721", async () => {
             await expect(
                 myBaseERC721
                     .connect(addr2)
-                    .buyTokenOnSale(tokenId, creatorArtist, { value: sellPrice })
+                    .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, { value: sellPrice })
             ).to.be.revertedWith("Pleas provide minimum price of this specific token!");
 
             const gasForRevertedTx = await getGasUsedForLastTx();
@@ -555,6 +565,84 @@ describe("TEST BaseERC721", async () => {
             expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
             expect(await ethers.provider.getBalance(creatorArtist)).to.equal(
                 creatorArtistBalanceBefor
+            );
+        });
+
+        it("FAIL - invalid creator address", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const invalidProof = artistMerkleTree.getHexProof(hashToken(0, addr1.address));
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const adminFee = parseInt(
+                await myBaseERC721.calculateAdminFee(addr2.address, sellPrice)
+            );
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await expect(
+                myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, invalidProof, {
+                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                })
+            ).to.be.revertedWith("Invalid artist address!");
+
+            const gasUsed = await getGasUsedForLastTx();
+
+            expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor));
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasUsed);
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
+                BigInt(contractBalanceBefor)
+            );
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor)
+            );
+        });
+
+        it("FAIL - invalid tokenId in proof", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const invalidProof = artistMerkleTree.getHexProof(hashToken(1, creatorArtist));
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseERC721.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const adminFee = parseInt(
+                await myBaseERC721.calculateAdminFee(addr2.address, sellPrice)
+            );
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await expect(
+                myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, invalidProof, {
+                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                })
+            ).to.be.revertedWith("Invalid artist address!");
+
+            const gasUsed = await getGasUsedForLastTx();
+
+            expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor));
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasUsed);
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
+                BigInt(contractBalanceBefor)
+            );
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor)
             );
         });
     });
@@ -682,9 +770,11 @@ describe("TEST BaseERC721", async () => {
                 );
                 const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
 
-                await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, {
-                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
-                });
+                await myBaseERC721
+                    .connect(addr2)
+                    .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                        value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                    });
 
                 const gasUsed = await getGasUsedForLastTx();
 
@@ -865,12 +955,14 @@ describe("TEST BaseERC721", async () => {
                 await myBaseERC721.addressToBasicTicket(addr2.address)
             ).acumulativeValueOfTransactions;
 
-            await myBaseERC721.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, {
-                value: String(
-                    parseInt(sellPrice) +
-                        parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice))
-                ),
-            });
+            await myBaseERC721
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(
+                        parseInt(sellPrice) +
+                            parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice))
+                    ),
+                });
             expect(
                 (await myBaseERC721.addressToBasicTicket(addr2.address))
                     .acumulativeValueOfTransactions

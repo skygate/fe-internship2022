@@ -1,11 +1,14 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { MerkleTree } = require("merkletreejs");
+const { keccak256 } = require("@ethersproject/keccak256");
 
 const {
     getGasUsedForLastTx,
     getTimeStampForLastTx,
     skiptTime,
     getEventLastTx,
+    hashToken,
 } = require("./../utils");
 
 describe("Test BaseBidNFT", async () => {
@@ -29,23 +32,38 @@ describe("Test BaseBidNFT", async () => {
     const bid2Amount = ethers.utils.parseEther("0.25");
     const bid2AmountWithFee = ethers.utils.parseEther("0.2550");
 
+    let artistMerkleTree;
+    let tokenZeroProof;
+
     beforeEach(async () => {
         const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
         myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
         await myMockV3Aggregator.deployed();
 
+        let artistAddressPerTokenId = {};
+        for (let i = 0; i < 10; i++) {
+            artistAddressPerTokenId[i] = creatorArtist;
+        }
+        artistMerkleTree = new MerkleTree(
+            Object.entries(artistAddressPerTokenId).map((token) => hashToken(...token)),
+            keccak256,
+            { sortPairs: true }
+        );
+        tokenZeroProof = artistMerkleTree.getHexProof(hashToken(0, creatorArtist));
+
         const BaseERC721 = await ethers.getContractFactory("BaseERC721");
         myBaseERC721 = await BaseERC721.deploy(
             "My base ERC721",
             "Base ERC721",
-            myMockV3Aggregator.address
+            myMockV3Aggregator.address,
+            artistMerkleTree.getHexRoot()
         );
         await myBaseERC721.deployed();
 
         const BaseBidNFT = await ethers.getContractFactory("BaseBidNFT");
         myBaseBidNFT = await BaseBidNFT.deploy(myBaseERC721.address);
         await myBaseBidNFT.deployed();
-    
+
         [owner, addr1, addr2, addr3, ...addrs] = await ethers.getSigners();
 
         await myBaseERC721.connect(owner).setBaseBidNFTAddress(myBaseBidNFT.address);
@@ -84,9 +102,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            const bidTx = await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            const bidTx = await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             await skiptTime(5);
 
             const eventBidTx = await getEventLastTx(await bidTx.wait(), "Bid");
@@ -103,9 +123,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             await skiptTime(5);
 
             const endTx = await myBaseBidNFT.connect(owner).endAuction(tokenId);
@@ -123,13 +145,17 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid2Amount, creatorArtist, {
-                value: bid2AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid2Amount, creatorArtist, tokenZeroProof, {
+                    value: bid2AmountWithFee,
+                });
 
             await skiptTime(5);
 
@@ -149,13 +175,17 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid2Amount, creatorArtist, {
-                value: bid2AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid2Amount, creatorArtist, tokenZeroProof, {
+                    value: bid2AmountWithFee,
+                });
 
             const cancelTx = await myBaseBidNFT.connect(owner).cancelAuction(tokenId);
             const eventCancelTx = await getEventLastTx(await cancelTx.wait(), "Cancel");
@@ -174,9 +204,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             await skiptTime(6);
 
             await myBaseBidNFT.connect(owner).endAuction(tokenId);
@@ -197,9 +229,11 @@ describe("Test BaseBidNFT", async () => {
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
 
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             agregateGasAddr1 = await getGasUsedForLastTx();
 
             expect((await myBaseBidNFT.auctions(0))[1]).to.be.equal(addr1.address);
@@ -208,9 +242,11 @@ describe("Test BaseBidNFT", async () => {
                 BigInt(startBalanceAddr1) - BigInt(agregateGasAddr1) - BigInt(bid1AmountWithFee)
             );
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid2Amount, creatorArtist, {
-                value: bid2AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid2Amount, creatorArtist, tokenZeroProof, {
+                    value: bid2AmountWithFee,
+                });
             agregateGasAddr2 = await getGasUsedForLastTx();
 
             expect((await myBaseBidNFT.auctions(0))[1]).to.be.equal(addr2.address);
@@ -227,9 +263,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await expect(
-                myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                    value: bid1AmountWithFee,
-                })
+                myBaseBidNFT
+                    .connect(addr1)
+                    .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                        value: bid1AmountWithFee,
+                    })
             ).to.be.revertedWith("The bidding period is over");
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
@@ -246,9 +284,11 @@ describe("Test BaseBidNFT", async () => {
 
             await myBaseBidNFT.connect(owner).endAuction(tokenId);
             await expect(
-                myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                    value: bid1AmountWithFee,
-                })
+                myBaseBidNFT
+                    .connect(addr1)
+                    .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                        value: bid1AmountWithFee,
+                    })
             ).to.be.revertedWith("The bidding period is over");
         });
 
@@ -262,10 +302,48 @@ describe("Test BaseBidNFT", async () => {
 
             await myBaseBidNFT.connect(owner).cancelAuction(tokenId);
             await expect(
-                myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                    value: bid1AmountWithFee,
-                })
+                myBaseBidNFT
+                    .connect(addr1)
+                    .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                        value: bid1AmountWithFee,
+                    })
             ).to.be.revertedWith("The bidding period is over");
+        });
+
+        it("FAIL - invalid creator address", async () => {
+            const invalidProof = artistMerkleTree.getHexProof(hashToken(0, addr1.address));
+            await myBaseERC721.connect(owner).safeMint(owner.address);
+
+            balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
+            expect(balance).to.equal(1);
+
+            await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
+
+            await expect(
+                myBaseBidNFT
+                    .connect(addr1)
+                    .bidAuction(tokenId, bid1Amount, creatorArtist, invalidProof, {
+                        value: bid1AmountWithFee,
+                    })
+            ).to.be.revertedWith("Invalid artist address!");
+        });
+
+        it("FAIL - invalid tokenId in proof", async () => {
+            const invalidProof = artistMerkleTree.getHexProof(hashToken(1, creatorArtist));
+            await myBaseERC721.connect(owner).safeMint(owner.address);
+
+            balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
+            expect(balance).to.equal(1);
+
+            await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
+
+            await expect(
+                myBaseBidNFT
+                    .connect(addr1)
+                    .bidAuction(tokenId, bid1Amount, creatorArtist, invalidProof, {
+                        value: bid1AmountWithFee,
+                    })
+            ).to.be.revertedWith("Invalid artist address!");
         });
     });
 
@@ -320,9 +398,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
 
             await expect(myBaseBidNFT.connect(owner).endAuction(tokenId)).to.be.revertedWith(
                 "The bidding period has not ended"
@@ -336,9 +416,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(addr2).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             await skiptTime(5);
 
             await myBaseBidNFT.connect(addr2).endAuction(tokenId);
@@ -377,9 +459,11 @@ describe("Test BaseBidNFT", async () => {
             expect(balance).to.equal(1);
 
             await myBaseBidNFT.connect(owner).createAuction(tokenId, startingBid);
-            await myBaseBidNFT.connect(addr1).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr1)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
 
             await skiptTime(5);
 
@@ -404,14 +488,18 @@ describe("Test BaseBidNFT", async () => {
             await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
             agregateAddr1Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             agregateAddr2Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, bid2Amount, creatorArtist, {
-                value: bid2AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr3)
+                .bidAuction(tokenId, bid2Amount, creatorArtist, tokenZeroProof, {
+                    value: bid2AmountWithFee,
+                });
             agregateAddr3Gas += await getGasUsedForLastTx();
 
             await skiptTime(5);
@@ -435,9 +523,7 @@ describe("Test BaseBidNFT", async () => {
                 BigInt(adminFee) + BigInt(bid1Amount)
             );
 
-            expect(await myBaseBidNFT.adminFeeToWithdraw()).to.be.equal(
-                BigInt(adminFee)
-            );
+            expect(await myBaseBidNFT.adminFeeToWithdraw()).to.be.equal(BigInt(adminFee));
         });
 
         it("PASS - after canceled auction", async () => {
@@ -450,14 +536,18 @@ describe("Test BaseBidNFT", async () => {
 
             await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             agregateAddr2Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, bid2Amount, creatorArtist, {
-                value: bid2AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr3)
+                .bidAuction(tokenId, bid2Amount, creatorArtist, tokenZeroProof, {
+                    value: bid2AmountWithFee,
+                });
             agregateAddr3Gas += await getGasUsedForLastTx();
 
             await myBaseBidNFT.connect(addr1).cancelAuction(tokenId);
@@ -497,14 +587,18 @@ describe("Test BaseBidNFT", async () => {
             await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
             agregateAddr1Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
             agregateAddr2Gas += await getGasUsedForLastTx();
 
-            await myBaseBidNFT.connect(addr3).bidAuction(tokenId, bid2Amount, creatorArtist, {
-                value: bid2AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr3)
+                .bidAuction(tokenId, bid2Amount, creatorArtist, tokenZeroProof, {
+                    value: bid2AmountWithFee,
+                });
             agregateAddr3Gas += await getGasUsedForLastTx();
 
             await expect(myBaseBidNFT.connect(addr2).withdraw(tokenId)).to.be.revertedWith(
@@ -543,9 +637,11 @@ describe("Test BaseBidNFT", async () => {
 
             await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
 
             await skiptTime(5);
 
@@ -569,9 +665,11 @@ describe("Test BaseBidNFT", async () => {
 
             await myBaseBidNFT.connect(addr1).createAuction(tokenId, startingBid);
 
-            await myBaseBidNFT.connect(addr2).bidAuction(tokenId, bid1Amount, creatorArtist,  {
-                value: bid1AmountWithFee,
-            });
+            await myBaseBidNFT
+                .connect(addr2)
+                .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
+                    value: bid1AmountWithFee,
+                });
 
             await skiptTime(5);
 
