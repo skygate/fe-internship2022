@@ -1,5 +1,8 @@
 const { network, ethers } = require("hardhat");
 // const { helperData } = require("helper-hardhat-config.js"); //This line is useful when we will be using different blockchains.
+const { hashToken } = require("../test/utils");
+const { MerkleTree } = require("merkletreejs");
+const { keccak256 } = require("@ethersproject/keccak256");
 
 async function main() {
     const DECIMALS = "18";
@@ -14,11 +17,23 @@ async function main() {
     await myMockV3Aggregator.deployed();
     console.log("MyMockV3Aggregator address:", myMockV3Aggregator.address);
 
+    const creatorArtist = "0xbcd4042de499d14e55001ccbb24a551f3b954096";
+    let artistAddressPerTokenId = {};
+    for (let i = 0; i < 10; i++) {
+        artistAddressPerTokenId[i] = creatorArtist;
+    }
+    const artistMerkleTree = new MerkleTree(
+        Object.entries(artistAddressPerTokenId).map((token) => hashToken(...token)),
+        keccak256,
+        { sortPairs: true }
+    );
+
     const BaseERC721 = await ethers.getContractFactory("BaseERC721");
     const baseERC721 = await BaseERC721.deploy(
         "My base ERC721",
         "Base ERC721",
-        myMockV3Aggregator.address
+        myMockV3Aggregator.address,
+        artistMerkleTree.getHexRoot()
     );
     console.log("BaseERC721 address:", baseERC721.address);
 
