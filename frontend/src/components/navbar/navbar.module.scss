@@ -12,7 +12,7 @@ header {
 div.logo {
   display: flex;
   flex-direction: row;
-  padding-right: 30px;
+  padding-right: 1.875rem;
 }
 
 div.logo:hover {
@@ -21,12 +21,12 @@ div.logo:hover {
 
 div.logo img {
   height: 32px;
-  padding-right: 9px;
+  padding-right: 0.563rem;
 }
 
 div.searchInput {
   position: relative;
-  padding-right: 24px;
+  padding-right: 1.5rem;
 }
 
 div.searchInput label {
@@ -43,8 +43,8 @@ label svg {
 
 div.searchInput input {
   width: 427px;
-  padding: 10px 12px 10px 44px;
-  background: #F4F5F6;
+  padding: 0.625rem 0.75rem 0.625rem 2.75rem;
+  background-color: $input-background;
   border-radius: 30px;
   border: none;
 }
@@ -77,28 +77,29 @@ li a {
 }
 
 li:nth-child(1) {
-  padding-right: 20px;
+  padding-right: 1.25rem;
 }
 
 li:nth-child(2) {
-  padding-right: 20px;
+  padding-right: 1.25rem;
 }
 
 li:nth-child(3) {
-  padding: 0 0 0 20px;
-  border-left: 2px solid #E6E8EC;
+  padding: 0 0 0 1.25rem;
+  border-left: 2px solid $links-divider;
 }
 
 button.btnCreate {
-  padding: 12px 16px;
-  margin: 0px 8px 0 24px;
+  padding: 0.75rem 1rem;
+  margin: 0 0.5rem 0 1.5rem;
   background-color: $button-create-background;
   border-radius: 90px;
   border: none;
-  color: white;
+  color: $button-create-color;
   font-size: 14px;
   font-weight: 700;
 }
+
 
 
 
@@ -106,7 +107,7 @@ button.btnWallet {
   background-color: $button-wallet-background;
   border: 2px solid $button-wallet-border;
   border-radius: 90px;
-  padding: 10px 16px;
+  padding: 0.625rem 1rem;
   font-weight: 600;
   font-size: 14px;
   font-weight: 700;
