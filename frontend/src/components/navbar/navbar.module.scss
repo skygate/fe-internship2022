@@ -1,0 +1,119 @@
+@import './navbar-colors.scss';
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 85px;
+  background-color: $header-background;
+  border-bottom: 1px solid $header-border;
+}
+
+div.logo {
+  display: flex;
+  flex-direction: row;
+  padding-right: 30px;
+}
+
+div.logo:hover {
+  cursor: pointer;
+}
+
+div.logo img {
+  height: 32px;
+  padding-right: 9px;
+}
+
+div.searchInput {
+  position: relative;
+  padding-right: 24px;
+}
+
+div.searchInput label {
+  position: absolute;
+  transform: translateY(-50%);
+  top: 50%;
+  left: 10px;
+  height: 15px;
+}
+
+label svg {
+  height: 15px;
+}
+
+div.searchInput input {
+  width: 427px;
+  padding: 10px 12px 10px 44px;
+  background: #F4F5F6;
+  border-radius: 30px;
+  border: none;
+}
+
+div.searchInput input:focus {
+  outline: none;
+}
+
+nav {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+nav ul {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  padding: 0;
+  height: 24px;
+  align-items: center;
+}
+
+nav ul li {
+  line-height: 16px;
+}
+
+li a {
+  text-decoration: none;
+  color: $link-color;
+}
+
+li:nth-child(1) {
+  padding-right: 20px;
+}
+
+li:nth-child(2) {
+  padding-right: 20px;
+}
+
+li:nth-child(3) {
+  padding: 0 0 0 20px;
+  border-left: 2px solid #E6E8EC;
+}
+
+button.btnCreate {
+  padding: 12px 16px;
+  margin: 0px 8px 0 24px;
+  background-color: $button-create-background;
+  border-radius: 90px;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+
+button.btnWallet {
+  background-color: $button-wallet-background;
+  border: 2px solid $button-wallet-border;
+  border-radius: 90px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+button.btnCreate:hover,
+button.btnWallet:hover {
+  cursor: pointer;
+}
