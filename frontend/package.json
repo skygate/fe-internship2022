@@ -27,7 +27,8 @@
     "styled-components": "^5.3.3",
     "util": "0.12.4",
     "web-vitals": "^2.1.4",
-    "merkletreejs": "0.2.31"
+    "merkletreejs": "0.2.31",
+    "axios": "^0.26.1"
   },
   "scripts": {
     "start": "craco start",

@@ -2,6 +2,8 @@ import {
     getBaseBidNFTContractComponents,
     signMessageWithTxDetails,
     getBaseERC721ContractComponents,
+    getArtistAddress,
+    getArtistAddressProof,
 } from "../../../helpers";
 import { useState } from "react";
 import { ethers } from "ethers";
@@ -24,11 +26,19 @@ const BidAuction = (props) => {
             const bidAuctionValueTotalCost =
                 parseInt(ethers.utils.parseEther(bidAuctionValue)) +
                 parseInt(
-                    await contractBaseERC721.calculateTransactionFee(
+                    await contractBaseERC721.calculateAdminFee(
                         props.activeAccountProps,
                         ethers.utils.parseEther(bidAuctionValue)
                     )
+                ) +
+                parseInt(
+                    await contractBaseERC721.calculateRoyaltiesFee(
+                        ethers.utils.parseEther(bidAuctionValue)
+                    )
                 );
+
+            const creatorAddress = await getArtistAddress(bidAuctionTokenId);
+            const addressProof = await getArtistAddressProof(bidAuctionTokenId, creatorAddress);
 
             if (
                 await signMessageWithTxDetails(
@@ -41,11 +51,17 @@ const BidAuction = (props) => {
                 )
             ) {
                 await contract
-                    .bidAuction(bidAuctionTokenId, ethers.utils.parseEther(bidAuctionValue), {
-                        value: bidAuctionValueTotalCost.toString(),
-                        maxPriorityFeePerGas: null,
-                        maxFeePerGas: null,
-                    })
+                    .bidAuction(
+                        bidAuctionTokenId,
+                        ethers.utils.parseEther(bidAuctionValue),
+                        creatorAddress,
+                        addressProof,
+                        {
+                            value: bidAuctionValueTotalCost.toString(),
+                            maxPriorityFeePerGas: null,
+                            maxFeePerGas: null,
+                        }
+                    )
                     .then(() => {
                         console.log(
                             `>>> You bidded ${bidAuctionValue} ETH on token auction with tokenID ${bidAuctionTokenId}!`

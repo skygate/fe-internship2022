@@ -34,7 +34,7 @@ describe("TEST BaseERC721", async () => {
         }
         artistMerkleTree = new MerkleTree(
             Object.entries(artistAddressPerTokenId).map((token) => hashToken(...token)),
-            keccak256,
+            ethers.utils.keccak256,
             { sortPairs: true }
         );
         tokenZeroProof = artistMerkleTree.getHexProof(hashToken(0, creatorArtist));
@@ -56,6 +56,7 @@ describe("TEST BaseERC721", async () => {
             expect(new ethers.BigNumber.from(result._hex).toString())
                 .equals(INITIAL_PRICE)
                 .toString();
+            console.log(artistMerkleTree);
         });
     });
 

@@ -1,4 +1,9 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signMessageWithTxDetails,
+    getArtistAddress,
+    getArtistAddressProof,
+} from "../../../helpers.jsx";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
 import { ButtonElement } from "../../atoms/button";
@@ -16,11 +21,15 @@ const BuyToken = (props) => {
             const tokenTotalCost =
                 tokenIdPrice +
                 parseInt(
-                    await contract.calculateTransactionFee(
+                    await contract.calculateAdminFee(
                         props.activeAccountProps,
                         tokenIdPrice.toString()
                     )
-                );
+                ) +
+                parseInt(await contract.calculateRoyaltiesFee(tokenIdPrice.toString()));
+
+            const creatorAddress = await getArtistAddress(buyTokenId);
+            const addressProof = await getArtistAddressProof(buyTokenId, creatorAddress);
 
             if (
                 await signMessageWithTxDetails(
@@ -31,7 +40,9 @@ const BuyToken = (props) => {
                 )
             ) {
                 await contract
-                    .buyTokenOnSale(buyTokenId, { value: tokenTotalCost.toString() })
+                    .buyTokenOnSale(buyTokenId, creatorAddress, addressProof, {
+                        value: tokenTotalCost.toString(),
+                    })
                     .then(() => {
                         console.log(
                             `>>> Token ${buyTokenId} has been bougth for ${
