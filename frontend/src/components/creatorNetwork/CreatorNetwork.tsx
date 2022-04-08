@@ -1,11 +1,11 @@
 import React from 'react';
 import homeImage from '../../assets/homeImage.png';
-import exampleImage from '../../assets/exampleImage.png';
-import profilePicture from '../../assets/profilePicture.png';
 import arrowLeft from '../../assets/arrowLeft.svg';
 import arrowRight from '../../assets/arrowRight.svg';
 import style from './creatorNetwork.module.scss';
-
+import profilePicture from '../../assets/profilePicture.png';
+import exampleImage from '../../assets/exampleImage.png';
+import { ProfileHorizontal } from '../';
 
 export const CreatorNetwork = () => {
   return (
@@ -15,20 +15,8 @@ export const CreatorNetwork = () => {
         <div>
           <h2>the creator network&#174;</h2>
           <div className={style.container}>
-            <div className={style.profile}>
-              <img src={profilePicture} alt="profile" className={style.profileImage} />
-              <div className={style.userInfo}>
-                <p className={style.function}>Creator</p>
-                <p className={style.name}>Enrico Cole</p>            
-              </div>
-            </div>
-            <div className={style.instantPrice}>
-              <img src={exampleImage} alt="example" className={style.profileImage} />
-              <div className={style.userInfo}>
-                <p className={style.function}>Instant price</p>
-                <p className={style.name}>3.5 ETH</p>            
-              </div>
-            </div>
+            <ProfileHorizontal upperText='Enrico' bottomText="Creator" imageWidth='50px' imageUrl={profilePicture} />
+            <ProfileHorizontal upperText="Instant price" bottomText="3.5 ETH" imageWidth='50px' imageUrl={exampleImage} />
           </div>
           <div className={style.currentBid}>
             <p className={style.currentBidTitle}>Current Bid</p>

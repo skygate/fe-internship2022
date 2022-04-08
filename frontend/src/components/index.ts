@@ -5,3 +5,5 @@ export { CreatorNetwork } from './creatorNetwork/CreatorNetwork';
 export { MainNFT } from "./topBrands/MainNFT/MainNFT";
 export { NFTList } from "./topBrands/NFTList/NFTList";
 export { CreatorsList } from "./topBrands/CreatorsList/CreatorsList";
+export { ProfilePicture } from './profilePicture/ProfilePicture';
+export { ProfileHorizontal } from './profileHorizontal/ProfileHorizontal';
