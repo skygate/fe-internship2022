@@ -13,6 +13,7 @@ async function main() {
     const pngPath = path.join(path.dirname(__dirname), "metadata\\png");
     const pngDirHash = await pinDirectoryToIPFS(pngPath);
     console.log(`PNG files uploded on pinata on ${pngDirHash}`);
+    let artistData = {};
 
     // Update matadata with PNG IPFS Hash
     for (let i = 0; i <= fileCounter; i++) {
@@ -21,6 +22,7 @@ async function main() {
         );
         let parsedData = JSON.parse(rawData);
         parsedData["image"] = `ipfs://${pngDirHash}/${i}`;
+        artistData[i] = parsedData.creators[0].address;
         fs.writeFileSync(
             path.join(path.dirname(__dirname), "metadata\\json", `${i}.json`),
             JSON.stringify(parsedData, null, 2)
@@ -31,6 +33,13 @@ async function main() {
     const jsonPath = path.join(path.dirname(__dirname), "metadata\\json");
     const jsonDirHash = await pinDirectoryToIPFS(jsonPath);
     console.log(`JSON files uploded on pinata on ${jsonDirHash}`);
+
+    // generate json with artist address per tokenID
+    fs.writeFileSync(
+        path.join(path.dirname(__dirname), "frontend\\src", "artistData.json"), 
+        JSON.stringify(artistData, null, 2)
+    );
+
 }
 
 async function pinDirectoryToIPFS(dirPath) {
