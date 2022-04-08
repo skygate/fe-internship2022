@@ -21,6 +21,7 @@ import TokenPriceOnSale from "./components/pages/utils/TokenPriceOnSale.jsx";
 import JoinAirdrop from "./components/pages/airdrop/JoinAirdrop";
 import SetMerkleRoot from "./components/pages/airdrop/SetMerkleRoot";
 import ClaimAirdrop from "./components/pages/airdrop/ClaimAirdrop";
+import ImportNFT from "./components/pages/importNFT/ImportNFT";
 import GlobalStyles from "./theme/GlobalStyles";
 
 import { Navbar } from "./components/molecules/navbar/Navbar";
@@ -157,6 +158,18 @@ const App = () => {
                                             <TokenPriceOnSale
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                        </MainTemplate>
+                                    }
+                                />
+                                <Route
+                                    exact
+                                    path="/import"
+                                    element={
+                                        <MainTemplate activeAccountProps={activeAccount}>
+                                            <ImportNFT
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                                activeAccountProps={activeAccount}
                                             />
                                         </MainTemplate>
                                     }

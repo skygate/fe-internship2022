@@ -60,12 +60,12 @@ export const signMessageWithTxDetails = async (signer, message) => {
 };
 
 export const getArtistAddress = async (tokenID) => {
-    const data = require("./\\artistData.json");
+    const data = require("./artistData.json");
     return data[tokenID];
 };
 
 export const getArtistAddressProof = async (tokenId, creatorAddress) => {
-    const data = require("./\\artistData.json");
+    const data = require("./artistData.json");
     const artistMerkleTree = new MerkleTree(
         Object.entries(data).map((token) => hashToken(...token)),
         ethers.utils.keccak256,

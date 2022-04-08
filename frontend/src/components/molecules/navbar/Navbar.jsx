@@ -12,6 +12,7 @@ export const Navbar = (props) => {
             <Link to="/buy">Buy Token</Link>
             <Link to="/bid">Bid Token</Link>
             <Link to="/utils">Utils</Link>
+            <Link to="/import">ImportNFT</Link>
             <Link to="/airdrop">Airdrop</Link>
             <div className="header-right">
                 {props.activeAccountProps ? (
