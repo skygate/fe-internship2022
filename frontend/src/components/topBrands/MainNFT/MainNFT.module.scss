@@ -1,0 +1,79 @@
+@import "MainNFTColors.scss";
+
+.mainImage {
+    max-width: 450px;
+    width: 100%;
+    border-radius: 0.75rem;
+}
+
+.profileImage {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.mainBidInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.nftInfo {
+    display: flex;
+    align-items: center;
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+    padding-left: 1rem;
+}
+
+.currentBid {
+    display: flex;
+    flex-direction: column;
+}
+
+.NFTTitle {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
+    color: $dark-color;
+}
+
+.units {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    color: $semi-dark-color;
+}
+
+.highestBid {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    color: $silver;
+}
+
+.ETHValue {
+    font-family: "Poppins";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 12px;
+    text-transform: uppercase;
+    color: $nft-value;
+    padding: 0.25rem;
+    border: 2px solid $nft-value;
+    border-radius: 0.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

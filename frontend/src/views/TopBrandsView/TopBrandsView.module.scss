@@ -1,0 +1,30 @@
+@import "TopBrandsColors.scss";
+
+.topBrandsContainer {
+    background-color: $top-brands-background-color;
+    padding: 8rem 10rem;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    max-width: 1440px;
+    max-height: 750px;
+    width: 100vw;
+    height: 100%;
+    text-align: start;
+}
+
+.headerText {
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 48px;
+    letter-spacing: -0.01em;
+    color: $header-text-color;
+    margin-bottom: 3rem;
+}
+
+.listsContainer {
+    display: flex;
+}
