@@ -1,9 +1,10 @@
 export { Footer } from "./footer/Footer";
-export { Navbar } from './navbar/Navbar';
-export { Banner } from './banner/Banner';
-export { CreatorNetwork } from './creatorNetwork/CreatorNetwork';
+export { Navbar } from "./navbar/Navbar";
+export { Banner } from "./banner/Banner";
+export { CreatorNetwork } from "./creatorNetwork/CreatorNetwork";
 export { MainNFT } from "./topBrands/MainNFT/MainNFT";
-export { NFTList } from "./topBrands/NFTList/NFTList";
 export { CreatorsList } from "./topBrands/CreatorsList/CreatorsList";
-export { ProfilePicture } from './profilePicture/ProfilePicture';
-export { ProfileHorizontal } from './profileHorizontal/ProfileHorizontal';
+export { ProfilePicture } from "./profilePicture/ProfilePicture";
+export { ProfileHorizontal } from "./profileHorizontal/ProfileHorizontal";
+export { NFTListItem } from "./topBrands/NFTListItem/NFTListItem";
+export { GreenETHValue } from "./greenETHValue/GreenETHValue";

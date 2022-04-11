@@ -1,27 +1,28 @@
 import React from "react";
 import styles from "./MainNFT.module.scss";
+import { ProfilePicture } from "../..";
+import profilePicture from "../../../assets/profilePicture.png";
+import GreenETHValue from "../../greenETHValue/GreenETHValue";
+
 export function MainNFT() {
-    const unitsInStock = 0;
+    const unitsInStock = 4;
     const nftTitle = "NFT TITLE";
-    const highestBidETH = 0;
+    const highestBidETH = 100.1;
     const nftImage =
         "https://image.shutterstock.com/z/stock-photo-funny-cat-in-round-sunglasses-close-up-1158137110.jpg";
     return (
         <div className="mainNFT">
-            <img
-                src={nftImage}
-                alt="NFT"
-                className={styles.mainImage}
-                /*replace it with nft img component*/
-            />
+            <div className={styles.mainNFTImageWrapper}>
+                <img
+                    src={nftImage}
+                    alt="NFT"
+                    className={styles.mainImage}
+                    /*replace it with nft img component*/
+                />
+            </div>
             <div className={styles.mainBidInfo}>
                 <div className={styles.nftInfo}>
-                    <img
-                        src="https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg"
-                        alt="default avatar"
-                        className={styles.profileImage}
-                        /*replace it with avatar component*/
-                    />
+                    <ProfilePicture width={"48px"} url={profilePicture} />
                     <div className={styles.productInfo}>
                         <span className={styles.NFTTitle}>{nftTitle}</span>
                         <span className={styles.units}>{unitsInStock} in stock</span>
@@ -29,7 +30,7 @@ export function MainNFT() {
                 </div>
                 <div className={styles.currentBid}>
                     <span className={styles.highestBid}>Highest bid</span>
-                    <span className={styles.ETHValue}>{highestBidETH} ETH</span>
+                    <GreenETHValue ETHValue={highestBidETH} />
                 </div>
             </div>
         </div>

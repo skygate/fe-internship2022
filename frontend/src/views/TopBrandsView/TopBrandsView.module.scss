@@ -10,7 +10,6 @@
     flex-direction: column;
     justify-content: flex-end;
     max-width: 1440px;
-    max-height: 750px;
     width: 100%;
     height: 100%;
     text-align: start;
@@ -29,4 +28,8 @@
 
 .listsContainer {
     display: flex;
+}
+
+.nftList {
+    padding-left: $spacer-32;
 }

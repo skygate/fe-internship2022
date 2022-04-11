@@ -1,0 +1,19 @@
+@import "../../theme/typography.scss";
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+
+.ETHValue {
+    font-family: $font-family-poppins;
+    font-style: normal;
+    font-weight: $font-weight-700;
+    font-size: $font-size-hairline-2;
+    line-height: $line-height-hairline-2;
+    text-transform: uppercase;
+    color: $c-primary-4;
+    padding: $spacer-4;
+    border: 2px solid $c-primary-4;
+    border-radius: 0.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

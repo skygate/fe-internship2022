@@ -1,0 +1,70 @@
+@import "../../../theme/lightThemeColors.scss";
+@import "../../../theme/spacers.scss";
+@import "../../../theme/typography.scss";
+
+.nftContainer {
+    display: flex;
+    margin-bottom: $spacer-24;
+}
+
+.pictureWrapper {
+    width: 160px;
+    height: 148px;
+    margin-right: $spacer-24;
+}
+
+.nftImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.75rem;
+}
+
+.bidMenuContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.nftTitle {
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-500;
+    font-size: $font-size-body-2-bold;
+    line-height: $line-height-body-2-bold;
+    color: $c-neutrals-2;
+}
+
+.bidInfo {
+    display: flex;
+    margin: $spacer-12 0;
+}
+
+.authorStoreLenght {
+    margin: 0 $spacer-12;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-400;
+    font-size: $font-size-caption;
+    line-height: $line-height-caption;
+    color: $c-neutrals-4;
+}
+
+.bidButton {
+    font-family: $font-family-dm-sans;
+    font-weight: $font-weight-700;
+    font-size: $font-size-button-2;
+    line-height: $line-height-button-2;
+    color: $c-neutrals-2;
+    width: 98px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 32px;
+    background-color: $c-neutrals-8;
+    border: 2px solid $c-neutrals-6;
+}
+.bidButton:hover {
+    color: $c-neutrals-8;
+    background-color: $c-primary-1;
+    border: 2px solid $c-primary-1;
+}
