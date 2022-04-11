@@ -1,25 +1,27 @@
-@import './profileHorizontalColors.scss'; 
+@import '../../theme/lightThemeColors.scss';
+@import '../../theme/spacers.scss';
+@import '../../theme/typography.scss';
 
 div.profile {
   display: flex;
-  row-gap: 0.5rem;
+  row-gap: $spacer-8;
   width: 50%;
 }
 
 p.function {
-  color: $pFunction;
-  font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  line-height: 20px;
-  font-weight: 400;
+  color: $c-neutrals-4;
+  font-family: $font-family-poppins;
+  font-size: $font-size-caption-2;
+  line-height: $line-height-caption-2;
+  font-weight: $font-weight-400;
   text-align: left;
 }
 
 p.name {
-  color: $pName;
-  font-size: 14px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-  line-height: 24px;
+  color: $c-neutrals-2;
+  font-size: $font-size-caption-bold;
+  font-family: $font-family-poppins;
+  font-weight: $font-weight-500;
+  line-height: $line-height-caption-bold;
   text-align: left;
 }

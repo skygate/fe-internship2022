@@ -1,4 +1,7 @@
-@import './creatorNetworkColors.scss';
+@import '../../theme/lightThemeColors.scss';
+@import '../../theme/spacers.scss';
+@import '../../theme/typography.scss';
+
 
 section.creatorNetwork {
 width: 100vw;
@@ -10,7 +13,7 @@ div.sectionContainer {
   display: flex;
   justify-content: center;
   column-gap: 8rem;
-  background-color: $background;
+  background-color: $c-neutrals-8;
   margin: auto;
 }
 
@@ -20,13 +23,13 @@ img.mainImage {
   border-radius: 20px;
 }
 section.creatorNetwork h2 {
-  font-size: 64px;
-  font-weight: 700;
-  line-height: 64px;
-  letter-spacing: -0.02em;
-  color: $h2;
+  font-size: $font-size-headline-1;
+  font-weight: $font-weight-700;
+  line-height: $line-height-headline-1;
+  letter-spacing: $letter-spacing--01em;
+  color: $c-neutrals-2;
   text-align: left;
-  margin-bottom: 1.25rem;
+  margin-bottom: $spacer-20;
 }
 
 div.container {
@@ -35,69 +38,69 @@ div.container {
 }
 
 div.currentBid {
-  border: 2px solid $currentBidBorder;
+  border: 2px solid $c-neutrals-6;
   border-radius: 24px;
-  padding: 2rem 0;
+  padding: $spacer-32 0;
   margin-top: 2.5rem;
 }
 
 p.currentBidTitle {
-  font-family: 'Poppins', sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
+  font-family: $font-family-poppins;
+  font-size: $font-size-body-1;
+  font-weight: $font-weight-500;
+  line-height: $line-height-body-2;
   text-align: center;
-  color: $currentBidTitle;
+  color: $c-neutrals-2;
 }
 
 p.ethValue {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 56px;
+  font-size: $font-size-headline-2;
+  font-weight: $font-weight-700;
+  line-height: $line-height-headline-2;
   text-align: center;
-  color: $ethValue;
+  color: $c-neutrals-1;
 }
 
 p.dolarValue {
-  font-family: 'Poppins', sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 32px;
+  font-family: $font-family-poppins;
+  font-size: $font-size-body-1-bold;
+  font-weight: $font-weight-600;
+  line-height: $line-height-body-1-bold;
   text-align: center;
-  color: $dolarValue;
+  color: $c-neutrals-4;
 }
 
 p.endTime {
-  font-family: 'Poppins', sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
+  font-family: $font-family-poppins;
+  font-size: $font-size-body-2-bold;
+  font-weight: $font-weight-500;
+  line-height: $line-height-body-2-bold;
   text-align: center;
-  color: $endTimeTitle;
-  margin-top: 1.5rem;
+  color: $c-neutrals-2;
+  margin-top: $spacer-24;
 }
 
 div.countdown {
   display: flex;
   justify-content: center;
-  padding-top: 0.5rem;
+  padding-top: $spacer-8;
   column-gap: 19px;
 }
 
 p.timeValue {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 40px;
-  color: $timeValue;
+  font-size: $font-size-headline-4;
+  font-weight: $font-weight-700;
+  line-height: $line-height-headline-4;
+  color: $c-neutrals-1;
 }
 
 p.timeLabel {
-  font-family: 'Poppins', sans-serif;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
+  font-family: $font-family-poppins;
+  font-size: $font-size-body-2-bold;
+  font-weight: $font-weight-500;
+  line-height: $line-height-body-2-bold;
   text-align: center;
-  color: $timeLabel;
+  color: $c-neutrals-4;
 }
 
 div.buttons {
@@ -106,33 +109,33 @@ div.buttons {
 }
 
 button.btnBid {
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 16px;  
-  color: $bidButton;
-  background-color: $bidButtonBackground;
-  border: 2px solid $bidButtonBorder;
+  font-weight: $font-weight-700;
+  font-size: $font-size-button-1;
+  line-height:$line-height-button-1;  
+  color: $c-neutrals-8;
+  background-color: $c-primary-1;
+  border: 2px solid $c-primary-1;
   border-radius: 90px;
-  padding: 1rem 0;
+  padding: $spacer-16 0;
   margin-top: 2.5rem;
 }
 
 button.btnView {
-  border: 2px solid $viewButtonBorder;
-  background-color: $viewButtonBackground;
+  border: 2px solid $c-neutrals-6;
+  background-color: $c-neutrals-8;
   border-radius: 90px;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 16px;
-  padding: 1rem 0;
-  margin-top: 0.5rem;
+  font-weight: $font-weight-700;
+  font-size: $font-size-button-1;
+  line-height: $line-height-button-1;
+  padding: $spacer-16 0;
+  margin-top: $spacer-8;
 }
 
 div.arrowButtons {
   display: flex;
   column-gap: 10px;
   text-align: left;
-  margin-top: 3rem;
+  margin-top: $spacer-48;
 }
 
 div.arrowButtons img {
@@ -140,8 +143,8 @@ div.arrowButtons img {
 }
 
 button.arrowButton {
-  color: $arrowButton;
-  background-color: $arrowButtonBackground;
+  color: $c-neutrals-4;
+  background-color: $c-neutrals-8;
   border: none;
   width: 30px;
   height: 30px;
@@ -152,7 +155,7 @@ button:hover {
 }
 
 button.arrowButton:hover {
-  border: 2px solid $arrowButtonBorder;
+  border: 2px solid $c-neutrals-6;
   border-radius: 50%;
 }
 
