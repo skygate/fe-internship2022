@@ -1,4 +1,6 @@
-@import "MainNFTColors.scss";
+@import "../../../theme/lightThemeColors.scss";
+@import "../../../theme/spacers.scss";
+@import "../../../theme/typography.scss";
 
 .mainImage {
     max-width: 450px;
@@ -16,7 +18,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1rem;
+    margin-top: $spacer-16;
 }
 
 .nftInfo {
@@ -27,7 +29,7 @@
 .productInfo {
     display: flex;
     flex-direction: column;
-    padding-left: 1rem;
+    padding-left: $spacer-16;
 }
 
 .currentBid {
@@ -36,42 +38,42 @@
 }
 
 .NFTTitle {
-    font-family: "Poppins";
+    font-family: $font-family-poppins;
     font-style: normal;
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 32px;
-    color: $dark-color;
+    font-weight: $font-weight-600;
+    font-size: $font-size-body-1-bold;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-2;
 }
 
 .units {
-    font-family: "Poppins";
+    font-family: $font-family-poppins;
     font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 24px;
-    color: $semi-dark-color;
+    font-weight: $font-weight-500;
+    font-size: $font-size-caption-bold;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-3;
 }
 
 .highestBid {
-    font-family: "Poppins";
+    font-family: $font-family-poppins;
     font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 20px;
-    color: $silver;
+    font-weight: $font-weight-400;
+    font-size: $font-size-caption-2;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
 }
 
 .ETHValue {
-    font-family: "Poppins";
+    font-family: $font-family-poppins;
     font-style: normal;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 12px;
+    font-weight: $font-weight-700;
+    font-size: $font-size-hairline-2;
+    line-height: $line-height-hairline-2;
     text-transform: uppercase;
-    color: $nft-value;
-    padding: 0.25rem;
-    border: 2px solid $nft-value;
+    color: $c-primary-4;
+    padding: $spacer-4;
+    border: 2px solid $c-primary-4;
     border-radius: 0.25rem;
     display: flex;
     justify-content: center;
