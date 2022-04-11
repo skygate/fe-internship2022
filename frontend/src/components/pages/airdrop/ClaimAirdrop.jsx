@@ -1,4 +1,4 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
 import { ethers } from "ethers";
 import { Card, Grid, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
@@ -6,12 +6,17 @@ import { ButtonElement } from "../../atoms/button";
 const ClaimAirdrop = (props) => {
     const claimAirdrop = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
             if (props.merkelTreeProps.length != 0) {
                 if (
-                    await signMessageWithTxDetails(signer, "Do you want to claim NFT via airdrop?")
+                    await signTypedDataWithoutEth(
+                        signer, //signer
+                        props.activeAccountProps, //userAddress
+                        contractAddress, //contractAddress
+                        "Do you want to claim NFT via airdrop?" //textMessage
+                    )
                 ) {
                     const proof = props.merkelTreeProps.getHexProof(
                         ethers.utils.keccak256(props.activeAccountProps)

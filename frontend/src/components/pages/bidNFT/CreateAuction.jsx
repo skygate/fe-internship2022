@@ -1,4 +1,4 @@
-import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
+import { getBaseBidNFTContractComponents, signTypedDataWithoutEth } from "../../../helpers";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
@@ -11,13 +11,15 @@ const CreateAuction = (props) => {
 
     const createAuction = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseBidNFTContractComponents(
+            const [contractAddress, , signer, contract] = getBaseBidNFTContractComponents(
                 props.activeProviderGlobalProps
             );
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to start bidding auction of token with tokenID ${createAuctionTokenId} with minimal price ${createAuctionValue} ETH?`
+                await signTypedDataWithoutEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to start bidding auction of token with tokenID ${createAuctionTokenId} with minimal price ${createAuctionValue} ETH?` //textMessage
                 )
             ) {
                 await contract

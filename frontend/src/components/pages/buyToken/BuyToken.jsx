@@ -1,6 +1,6 @@
 import {
     getBaseERC721ContractComponents,
-    signMessageWithTxDetails,
+    signTypedDataWithEth,
     getArtistAddress,
     getArtistAddressProof,
 } from "../../../helpers.jsx";
@@ -8,46 +8,50 @@ import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
 import { ButtonElement } from "../../atoms/button";
 import { useState } from "react";
+import { ethers } from "ethers";
 
 const BuyToken = (props) => {
     const [buyTokenId, setBuyTokenId] = useState("");
     const butToken = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
 
             const tokenIdPrice = parseInt((await contract.tokenIdToPriceOnSale(buyTokenId))._hex);
-            const tokenTotalCost =
-                tokenIdPrice +
-                parseInt(
-                    await contract.calculateAdminFee(
-                        props.activeAccountProps,
-                        tokenIdPrice.toString()
-                    )
-                ) +
-                parseInt(await contract.calculateRoyaltiesFee(tokenIdPrice.toString()));
+            const adminFee = parseInt(
+                await contract.calculateAdminFee(props.activeAccountProps, String(tokenIdPrice))
+            );
+            const royalitiesFee = parseInt(
+                await contract.calculateRoyaltiesFee(tokenIdPrice.toString())
+            );
+            const tokenTotalCost = ethers.utils.parseEther(
+                String(tokenIdPrice + adminFee + royalitiesFee)
+            );
 
             const creatorAddress = await getArtistAddress(buyTokenId);
             const addressProof = await getArtistAddressProof(buyTokenId, creatorAddress);
 
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to buy token with tokenID ${buyTokenId}  for ${
+                await signTypedDataWithEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to buy token with tokenID ${buyTokenId} for ${
                         tokenIdPrice / 10 ** 18
-                    } with ${(tokenTotalCost - tokenIdPrice) / 10 ** 18} ETH fee?`
+                    } ETH with ${(royalitiesFee + adminFee) / 10 ** 18} ETH fee?`, //textMessage
+                    tokenIdPrice / 10 ** 18, //baseCost
+                    adminFee / 10 ** 18, //adminFee
+                    royalitiesFee / 10 ** 18 //royalitiesFee
                 )
             ) {
                 await contract
                     .buyTokenOnSale(buyTokenId, creatorAddress, addressProof, {
-                        value: tokenTotalCost.toString(),
+                        value: tokenTotalCost,
                     })
                     .then(() => {
                         console.log(
-                            `>>> Token ${buyTokenId} has been bougth for ${
-                                tokenIdPrice / 10 ** 18
-                            } ETH!`
+                            `>>> Token ${buyTokenId} has been bougth for ${tokenIdPrice} ETH!`
                         );
                     })
                     .catch((error) => {
