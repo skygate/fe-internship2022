@@ -3,6 +3,7 @@ import {
     signTypedDataWithEth,
     getArtistAddress,
     getArtistAddressProof,
+    suggestDefaultNetworks,
 } from "../../../helpers.jsx";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
@@ -14,6 +15,7 @@ const BuyToken = (props) => {
     const [buyTokenId, setBuyTokenId] = useState("");
     const butToken = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

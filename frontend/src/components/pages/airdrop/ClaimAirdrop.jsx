@@ -1,4 +1,8 @@
-import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signTypedDataWithoutEth,
+    suggestDefaultNetworks,
+} from "../../../helpers.jsx";
 import { ethers } from "ethers";
 import { Card, Grid, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
@@ -6,6 +10,7 @@ import { ButtonElement } from "../../atoms/button";
 const ClaimAirdrop = (props) => {
     const claimAirdrop = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

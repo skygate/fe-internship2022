@@ -1,10 +1,15 @@
-import { getBaseERC721ContractComponents, signTypedDataWithEth } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signTypedDataWithEth,
+    suggestDefaultNetworks,
+} from "../../../helpers.jsx";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 
 const BuyPremiumTicket = (props) => {
     const buyPremiumToken = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

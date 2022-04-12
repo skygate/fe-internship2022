@@ -1,4 +1,8 @@
-import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signTypedDataWithoutEth,
+    suggestDefaultNetworks,
+} from "../../../helpers.jsx";
 import { Grid, Card, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 import { InputElement } from "../../atoms/input";
@@ -8,6 +12,7 @@ const CancelSale = (props) => {
     const [cancelSaleTokenId, setCancelSaleTokenId] = useState("");
     const cancelSale = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

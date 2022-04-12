@@ -1,4 +1,4 @@
-import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, suggestDefaultNetworks } from "../../../helpers.jsx";
 import { useState } from "react";
 import { Grid, Card, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
@@ -9,6 +9,7 @@ const TokenOwner = (props) => {
 
     const getTokenOwner = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [, , , contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

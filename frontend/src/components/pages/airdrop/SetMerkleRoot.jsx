@@ -1,4 +1,8 @@
-import { getBaseERC721ContractComponents, signTypedDataSetMerkleRoot } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signTypedDataSetMerkleRoot,
+    suggestDefaultNetworks,
+} from "../../../helpers.jsx";
 import { ethers } from "ethers";
 import { Card, Grid, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
@@ -7,6 +11,7 @@ import { MerkleTree } from "merkletreejs";
 const SetMerkleRoot = (props) => {
     const setMerkleRoot = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
