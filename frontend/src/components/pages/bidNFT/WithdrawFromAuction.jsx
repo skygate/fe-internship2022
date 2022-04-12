@@ -1,4 +1,4 @@
-import { getBaseBidNFTContractComponents, signMessageWithTxDetails } from "../../../helpers";
+import { getBaseBidNFTContractComponents, signTypedDataWithoutEth } from "../../../helpers";
 import { useState } from "react";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
@@ -9,13 +9,15 @@ const WithdrawFromAuction = (props) => {
 
     const withdrawFromAuction = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseBidNFTContractComponents(
+            const [contractAddress, , signer, contract] = getBaseBidNFTContractComponents(
                 props.activeProviderGlobalProps
             );
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to withdraw ETH from auction of token with tokenID ${withdrawFromAuctionTokenId}?`
+                await signTypedDataWithoutEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to withdraw ETH from auction of token with tokenID ${withdrawFromAuctionTokenId}?` //textMessage
                 )
             ) {
                 await contract

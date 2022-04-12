@@ -1,15 +1,22 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
 import { Card, Grid, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 
 const JoinAirdrop = (props) => {
     const joinAirdrop = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contracAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
             const maxAirDrop = parseInt((await contract.maxAirDrop())._hex);
-            if (await signMessageWithTxDetails(signer, "Do you want to join NFT Airdrop?")) {
+            if (
+                await signTypedDataWithoutEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contracAddress, //contractAddress
+                    "Do you want to join NFT Airdrop?"
+                ) //textMessage
+            ) {
                 if (
                     !props.airdropAddressesProps.includes(props.activeAccountProps) &&
                     maxAirDrop > props.airdropAddressesProps.length

@@ -1,4 +1,4 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
 import { useState } from "react";
 import { InputElement } from "../../atoms/input";
 import { ButtonElement } from "../../atoms/button";
@@ -8,13 +8,15 @@ const BurnToken = (props) => {
     const [burnTokenId, setBurnTokenId] = useState("");
     const burnToken = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to burn token with tokenID ${burnTokenId}?`
+                await signTypedDataWithoutEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to burn token with tokenID ${burnTokenId}?` //textMessage
                 )
             ) {
                 await contract

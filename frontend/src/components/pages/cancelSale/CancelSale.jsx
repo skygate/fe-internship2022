@@ -1,4 +1,4 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
 import { Grid, Card, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 import { InputElement } from "../../atoms/input";
@@ -8,14 +8,16 @@ const CancelSale = (props) => {
     const [cancelSaleTokenId, setCancelSaleTokenId] = useState("");
     const cancelSale = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
 
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to cancel sale of token with tokenID ${cancelSaleTokenId}?`
+                await signTypedDataWithoutEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to cancel sale of token with tokenID ${cancelSaleTokenId}?` //textMessage
                 )
             ) {
                 await contract

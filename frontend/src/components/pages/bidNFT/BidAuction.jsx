@@ -1,6 +1,6 @@
 import {
     getBaseBidNFTContractComponents,
-    signMessageWithTxDetails,
+    signTypedDataWithEth,
     getBaseERC721ContractComponents,
     getArtistAddress,
     getArtistAddressProof,
@@ -17,37 +17,39 @@ const BidAuction = (props) => {
 
     const bidAuction = async () => {
         if (props.activeAccountProps && bidAuctionValue !== 0) {
-            const [, , signer, contract] = getBaseBidNFTContractComponents(
+            const [contractAddress, , signer, contract] = getBaseBidNFTContractComponents(
                 props.activeProviderGlobalProps
             );
             const [, , , contractBaseERC721] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
+
+            const adminFee = parseInt(
+                await contractBaseERC721.calculateAdminFee(
+                    props.activeAccountProps,
+                    ethers.utils.parseEther(bidAuctionValue)
+                )
+            );
+            const royalitiesFee = parseInt(
+                await contractBaseERC721.calculateRoyaltiesFee(ethers.utils.parseEther(bidAuctionValue))
+            );
             const bidAuctionValueTotalCost =
-                parseInt(ethers.utils.parseEther(bidAuctionValue)) +
-                parseInt(
-                    await contractBaseERC721.calculateAdminFee(
-                        props.activeAccountProps,
-                        ethers.utils.parseEther(bidAuctionValue)
-                    )
-                ) +
-                parseInt(
-                    await contractBaseERC721.calculateRoyaltiesFee(
-                        ethers.utils.parseEther(bidAuctionValue)
-                    )
-                );
+                parseInt(ethers.utils.parseEther(bidAuctionValue)) + adminFee + royalitiesFee;
 
             const creatorAddress = await getArtistAddress(bidAuctionTokenId);
             const addressProof = await getArtistAddressProof(bidAuctionTokenId, creatorAddress);
 
             if (
-                await signMessageWithTxDetails(
-                    signer,
+                await signTypedDataWithEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
                     `Do you want to bid on token with tokenID ${bidAuctionTokenId} with ${bidAuctionValue} ETH with ${
-                        (bidAuctionValueTotalCost -
-                            parseInt(ethers.utils.parseEther(bidAuctionValue))) /
-                        10 ** 18
-                    } ETH of fee?`
+                        (royalitiesFee + adminFee) / 10 ** 18
+                    } ETH of fee?`, //textMessage
+                    ethers.utils.parseEther(bidAuctionValue) / 10 ** 18, //baseCost
+                    adminFee / 10 ** 18, //adminFee
+                    royalitiesFee / 10 ** 18 //royalitiesFee
                 )
             ) {
                 await contract

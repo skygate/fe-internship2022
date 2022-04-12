@@ -1,25 +1,28 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signTypedDataWithEth } from "../../../helpers.jsx";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 
 const BuyBasicToken = (props) => {
     const buyBasicToken = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
 
-            const basicTokenPrice = await contract.basicTicketPrice();
+            const basicTokenPrice = parseInt(await contract.basicTicketPrice());
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to buy basic ticket for ${
-                        parseInt(basicTokenPrice) / 10 ** 18
-                    } ETH?`
+                await signTypedDataWithEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to buy basic ticket for ${basicTokenPrice / 10 ** 18} ETH?`, //textMessage
+                    basicTokenPrice / 10 ** 18, //baseCost
+                    0, //adminFee
+                    0 //royaltiesFee
                 )
             ) {
                 await contract
-                    .buyBasicTicket({ value: basicTokenPrice })
+                    .buyBasicTicket({ value: String(basicTokenPrice) })
                     .then(() => {
                         console.log(`>>> Basic ticket has been bought!`);
                     })

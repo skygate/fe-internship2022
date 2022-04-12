@@ -59,6 +59,163 @@ export const signMessageWithTxDetails = async (signer, message) => {
     return result;
 };
 
+export const signTypedDataWithEth = async (
+    signer,
+    userAddress,
+    contractAddress,
+    textMessage,
+    baseCost,
+    adminFee,
+    royalitiesFee
+) => {
+    const domain = {
+        name: "SkyTemplate",
+    };
+
+    // The named list of all type definitions
+    const types = {
+        Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "string" },
+            { name: "contract", type: "address" },
+        ],
+        Person: [
+            { name: "name", type: "string" },
+            { name: "wallet", type: "address" },
+        ],
+        Costs: [
+            { name: "baseCost", type: "string" },
+            { name: "adminFee", type: "string" },
+            { name: "royalitiesFee", type: "string" },
+            { name: "totalCost_gasExlcuded", type: "string" },
+        ],
+        Mail: [
+            { name: "contents", type: "string" },
+            { name: "domain", type: "Domain" },
+            { name: "from", type: "Person" },
+            { name: "costs", type: "Costs" },
+        ],
+    };
+    // The data to sign
+    const value = {
+        contents: textMessage,
+        domain: {
+            name: "SkyTemplate",
+            version: "1",
+            chainId: signer.provider.provider.networkVersion,
+            contract: contractAddress,
+        },
+        from: {
+            name: "You",
+            wallet: userAddress,
+        },
+        costs: {
+            baseCost: `${baseCost} ETH`,
+            adminFee: `${adminFee} ETH`,
+            royalitiesFee: `${royalitiesFee} ETH`,
+            totalCost_gasExlcuded: `${baseCost + adminFee + royalitiesFee} ETH`,
+        },
+    };
+    const signature = await signer._signTypedData(domain, types, value);
+    return signature;
+};
+
+export const signTypedDataWithoutEth = async (
+    signer,
+    userAddress,
+    contractAddress,
+    textMessage
+) => {
+    const domain = {
+        name: "SkyTemplate",
+    };
+
+    // The named list of all type definitions
+    const types = {
+        Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "string" },
+            { name: "contract", type: "address" },
+        ],
+        Person: [
+            { name: "name", type: "string" },
+            { name: "wallet", type: "address" },
+        ],
+        Mail: [
+            { name: "contents", type: "string" },
+            { name: "domain", type: "Domain" },
+            { name: "from", type: "Person" },
+        ],
+    };
+    // The data to sign
+    const value = {
+        contents: textMessage,
+        domain: {
+            name: "SkyTemplate",
+            version: "1",
+            chainId: signer.provider.provider.networkVersion,
+            contract: contractAddress,
+        },
+        from: {
+            name: "You",
+            wallet: userAddress,
+        },
+    };
+    const signature = await signer._signTypedData(domain, types, value);
+    return signature;
+};
+
+export const signTypedDataSetMerkleRoot = async (
+    signer,
+    userAddress,
+    contractAddress,
+    textMessage,
+    airdropAdresses
+) => {
+    const domain = {
+        name: "SkyTemplate",
+    };
+
+    // The named list of all type definitions
+    const types = {
+        Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "string" },
+            { name: "contract", type: "address" },
+        ],
+        Person: [
+            { name: "name", type: "string" },
+            { name: "wallet", type: "address" },
+        ],
+        Mail: [
+            { name: "contents", type: "string" },
+            { name: "domain", type: "Domain" },
+            { name: "from", type: "Person" },
+            { name: "airdropAddresses", type: "address[]" },
+        ],
+    };
+    // The data to sign
+    const value = {
+        contents: textMessage,
+        domain: {
+            name: "SkyTemplate",
+            version: "1",
+            chainId: signer.provider.provider.networkVersion,
+            contract: contractAddress,
+        },
+        from: {
+            name: "You",
+            wallet: userAddress,
+        },
+        airdropAddresses: airdropAdresses,
+    };
+    const signature = await signer._signTypedData(domain, types, value);
+    return signature;
+};
+
 export const getArtistAddress = async (tokenID) => {
     const data = require("./artistData.json");
     return data[tokenID];

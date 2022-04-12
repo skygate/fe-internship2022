@@ -1,25 +1,28 @@
-import { getBaseERC721ContractComponents, signMessageWithTxDetails } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, signTypedDataWithEth } from "../../../helpers.jsx";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 
 const BuyPremiumTicket = (props) => {
     const buyPremiumToken = async () => {
         if (props.activeAccountProps) {
-            const [, , signer, contract] = getBaseERC721ContractComponents(
+            const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
 
-            const premiumTicketPrice = String(parseInt(await contract.basicTicketPrice()) * 10);
+            const premiumTicketPrice = parseInt(await contract.basicTicketPrice()) * 10;
             if (
-                await signMessageWithTxDetails(
-                    signer,
-                    `Do you want to buy basic ticket for ${
-                        parseInt(premiumTicketPrice) / 10 ** 18
-                    } ETH?`
+                await signTypedDataWithEth(
+                    signer, //signer
+                    props.activeAccountProps, //userAddress
+                    contractAddress, //contractAddress
+                    `Do you want to buy basic ticket for ${premiumTicketPrice / 10 ** 18} ETH?`, //textMessage
+                    premiumTicketPrice / 10 ** 18, //baseCost
+                    0, //adminFee
+                    0 //royalitiesFee
                 )
             ) {
                 await contract
-                    .buyPremiumTicket({ value: premiumTicketPrice })
+                    .buyPremiumTicket({ value: String(premiumTicketPrice) })
                     .then(() => {
                         console.log(`>>> Premium ticket has been bought!`);
                     })
