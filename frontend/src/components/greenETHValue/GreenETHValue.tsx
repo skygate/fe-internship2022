@@ -2,7 +2,7 @@ import { FC } from "react";
 import styles from "./GreenETHValue.module.scss";
 
 interface ETHValueProp {
-    ETHValue?: number;
+    ETHValue: number;
 }
 
 export const GreenETHValue: FC<ETHValueProp> = ({ ETHValue }) => {

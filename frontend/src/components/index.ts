@@ -3,7 +3,7 @@ export { Navbar } from "./navbar/Navbar";
 export { Banner } from "./banner/Banner";
 export { CreatorNetwork } from "./creatorNetwork/CreatorNetwork";
 export { MainNFT } from "./topBrands/MainNFT/MainNFT";
-export { CreatorsList } from "./topBrands/CreatorsList/CreatorsList";
+export { CreatorsListItem } from "./topBrands/CreatorsList/CreatorsListItem";
 export { ProfilePicture } from "./profilePicture/ProfilePicture";
 export { ProfileHorizontal } from "./profileHorizontal/ProfileHorizontal";
 export { NFTListItem } from "./topBrands/NFTListItem/NFTListItem";

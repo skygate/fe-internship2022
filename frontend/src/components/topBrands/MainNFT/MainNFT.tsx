@@ -12,7 +12,7 @@ export function MainNFT() {
         "https://image.shutterstock.com/z/stock-photo-funny-cat-in-round-sunglasses-close-up-1158137110.jpg";
     return (
         <div className="mainNFT">
-            <div className={styles.mainNFTImageWrapper}>
+            <div className={styles.mainImageWrapper}>
                 <img
                     src={nftImage}
                     alt="NFT"

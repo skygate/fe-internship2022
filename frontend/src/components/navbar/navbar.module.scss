@@ -1,121 +1,121 @@
-@import '../../theme/lightThemeColors.scss';
-@import '../../theme/spacers.scss';
-@import '../../theme/typography.scss';
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+@import "../../theme/typography.scss";
 
 header {
-  position: fixed;
-  top:0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 85px;
-  background-color: $c-neutrals-8;
-  border-bottom: 1px solid $c-neutrals-6;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85px;
+    background-color: $c-neutrals-8;
+    border-bottom: 1px solid $c-neutrals-6;
+    z-index: 2;
 }
 
 div.logo {
-  display: flex;
-  flex-direction: row;
-  padding-right: $spacer-32;
+    display: flex;
+    flex-direction: row;
+    padding-right: $spacer-32;
 }
 
 div.logo:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 div.logo img {
-  height: 32px;
-  padding-right: $spacer-8;
+    height: 32px;
+    padding-right: $spacer-8;
 }
 
 div.searchInput {
-  position: relative;
-  padding-right: $spacer-24;
+    position: relative;
+    padding-right: $spacer-24;
 }
 
 div.searchInput label {
-  position: absolute;
-  transform: translateY(-50%);
-  top: 50%;
-  left: 10px;
-  height: 15px;
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    left: 10px;
+    height: 15px;
 }
 
 label svg {
-  height: 15px;
+    height: 15px;
 }
 
 div.searchInput input {
-  width: 427px;
-  padding: $spacer-12 $spacer-12 $spacer-12 $spacer-48;
-  background-color: $c-neutrals-7;
-  border-radius: 30px;
-  border: none;
+    width: 427px;
+    padding: $spacer-12 $spacer-12 $spacer-12 $spacer-48;
+    background-color: $c-neutrals-7;
+    border-radius: 30px;
+    border: none;
 }
 
 div.searchInput input:focus {
-  outline: none;
+    outline: none;
 }
 
 nav {
-  font-size: $font-size-button-2;
-  font-weight: $font-weight-700;
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
 }
 
 nav ul {
-  display: flex;
-  flex-direction: row;
-  list-style: none;
-  padding: 0;
-  height: 24px;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding: 0;
+    height: 24px;
+    align-items: center;
 }
 
 nav ul li {
-  line-height: $line-height-button-2;
+    line-height: $line-height-button-2;
 }
 
 li a {
-  text-decoration: none;
-  color: $c-neutrals-4;
+    text-decoration: none;
+    color: $c-neutrals-4;
 }
 
 li:nth-child(1) {
-  padding-right: $spacer-20;
+    padding-right: $spacer-20;
 }
 
 li:nth-child(2) {
-  padding-right: $spacer-20;
+    padding-right: $spacer-20;
 }
 
 li:nth-child(3) {
-  padding: 0 0 0 $spacer-20;
-  border-left: 2px solid $c-neutrals-6;
+    padding: 0 0 0 $spacer-20;
+    border-left: 2px solid $c-neutrals-6;
 }
 
 button.btnCreate {
-  padding: $spacer-12 $spacer-16;
-  margin: 0 $spacer-8 0 $spacer-24;
-  background-color: $c-primary-3;
-  border-radius: 90px;
-  border: none;
-  color: $c-neutrals-8;
-  font-size: $font-size-button-2;
-  font-weight: $font-weight-700;
+    padding: $spacer-12 $spacer-16;
+    margin: 0 $spacer-8 0 $spacer-24;
+    background-color: $c-primary-3;
+    border-radius: 90px;
+    border: none;
+    color: $c-neutrals-8;
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
 }
 
 button.btnWallet {
-  background-color: $c-neutrals-8;
-  border: 2px solid $c-neutrals-6;
-  border-radius: 90px;
-  padding: $spacer-12 $spacer-16;
-  font-weight: $font-weight-700;
-  font-size: $font-size-button-2;
+    background-color: $c-neutrals-8;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 90px;
+    padding: $spacer-12 $spacer-16;
+    font-weight: $font-weight-700;
+    font-size: $font-size-button-2;
 }
-
 
 button.btnCreate:hover,
 button.btnWallet:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
