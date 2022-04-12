@@ -6,6 +6,7 @@ import { Navbar } from './components';
 import { Banner } from './components';
 import { CreatorNetwork } from './components';
 import { TopBrandsView } from "./views";
+import { Popular } from './components';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Banner />      
           <CreatorNetwork />
           <TopBrandsView />
+          <Popular />
           <Footer />
       </div>
   );
