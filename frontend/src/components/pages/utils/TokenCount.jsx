@@ -1,10 +1,11 @@
-import { getBaseERC721ContractComponents } from "../../../helpers.jsx";
+import { getBaseERC721ContractComponents, suggestDefaultNetworks } from "../../../helpers.jsx";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
 
 const TokenCount = (props) => {
     const getTokenCount = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [, , , contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

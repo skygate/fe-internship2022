@@ -77,7 +77,6 @@ export const signTypedDataWithEth = async (
         Domain: [
             { name: "name", type: "string" },
             { name: "version", type: "string" },
-            { name: "chainId", type: "string" },
             { name: "contract", type: "address" },
         ],
         Person: [
@@ -103,7 +102,6 @@ export const signTypedDataWithEth = async (
         domain: {
             name: "SkyTemplate",
             version: "1",
-            chainId: signer.provider.provider.networkVersion,
             contract: contractAddress,
         },
         from: {
@@ -136,7 +134,6 @@ export const signTypedDataWithoutEth = async (
         Domain: [
             { name: "name", type: "string" },
             { name: "version", type: "string" },
-            { name: "chainId", type: "string" },
             { name: "contract", type: "address" },
         ],
         Person: [
@@ -155,7 +152,6 @@ export const signTypedDataWithoutEth = async (
         domain: {
             name: "SkyTemplate",
             version: "1",
-            chainId: signer.provider.provider.networkVersion,
             contract: contractAddress,
         },
         from: {
@@ -183,7 +179,6 @@ export const signTypedDataSetMerkleRoot = async (
         Domain: [
             { name: "name", type: "string" },
             { name: "version", type: "string" },
-            { name: "chainId", type: "string" },
             { name: "contract", type: "address" },
         ],
         Person: [
@@ -203,7 +198,6 @@ export const signTypedDataSetMerkleRoot = async (
         domain: {
             name: "SkyTemplate",
             version: "1",
-            chainId: signer.provider.provider.networkVersion,
             contract: contractAddress,
         },
         from: {
@@ -229,4 +223,13 @@ export const getArtistAddressProof = async (tokenId, creatorAddress) => {
         { sortPairs: true }
     );
     return artistMerkleTree.getHexProof(hashToken(tokenId, creatorAddress));
+};
+
+export const suggestDefaultNetworks = async (provider) => {
+    if (provider.networkVersion != 31337) {
+        await provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x7a69" }],
+        });
+    }
 };

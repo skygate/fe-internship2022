@@ -1,4 +1,8 @@
-import { getBaseERC721ContractComponents, signTypedDataWithoutEth } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signTypedDataWithoutEth,
+    suggestDefaultNetworks,
+} from "../../../helpers.jsx";
 import { useState } from "react";
 import { InputElement } from "../../atoms/input";
 import { ButtonElement } from "../../atoms/button";
@@ -8,6 +12,7 @@ const BurnToken = (props) => {
     const [burnTokenId, setBurnTokenId] = useState("");
     const burnToken = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

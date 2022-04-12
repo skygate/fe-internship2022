@@ -1,4 +1,8 @@
-import { getBaseBidNFTContractComponents, signTypedDataWithoutEth } from "../../../helpers";
+import {
+    getBaseBidNFTContractComponents,
+    signTypedDataWithoutEth,
+    suggestDefaultNetworks,
+} from "../../../helpers";
 import { useState } from "react";
 import { Card, Grid, CardActions, CardContent } from "@mui/material";
 import { InputElement } from "../../atoms/input";
@@ -9,6 +13,7 @@ const EndAuction = (props) => {
 
     const endAuction = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseBidNFTContractComponents(
                 props.activeProviderGlobalProps
             );

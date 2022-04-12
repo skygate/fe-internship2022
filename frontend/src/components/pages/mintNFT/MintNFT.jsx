@@ -1,4 +1,8 @@
-import { getBaseERC721ContractComponents, signTypedDataWithEth } from "../../../helpers.jsx";
+import {
+    getBaseERC721ContractComponents,
+    signTypedDataWithEth,
+    suggestDefaultNetworks,
+} from "../../../helpers.jsx";
 import { ethers } from "ethers";
 import { Card, Grid, CardContent, CardActions } from "@mui/material";
 import { ButtonElement } from "../../atoms/button";
@@ -6,6 +10,7 @@ import { ButtonElement } from "../../atoms/button";
 const MintNFT = (props) => {
     const mint = async () => {
         if (props.activeAccountProps) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );

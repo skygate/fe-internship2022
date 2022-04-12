@@ -4,6 +4,7 @@ import {
     getBaseERC721ContractComponents,
     getArtistAddress,
     getArtistAddressProof,
+    suggestDefaultNetworks,
 } from "../../../helpers";
 import { useState } from "react";
 import { ethers } from "ethers";
@@ -17,6 +18,7 @@ const BidAuction = (props) => {
 
     const bidAuction = async () => {
         if (props.activeAccountProps && bidAuctionValue !== 0) {
+            await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [contractAddress, , signer, contract] = getBaseBidNFTContractComponents(
                 props.activeProviderGlobalProps
             );
