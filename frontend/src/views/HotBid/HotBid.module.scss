@@ -1,0 +1,26 @@
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+@import "../../theme/typography.scss";
+
+.hotBidContainer {
+    text-align: left;
+    max-width: 1440px;
+    padding: 0 $spacer-160;
+    margin: 0 auto;
+}
+
+.nftsContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.headerSection {
+    font-family: $font-family-dm-sans;
+    font-size: $font-size-headline-3;
+    line-height: $line-height-headline-3;
+    font-weight: $font-weight-700;
+    letter-spacing: $letter-spacing--01em;
+    color: $c-neutrals-2;
+    padding-bottom: $spacer-64;
+    padding-top: $spacer-128;
+}

@@ -10,3 +10,4 @@ export { PopularItem } from "./popularItem/PopularItem";
 export { CreatorsListItem } from "./topBrands/CreatorsList/CreatorsListItem";
 export { NFTListItem } from "./topBrands/NFTListItem/NFTListItem";
 export { GreenETHValue } from "./greenETHValue/GreenETHValue";
+export { NFTProductCard } from "./nftProductCard/NFTProductCard";
