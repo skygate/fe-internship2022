@@ -4,6 +4,7 @@ import { FC } from "react";
 import styles from "./NFTProductCard.module.scss";
 import { ProfilePicture } from "..";
 import { GreenETHValue } from "../greenETHValue/GreenETHValue";
+import Heart from "../../assets/Heart.svg";
 
 interface NFT {
     nft: NFTItem;
@@ -14,6 +15,21 @@ export const NFTProductCard: FC<NFT> = ({ nft }) => {
         <div className={styles.productCardContainer}>
             <div className={styles.nftImageWrapper}>
                 <img src={nft.NFTS[0].nftUrl} alt={nft.NFTS[0].title} className={styles.nftImage} />
+                <div className={styles.imageHoverSection}>
+                    <div className={styles.imageHoverContainer}>
+                        <div className={styles.purchasingAndIcon}>
+                            <span className={styles.purchasing}>PURCHASING !</span>
+                            <button type="button" className={styles.iconContainer}>
+                                <img src={Heart} className={styles.heartIcon} alt="heart" />
+                            </button>
+                        </div>
+                        <div className={styles.placeBidContainer}>
+                            <button type="button" className={styles.placeBidButton}>
+                                <span>Place a bid</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div className={styles.titleAndPrice}>
                 <span className={styles.nftTitle}>{nft.NFTS[0].title}</span>

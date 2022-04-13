@@ -5,7 +5,7 @@
 .hotBidContainer {
     text-align: left;
     max-width: 1440px;
-    padding: 0 $spacer-160;
+    padding: $spacer-128 $spacer-160;
     margin: 0 auto;
 }
 
@@ -22,5 +22,31 @@
     letter-spacing: $letter-spacing--01em;
     color: $c-neutrals-2;
     padding-bottom: $spacer-64;
-    padding-top: $spacer-128;
+    padding-top: $spacer-8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.arrowButtons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrowButtons img {
+    width: 14px;
+}
+
+.arrowButton {
+    color: $c-neutrals-4;
+    background-color: $c-neutrals-8;
+    border: none;
+    width: 30px;
+    height: 30px;
+}
+
+.arrowButton:hover {
+    border: 2px solid $c-neutrals-6;
+    border-radius: 50%;
 }
