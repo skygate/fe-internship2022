@@ -1,0 +1,32 @@
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+@import "../../theme/typography.scss";
+
+.hotCollections {
+    width: 100vw;
+    background-color: $c-neutrals-7;
+}
+
+.hotCollectionsContainer {
+    text-align: left;
+    max-width: 1440px;
+    padding: $spacer-128 $spacer-160;
+    margin: 0 auto;
+    background-color: $c-neutrals-7;
+}
+
+.headerText {
+    font-family: $font-family-dm-sans;
+    font-weight: $font-weight-700;
+    color: $c-neutrals-2;
+    line-height: $line-height-headline-3;
+    font-size: $font-size-headline-3;
+    letter-spacing: $letter-spacing--01em;
+}
+
+.collectionItemsContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacer-96 0;
+}

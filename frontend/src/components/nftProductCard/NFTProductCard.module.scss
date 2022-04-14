@@ -22,8 +22,10 @@
 }
 
 .nftImageWrapper:hover,
-.nftImageWrapper:focus .imageHoverSection {
-    display: block;
+.nftImageWrapper:focus {
+    .imageHoverSection {
+        display: block;
+    }
 }
 
 .imageHoverSection {
