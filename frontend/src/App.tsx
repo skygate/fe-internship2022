@@ -4,6 +4,7 @@ import { Footer } from "./components";
 import { Navbar } from "./components";
 import { Banner } from "./components";
 import { CreatorNetwork } from "./components";
+import { Discover } from "./components";
 import { HotCollections, TopBrandsView, HotBid } from "./views";
 import { Popular } from "./components";
 
@@ -15,6 +16,7 @@ function App() {
             <CreatorNetwork />
             <TopBrandsView />
             <Popular />
+            <Discover />
             <HotBid />
             <HotCollections />
             <Footer />

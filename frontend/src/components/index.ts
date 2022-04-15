@@ -10,5 +10,8 @@ export { PopularItem } from "./popularItem/PopularItem";
 export { CreatorsListItem } from "./topBrands/CreatorsList/CreatorsListItem";
 export { NFTListItem } from "./topBrands/NFTListItem/NFTListItem";
 export { GreenETHValue } from "./greenETHValue/GreenETHValue";
+export { Discover } from "./discover/Discover";
+export { CategoryButtons } from "./categoryButtons/CategoryButtons";
+export { SelectFilters } from "./selectFilters/SelectFilters";
 export { NFTProductCard } from "./nftProductCard/NFTProductCard";
 export { HotCollectionItem } from "./hotCollectionItem/HotCollectionItem";
