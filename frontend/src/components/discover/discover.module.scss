@@ -183,3 +183,10 @@ input[type="range"]:active::-webkit-slider-thumb {
     background-color: #ffffff;
     border: 3px solid $c-primary-1;
 }
+
+.itemsContainer {
+    margin-top: $spacer-32;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}

@@ -1,6 +1,8 @@
 import React from "react";
 import { CategoryButtons } from "../";
 import { SelectFilters } from "../";
+import { NFTProductCard } from "../../components";
+import { ExampleNFTList } from "../../constant/ExampleNFTList";
 import style from "./discover.module.scss";
 
 interface DiscoverProps {
@@ -68,6 +70,11 @@ export const DiscoverView = ({
                     </div>
                 </div>
             </form>
+            <div className={style.itemsContainer}>
+                {ExampleNFTList.map((author) => (
+                    <NFTProductCard key={author.authorName} nft={author} />
+                ))}
+            </div>
         </section>
     );
 };

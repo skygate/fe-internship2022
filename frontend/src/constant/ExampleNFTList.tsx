@@ -70,4 +70,68 @@ export const ExampleNFTList = [
             },
         ],
     },
+    {
+        authorName: "exmapleN5",
+        profilePic: "https://i.pinimg.com/236x/07/33/ba/0733ba760b29378474dea0fdbcb97107.jpg",
+        NFTS: [
+            {
+                nftUrl: "https://www.wprost.pl/_thumb/cd/61/764e14104a81b8064c32c71cecf3.jpeg",
+                price: 0.19,
+                title: "example5.1",
+            },
+            {
+                nftUrl: "https://www.rd.com/wp-content/uploads/2021/04/GettyImages-106649919-scaled-e1618860834581.jpg",
+                price: 0.21,
+                title: "example5.2",
+            },
+        ],
+    },
+    {
+        authorName: "exmapleN6",
+        profilePic: "https://i.pinimg.com/236x/07/33/ba/0733ba760b29378474dea0fdbcb97107.jpg",
+        NFTS: [
+            {
+                nftUrl: "https://www.wprost.pl/_thumb/cd/61/764e14104a81b8064c32c71cecf3.jpeg",
+                price: 0.19,
+                title: "example6.1",
+            },
+            {
+                nftUrl: "https://www.rd.com/wp-content/uploads/2021/04/GettyImages-106649919-scaled-e1618860834581.jpg",
+                price: 0.21,
+                title: "example6.2",
+            },
+        ],
+    },
+    {
+        authorName: "exmapleN7",
+        profilePic: "https://i.pinimg.com/236x/07/33/ba/0733ba760b29378474dea0fdbcb97107.jpg",
+        NFTS: [
+            {
+                nftUrl: "https://www.wprost.pl/_thumb/cd/61/764e14104a81b8064c32c71cecf3.jpeg",
+                price: 0.19,
+                title: "example7.1",
+            },
+            {
+                nftUrl: "https://www.rd.com/wp-content/uploads/2021/04/GettyImages-106649919-scaled-e1618860834581.jpg",
+                price: 0.21,
+                title: "example7.2",
+            },
+        ],
+    },
+    {
+        authorName: "exmapleN8",
+        profilePic: "https://i.pinimg.com/236x/07/33/ba/0733ba760b29378474dea0fdbcb97107.jpg",
+        NFTS: [
+            {
+                nftUrl: "https://www.wprost.pl/_thumb/cd/61/764e14104a81b8064c32c71cecf3.jpeg",
+                price: 0.19,
+                title: "example8.1",
+            },
+            {
+                nftUrl: "https://www.rd.com/wp-content/uploads/2021/04/GettyImages-106649919-scaled-e1618860834581.jpg",
+                price: 0.21,
+                title: "example8.2",
+            },
+        ],
+    },
 ];
