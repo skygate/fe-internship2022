@@ -1,16 +1,13 @@
 export { Footer } from "./footer/Footer";
 export { Navbar } from "./navbar/Navbar";
 export { Banner } from "./banner/Banner";
-export { CreatorNetwork } from "./creatorNetwork/CreatorNetwork";
 export { MainNFT } from "./topBrands/MainNFT/MainNFT";
 export { ProfilePicture } from "./profilePicture/ProfilePicture";
 export { ProfileHorizontal } from "./profileHorizontal/ProfileHorizontal";
-export { Popular } from "./popular/Popular";
 export { PopularItem } from "./popularItem/PopularItem";
 export { CreatorsListItem } from "./topBrands/CreatorsList/CreatorsListItem";
 export { NFTListItem } from "./topBrands/NFTListItem/NFTListItem";
 export { GreenETHValue } from "./greenETHValue/GreenETHValue";
-export { Discover } from "./discover/Discover";
 export { CategoryButtons } from "./categoryButtons/CategoryButtons";
 export { SelectFilters } from "./selectFilters/SelectFilters";
 export { NFTProductCard } from "./nftProductCard/NFTProductCard";

@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./TopBrandsView.module.scss";
-import { MainNFT } from "../../components";
-import { CreatorsListItem, NFTListItem } from "../../components";
-import { ExampleNFTList } from "../../constant/ExampleNFTList";
-import arrowRightdark from "../../assets/arrowRightdark.svg";
+import { MainNFT } from "../../../components";
+import { CreatorsListItem, NFTListItem } from "../../../components";
+import { ExampleNFTList } from "../../../constant/ExampleNFTList";
+import arrowRightdark from "../../../assets/arrowRightdark.svg";
 
 export function TopBrandsView() {
     return (
