@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-waffle");
 require('@openzeppelin/hardhat-upgrades');
 require("axios");
 require('recursive-fs');
+require("hardhat-gas-reporter");
 let secret = require("./secret")
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {

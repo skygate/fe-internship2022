@@ -28,6 +28,8 @@ contract BaseBidNFT is Ownable {
     mapping(uint256 => mapping(address => uint256)) private userBalance;
     mapping(uint256 => uint256) private auctionBlance;
     mapping(uint256 => Auctions) public auctions;
+    mapping(uint256 => uint256) public tokenIdToPriceOnSale;
+    mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
 
     BaseERC721 private baseERC721;
     uint256 public adminFeeToWithdraw;
@@ -36,9 +38,17 @@ contract BaseBidNFT is Ownable {
         baseERC721 = BaseERC721(_baseERC721adders);
     }
 
+        modifier isTokenOnSale(uint256 tokenId) {
+        require(
+            tokenIdToPriceOnSale[tokenId] > 0,
+            "Cant perform this action, token is not on sale!"
+        );
+        _;
+    }
+
     modifier isOwnerOfToken(uint256 tokenId) {
         require(
-            baseERC721.ownerOf(tokenId) == msg.sender,
+            baseERC721.ownerOf(tokenId) == msg.sender || tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
             "Cant perform this action, you must be owner of this token!"
         );
         _;
@@ -187,5 +197,43 @@ contract BaseBidNFT is Ownable {
 
         emit End(auctions[tokenId].highBidder, balance, tokenId);
         delete auctions[tokenId];
+    }
+
+    function startSale(uint256 tokenId, uint256 price) public isOwnerOfToken(tokenId) {
+        require(price > 0, "Can not sale for 0 ETH!");
+        tokenIdToPriceOnSale[tokenId] = price;
+        tokenIdToOwnerAddressOnSale[tokenId] = msg.sender;
+        baseERC721.transfer(msg.sender, address(this), tokenId);
+    }
+
+    function cancelSale(uint256 tokenId) public isTokenOnSale(tokenId) isOwnerOfToken(tokenId) {
+        baseERC721.transfer(address(this), msg.sender, tokenId);
+        delete tokenIdToPriceOnSale[tokenId];
+        delete tokenIdToOwnerAddressOnSale[tokenId];
+    }
+
+    function buyTokenOnSale(
+        uint256 tokenId,
+        address creatorArtist,
+        bytes32[] memory proof
+    ) external payable isTokenOnSale(tokenId) {
+        uint256 adminFee = baseERC721.calculateAdminFee(msg.sender, tokenIdToPriceOnSale[tokenId]);
+        uint256 royaltiesFee = baseERC721.calculateRoyaltiesFee(tokenIdToPriceOnSale[tokenId]);
+        require(baseERC721.isArtist(tokenId, creatorArtist, proof), "Invalid artist address!");
+        require(
+            tokenIdToPriceOnSale[tokenId] + adminFee + royaltiesFee <= msg.value,
+            "Pleas provide minimum price of this specific token!"
+        );
+        baseERC721.transfer(address(this), msg.sender, tokenId);
+        (bool success, ) = payable(tokenIdToOwnerAddressOnSale[tokenId]).call{
+            value: tokenIdToPriceOnSale[tokenId]
+        }("");
+        require(success, "Failed to send Ether");
+        baseERC721.increaseAcumulativeValueOfTransactions(msg.sender, tokenIdToPriceOnSale[tokenId]);
+        adminFeeToWithdraw += adminFee;
+        (success, ) = payable(creatorArtist).call{value: royaltiesFee}("");
+        require(success, "Failed to send Ether");
+        delete tokenIdToPriceOnSale[tokenId];
+        delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 }

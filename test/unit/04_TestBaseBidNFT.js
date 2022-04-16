@@ -32,6 +32,10 @@ describe("Test BaseBidNFT", async () => {
     const bid2Amount = ethers.utils.parseEther("0.25");
     const bid2AmountWithFee = ethers.utils.parseEther("0.2550");
 
+    const basicTicketPrice = ethers.utils.parseEther("0.1"); // value set in BaseERC721.js
+    const premiumTicketPrice = ethers.utils.parseEther("1"); // basicTicketPrice * 10
+    const mintValue = ethers.utils.parseEther("0.05"); // value set in BaseERC721.js
+
     let artistMerkleTree;
     let tokenZeroProof;
 
@@ -682,6 +686,481 @@ describe("Test BaseBidNFT", async () => {
             );
 
             expect(await myBaseBidNFT.adminFeeToWithdraw()).to.be.equal(ownerFee);
+        });
+    });
+
+    describe("TEST startSale()", async () => {
+        it("PASS", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(
+                sellPrice
+            );
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(
+                myBaseBidNFT.address
+            );
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addr1.address
+            );
+        });
+
+        it("FAIL - not onwer of token", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            await expect(
+                myBaseBidNFT.connect(addr2).startSale(tokenId, sellPrice)
+            ).to.be.revertedWith("Cant perform this action, you must be owner of this token!");
+
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+        });
+
+        it("FAIL - sale for 0 ETH", async () => {
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            await expect(myBaseBidNFT.connect(addr1).startSale(tokenId, 0)).to.be.revertedWith(
+                "Can not sale for 0 ETH!"
+            );
+
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+        });
+    });
+
+    describe("TEST cancelSale()", async () => {
+        it("PASS", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const cancelTheSaleTX = await myBaseBidNFT.connect(addr1).cancelSale(tokenId);
+            await cancelTheSaleTX.wait();
+
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+        });
+
+        it("FAIL - not onwer of token", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            await expect(myBaseBidNFT.connect(addr2).cancelSale(tokenId)).to.be.revertedWith(
+                "Cant perform this action, you must be owner of this token!"
+            );
+
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(
+                sellPrice
+            );
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(
+                myBaseBidNFT.address
+            );
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addr1.address
+            );
+        });
+
+        it("FAIL - sale not started", async () => {
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            await expect(myBaseBidNFT.connect(addr1).cancelSale(tokenId)).to.be.revertedWith(
+                "Cant perform this action, token is not on sale!"
+            );
+
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+        });
+    });
+
+    describe("TEST buyTokenOnSale()", async () => {
+        it("PASS - without ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseBidNFT.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const adminFee = parseInt(
+                await myBaseERC721.calculateAdminFee(addr2.address, sellPrice)
+            );
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await myBaseBidNFT
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                });
+
+            const gasUsed = await getGasUsedForLastTx();
+
+            expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
+            expect(await myBaseBidNFT.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseBidNFT.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+            expect(await addr1.getBalance()).to.equal(
+                BigInt(addr1BalanceBefor) + BigInt(sellPrice)
+            );
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(addr2BalanceBefor) -
+                    BigInt(sellPrice) -
+                    gasUsed -
+                    BigInt(adminFee) -
+                    BigInt(royaltyFee)
+            );
+            expect(await ethers.provider.getBalance(myBaseBidNFT.address)).to.equal(
+                BigInt(contractBalanceBefor) + BigInt(adminFee)
+            );
+            expect((await myBaseERC721.addressToBasicTicket(addr2.address))[0]).to.be.equal(0);
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor) + BigInt(royaltyFee)
+            );
+        });
+
+        it("PASS - with basic ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await myBaseERC721.connect(addr2).buyBasicTicket({ value: basicTicketPrice });
+            let gasUsed = await getGasUsedForLastTx();
+
+            await myBaseBidNFT
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(parseInt(sellPrice) + royaltyFee),
+                });
+            gasUsed += await getGasUsedForLastTx();
+
+            expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
+            expect(await myBaseBidNFT.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseBidNFT.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+            expect(await addr1.getBalance()).to.equal(
+                BigInt(addr1BalanceBefor) + BigInt(sellPrice)
+            );
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(addr2BalanceBefor) -
+                    BigInt(sellPrice) -
+                    gasUsed -
+                    BigInt(basicTicketPrice) -
+                    BigInt(royaltyFee)
+            );
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
+                BigInt(contractBalanceBefor) + BigInt(basicTicketPrice)
+            );
+            expect((await myBaseERC721.addressToBasicTicket(addr2.address))[0]).to.be.equal(
+                sellPrice
+            );
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor) + BigInt(royaltyFee)
+            );
+        });
+
+        it("PASS - with premium ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseERC721.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await myBaseERC721.connect(addr2).buyPremiumTicket({ value: premiumTicketPrice });
+            let gasUsed = await getGasUsedForLastTx();
+
+            await myBaseBidNFT
+                .connect(addr2)
+                .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: String(parseInt(sellPrice) + royaltyFee),
+                });
+            gasUsed += await getGasUsedForLastTx();
+
+            expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
+            expect(await myBaseBidNFT.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect(await myBaseBidNFT.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+                addrNull
+            );
+            expect(await addr1.getBalance()).to.equal(
+                BigInt(addr1BalanceBefor) + BigInt(sellPrice)
+            );
+            expect(await addr2.getBalance()).to.equal(
+                BigInt(addr2BalanceBefor) -
+                    BigInt(sellPrice) -
+                    gasUsed -
+                    BigInt(premiumTicketPrice) -
+                    BigInt(royaltyFee)
+            );
+            expect(await ethers.provider.getBalance(myBaseERC721.address)).to.equal(
+                BigInt(contractBalanceBefor) + BigInt(premiumTicketPrice)
+            );
+            expect((await myBaseERC721.addressToBasicTicket(addr2.address))[0]).to.be.equal(0);
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor) + BigInt(royaltyFee)
+            );
+        });
+
+        it("FAIL - token not for sale", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+
+            await expect(
+                myBaseBidNFT
+                    .connect(addr2)
+                    .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, { value: sellPrice })
+            ).to.be.revertedWith("Cant perform this action, token is not on sale!");
+
+            const gasForRevertedTx = await getGasUsedForLastTx();
+
+            expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
+            expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
+            expect(await ethers.provider.getBalance(creatorArtist)).to.equal(
+                creatorArtistBalanceBefor
+            );
+        });
+
+        it("FAIL - send eth to low", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const sendEthAmount = ethers.utils.parseEther("0.05");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: sendEthAmount,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+
+            await expect(
+                myBaseBidNFT.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
+                    value: sendEthAmount,
+                })
+            ).to.be.revertedWith("Pleas provide minimum price of this specific token!");
+
+            const gasForRevertedTx = await getGasUsedForLastTx();
+
+            expect(
+                await myBaseBidNFT.connect(myBaseBidNFT.address).tokenIdToPriceOnSale(tokenId)
+            ).to.equal(sellPrice);
+            expect(
+                await myBaseBidNFT
+                    .connect(myBaseBidNFT.address)
+                    .tokenIdToOwnerAddressOnSale(tokenId)
+            ).to.equal(addr1.address);
+            expect(await myBaseERC721.connect(myBaseBidNFT.address).ownerOf(tokenId)).to.equal(
+                myBaseBidNFT.address
+            );
+            expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
+            expect(await ethers.provider.getBalance(creatorArtist)).to.equal(
+                creatorArtistBalanceBefor
+            );
+        });
+
+        it("FAIL - send only price without transcation fee and active ticket", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+
+            await expect(
+                myBaseBidNFT
+                    .connect(addr2)
+                    .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, { value: sellPrice })
+            ).to.be.revertedWith("Pleas provide minimum price of this specific token!");
+
+            const gasForRevertedTx = await getGasUsedForLastTx();
+
+            expect(
+                await myBaseBidNFT.connect(myBaseBidNFT.address).tokenIdToPriceOnSale(tokenId)
+            ).to.equal(sellPrice);
+            expect(
+                await myBaseBidNFT
+                    .connect(myBaseBidNFT.address)
+                    .tokenIdToOwnerAddressOnSale(tokenId)
+            ).to.equal(addr1.address);
+            expect(await myBaseERC721.connect(myBaseBidNFT.address).ownerOf(tokenId)).to.equal(
+                myBaseBidNFT.address
+            );
+            expect(await addr1.getBalance()).to.equal(addr1BalanceBefor);
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasForRevertedTx);
+            expect(await ethers.provider.getBalance(creatorArtist)).to.equal(
+                creatorArtistBalanceBefor
+            );
+        });
+
+        it("FAIL - invalid creator address", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const invalidProof = artistMerkleTree.getHexProof(hashToken(0, addr1.address));
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseBidNFT.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const adminFee = parseInt(
+                await myBaseERC721.calculateAdminFee(addr2.address, sellPrice)
+            );
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await expect(
+                myBaseBidNFT.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, invalidProof, {
+                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                })
+            ).to.be.revertedWith("Invalid artist address!");
+
+            const gasUsed = await getGasUsedForLastTx();
+
+            expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor));
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasUsed);
+            expect(await ethers.provider.getBalance(myBaseBidNFT.address)).to.equal(
+                BigInt(contractBalanceBefor)
+            );
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor)
+            );
+        });
+
+        it("FAIL - invalid tokenId in proof", async () => {
+            const sellPrice = ethers.utils.parseEther("0.5");
+            const tokenId = 0;
+            const invalidProof = artistMerkleTree.getHexProof(hashToken(1, creatorArtist));
+            const mintTx = await myBaseERC721.connect(addr1).payToMint(addr1.address, {
+                value: mintValue,
+            });
+            await mintTx.wait();
+
+            const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await putOnSaleTx.wait();
+
+            const addr1BalanceBefor = await addr1.getBalance();
+            const addr2BalanceBefor = await addr2.getBalance();
+            const contractBalanceBefor = await ethers.provider.getBalance(myBaseBidNFT.address);
+            const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
+            const adminFee = parseInt(
+                await myBaseERC721.calculateAdminFee(addr2.address, sellPrice)
+            );
+            const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
+
+            await expect(
+                myBaseBidNFT.connect(addr2).buyTokenOnSale(tokenId, creatorArtist, invalidProof, {
+                    value: String(parseInt(sellPrice) + adminFee + royaltyFee),
+                })
+            ).to.be.revertedWith("Invalid artist address!");
+
+            const gasUsed = await getGasUsedForLastTx();
+
+            expect(await addr1.getBalance()).to.equal(BigInt(addr1BalanceBefor));
+            expect(await addr2.getBalance()).to.equal(BigInt(addr2BalanceBefor) - gasUsed);
+            expect(await ethers.provider.getBalance(myBaseBidNFT.address)).to.equal(
+                BigInt(contractBalanceBefor)
+            );
+            expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
+                BigInt(creatorArtistBalanceBefor)
+            );
         });
     });
 });
