@@ -149,7 +149,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         mintPrice = newMintPrice;
     }
 
-    function setBaseBidNFTAddress(address _baseBidNFTAddress) public onlyRole(ADMIN_ROLE) {
+    function setSalesContractAddress(address _baseBidNFTAddress) public onlyRole(ADMIN_ROLE) {
         revokeRole(ASSOCIATED_CONTRACT, baseBidNFTAddress);
         baseBidNFTAddress = _baseBidNFTAddress;
         grantRole(ASSOCIATED_CONTRACT, _baseBidNFTAddress);

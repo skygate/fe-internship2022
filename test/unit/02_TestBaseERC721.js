@@ -15,7 +15,7 @@ describe("TEST BaseERC721", async () => {
     const mintValue = ethers.utils.parseEther("0.05"); // value set in BaseERC721.js
 
     let myBaseERC721;
-    let myBaseBidNFT;
+    let salesContract;
     let owner;
     let addr1;
     let addr2;
@@ -49,13 +49,13 @@ describe("TEST BaseERC721", async () => {
         );
         await myBaseERC721.deployed();
 
-        const BaseBidNFT = await ethers.getContractFactory("BaseBidNFT");
-        myBaseBidNFT = await BaseBidNFT.deploy(myBaseERC721.address);
-        await myBaseBidNFT.deployed();
+        const SalesContract = await ethers.getContractFactory("Sales");
+        salesContract = await SalesContract.deploy(myBaseERC721.address);
+        await salesContract.deployed();
 
         [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
-        await myBaseERC721.connect(owner).setBaseBidNFTAddress(myBaseBidNFT.address);
+        await myBaseERC721.connect(owner).setSalesContractAddress(salesContract.address);
     });
 
     describe("TEST V3Aggregator", async () => {
@@ -258,19 +258,19 @@ describe("TEST BaseERC721", async () => {
                 const setFeeTx = await myBaseERC721.connect(owner).setAdminFee(fee);
                 await setFeeTx.wait();
 
-                const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+                const putOnSaleTx = await salesContract.connect(addr1).startSale(tokenId, sellPrice);
                 await putOnSaleTx.wait();
 
                 const addr1BalanceBefor = await addr1.getBalance();
                 const addr2BalanceBefor = await addr2.getBalance();
-                const contractBalanceBefor = await ethers.provider.getBalance(myBaseBidNFT.address);
+                const contractBalanceBefor = await ethers.provider.getBalance(salesContract.address);
                 const creatorArtistBalanceBefor = await ethers.provider.getBalance(creatorArtist);
                 const adminFee = parseInt(
                     await myBaseERC721.calculateAdminFee(addr2.address, sellPrice)
                 );
                 const royaltyFee = parseInt(await myBaseERC721.calculateRoyaltiesFee(sellPrice));
 
-                await myBaseBidNFT
+                await salesContract
                     .connect(addr2)
                     .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
                         value: String(parseInt(sellPrice) + adminFee + royaltyFee),
@@ -289,7 +289,7 @@ describe("TEST BaseERC721", async () => {
                         BigInt(adminFee) -
                         BigInt(royaltyFee)
                 );
-                expect(await ethers.provider.getBalance(myBaseBidNFT.address)).to.equal(
+                expect(await ethers.provider.getBalance(salesContract.address)).to.equal(
                     BigInt(contractBalanceBefor) + BigInt(adminFee)
                 );
                 expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
@@ -448,14 +448,14 @@ describe("TEST BaseERC721", async () => {
             await myBaseERC721.connect(addr1).payToMint(addr1.address, {
                 value: mintValue,
             });
-            await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
+            await salesContract.connect(addr1).startSale(tokenId, sellPrice);
             await myBaseERC721.connect(addr2).buyBasicTicket({ value: basicTicketPrice });
 
             const acumulativeValueOfTransactionsBefore = (
                 await myBaseERC721.addressToBasicTicket(addr2.address)
             ).acumulativeValueOfTransactions;
 
-            await myBaseBidNFT
+            await salesContract
                 .connect(addr2)
                 .buyTokenOnSale(tokenId, creatorArtist, tokenZeroProof, {
                     value: String(

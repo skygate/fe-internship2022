@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "./BaseERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BaseBidNFT is Ownable {
+contract Sales is Ownable {
     enum TOKENSTATUS {
         Started,
         Ended
