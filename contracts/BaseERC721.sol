@@ -105,7 +105,10 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     }
 
     function burn(uint256 tokenId) public {
-        require(ownerOf(tokenId)== msg.sender, "Cant perform this action, you must be owner of this token!");
+        require(
+            ownerOf(tokenId) == msg.sender,
+            "Cant perform this action, you must be owner of this token!"
+        );
         _burn(tokenId);
     }
 
@@ -178,7 +181,8 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     function checkIfUserHasDiscount(address user) public view returns (bool) {
         if (
             addressToBasicTicket[user].ticketExpirationDate > block.timestamp &&
-            addressToBasicTicket[user].acumulativeValueOfTransactions < maxAcumulativeValueOfTransactions
+            addressToBasicTicket[user].acumulativeValueOfTransactions <
+            maxAcumulativeValueOfTransactions
         ) {
             return true;
         } else if (addressToPremiumTicket[user]) {

@@ -11,7 +11,7 @@ const {
     hashToken,
 } = require("./../utils");
 
-describe("Test BaseBidNFT", async () => {
+describe("Test Sales", async () => {
     const DECIMALS = "18";
     const INITIAL_PRICE = "200000000000000000000";
     const addrNull = "0x0000000000000000000000000000000000000000";
@@ -1157,6 +1157,26 @@ describe("Test BaseBidNFT", async () => {
             expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
                 BigInt(creatorArtistBalanceBefor)
             );
+        });
+    });
+
+    describe("TEST - creatSwapOffer()", () => {
+        it("PASS - 1 NFT for 1 NFT", async () => {
+            await myBaseERC721.connect(owner).safeMint(addr1.address);
+            await myBaseERC721.connect(owner).safeMint(addr1.address);
+
+            await salesContract.connect(addr1).creatSwapOffer([0], [1], 2137);
+
+            const swapStruct = await salesContract.tokenIdToSwapOffers(0);
+            console.log(swapStruct);
+
+            expect(swapStruct['offerMaker']).to.equal(addr1.address);
+            console.log(1);
+            expect(await salesContract.getOfferedTokensForSwap(0)).to.equal([BigInt(0)]);
+            console.log(1);
+            expect(await salesContract.getRequestedTokensForSwap(0)).to.equal([BigInt(1)]);
+            console.log(1);
+            expect(swapStruct['requestedEth']).to.equal(0);
         });
     });
 });
