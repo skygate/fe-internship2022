@@ -1,46 +1,53 @@
-# Getting Started with Create React App
+# How to run frontend?
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## First run
 
-## Available Scripts
+### Install all dependencies:
 
-In the project directory, you can run:
+`npm install`
 
-### `npm start`
+### Run Frontend on localhost:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+`npm run dev`
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Running with `nmp run dev` automatically refreshes app with new chenges in code. **REMEMBER to be inside ./frontend directory to run it.**
 
-### `npm test`
+## HardHat localhost node
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+To use contract on frontend you need to run HardHat node on localhost. To do this use comand: `npx hardhat node` or `hh node`.
 
-### `npm run build`
+Later run deploy script on loclahost network: `npx hardhat run scripts/deploy.js --network localhost`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+We also need to configure/modify localhost network on MetaMask.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+-   Network Name: `up to you`
+-   New RPC URL: `http://localhost:8545`
+-   Chain ID: `31337`
+-   Currency Symbol: `ETH`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+And import given accounts by HardHat node to MetaMask.
 
-### `npm run eject`
+## Why we run HardHat localhost node and deploy there contract?
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Doing this we dont need to deploy contract everytime on test network and change addrress of contract. First deployed contract on HardHat local node will have the same address `0x5fbdb2315678afecb367f032d93f642f64180aa3`.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# How to add things to frontend?
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Adding connection to contract
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+In `./frotend/src` is file `helpers.jsx`. You can find there fucntion `getContractComponents` that returns `[address, provider, signer, contract]` and you dont need to impement in yourself. In component just import it and call this function.
 
-## Learn More
+```js
+import { getContractComponents } from "../../helpers.jsx";
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const BurnToken = () => {
+    const burnToken = async () => {
+        const [address, provider, signer, contract] = getContractComponents();
+        // code to interact with contract
+    };
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    return <h1>BurnToken</h1>;
+};
+
+export default BurnToken;
+```
