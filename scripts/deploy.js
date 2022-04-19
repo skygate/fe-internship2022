@@ -38,7 +38,7 @@ async function main() {
     console.log("BaseERC721 address:", baseERC721.address);
 
     const SalesContract = await ethers.getContractFactory("Sales");
-    const salesContract = await BaseBidNFT.deploy(baseERC721.address);
+    const salesContract = await SalesContract.deploy(baseERC721.address);
     console.log("BaseBidNFT address:", salesContract.address);
 
     await baseERC721.setSalesContractAddress(salesContract.address);
