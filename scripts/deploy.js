@@ -37,11 +37,11 @@ async function main() {
     );
     console.log("BaseERC721 address:", baseERC721.address);
 
-    const BaseBidNFT = await ethers.getContractFactory("BaseBidNFT");
-    const baseBidNFT = await BaseBidNFT.deploy(baseERC721.address);
-    console.log("BaseBidNFT address:", baseBidNFT.address);
+    const SalesContract = await ethers.getContractFactory("Sales");
+    const salesContract = await SalesContract.deploy(baseERC721.address);
+    console.log("BaseBidNFT address:", salesContract.address);
 
-    await baseERC721.setBaseBidNFTAddress(baseBidNFT.address);
+    await baseERC721.setSalesContractAddress(salesContract.address);
     await mintNFT(baseERC721);
 }
 

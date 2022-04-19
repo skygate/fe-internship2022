@@ -29,8 +29,6 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     bytes32 public airdropMerkleRoot;
     bytes32 public artistMerkleRoot;
 
-    mapping(uint256 => uint256) public tokenIdToPriceOnSale;
-    mapping(uint256 => address) public tokenIdToOwnerAddressOnSale;
     mapping(address => BasicTicket) public addressToBasicTicket;
     mapping(address => bool) public addressToPremiumTicket;
     mapping(address => bool) public claimed;
@@ -53,22 +51,6 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         grantRole(MINTER_ROLE, msg.sender);
         grantRole(MINTER_ROLE, address(this));
         grantRole(ASSOCIATED_CONTRACT, address(this));
-    }
-
-    modifier isTokenOnSale(uint256 tokenId) {
-        require(
-            tokenIdToPriceOnSale[tokenId] > 0,
-            "Cant perform this action, token is not on sale!"
-        );
-        _;
-    }
-
-    modifier isOwnerOfToken(uint256 tokenId) {
-        require(
-            ownerOf(tokenId) == msg.sender || tokenIdToOwnerAddressOnSale[tokenId] == msg.sender,
-            "Cant perform this action, you must be owner of this token!"
-        );
-        _;
     }
 
     modifier isMintPossible() {
@@ -118,53 +100,13 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         address from,
         address to,
         uint256 tokenId
-    ) public {
+    ) public onlyRole(ASSOCIATED_CONTRACT) {
         _transfer(from, to, tokenId);
     }
 
-    function burn(uint256 tokenId) public isOwnerOfToken(tokenId) {
-        if (tokenIdToPriceOnSale[tokenId] > 0) {
-            cancelSale(tokenId);
-        }
+    function burn(uint256 tokenId) public {
+        require(ownerOf(tokenId)== msg.sender, "Cant perform this action, you must be owner of this token!");
         _burn(tokenId);
-    }
-
-    function startSale(uint256 tokenId, uint256 price) public isOwnerOfToken(tokenId) {
-        require(price > 0, "Can not sale for 0 ETH!");
-        tokenIdToPriceOnSale[tokenId] = price;
-        tokenIdToOwnerAddressOnSale[tokenId] = msg.sender;
-        safeTransferFrom(msg.sender, address(this), tokenId);
-    }
-
-    function cancelSale(uint256 tokenId) public isTokenOnSale(tokenId) isOwnerOfToken(tokenId) {
-        _transfer(address(this), msg.sender, tokenId);
-        delete tokenIdToPriceOnSale[tokenId];
-        delete tokenIdToOwnerAddressOnSale[tokenId];
-    }
-
-    function buyTokenOnSale(
-        uint256 tokenId,
-        address creatorArtist,
-        bytes32[] memory proof
-    ) external payable isTokenOnSale(tokenId) {
-        uint256 adminFee = calculateAdminFee(msg.sender, tokenIdToPriceOnSale[tokenId]);
-        uint256 royaltiesFee = calculateRoyaltiesFee(tokenIdToPriceOnSale[tokenId]);
-        require(isArtist(tokenId, creatorArtist, proof), "Invalid artist address!");
-        require(
-            tokenIdToPriceOnSale[tokenId] + adminFee + royaltiesFee <= msg.value,
-            "Pleas provide minimum price of this specific token!"
-        );
-        _transfer(address(this), msg.sender, tokenId);
-        (bool success, ) = payable(tokenIdToOwnerAddressOnSale[tokenId]).call{
-            value: tokenIdToPriceOnSale[tokenId]
-        }("");
-        require(success, "Failed to send Ether");
-        this.increaseAcumulativeValueOfTransactions(msg.sender, tokenIdToPriceOnSale[tokenId]);
-        adminFeeToWithdraw += adminFee;
-        (success, ) = payable(creatorArtist).call{value: royaltiesFee}("");
-        require(success, "Failed to send Ether");
-        delete tokenIdToPriceOnSale[tokenId];
-        delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
     function getLatestPrice() public view returns (int256) {
@@ -207,7 +149,7 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         mintPrice = newMintPrice;
     }
 
-    function setBaseBidNFTAddress(address _baseBidNFTAddress) public onlyRole(ADMIN_ROLE) {
+    function setSalesContractAddress(address _baseBidNFTAddress) public onlyRole(ADMIN_ROLE) {
         revokeRole(ASSOCIATED_CONTRACT, baseBidNFTAddress);
         baseBidNFTAddress = _baseBidNFTAddress;
         grantRole(ASSOCIATED_CONTRACT, _baseBidNFTAddress);
