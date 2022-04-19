@@ -701,13 +701,13 @@ describe("Test BaseBidNFT", async () => {
             const putOnSaleTx = await myBaseBidNFT.connect(addr1).startSale(tokenId, sellPrice);
             await putOnSaleTx.wait();
 
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[1]).to.equal(
                 sellPrice
             );
             expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(
                 myBaseBidNFT.address
             );
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[0]).to.equal(
                 addr1.address
             );
         });
@@ -724,9 +724,9 @@ describe("Test BaseBidNFT", async () => {
                 myBaseBidNFT.connect(addr2).startSale(tokenId, sellPrice)
             ).to.be.revertedWith("Cant perform this action, you must be owner of this token!");
 
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[1]).to.equal(0);
             expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
         });
@@ -742,9 +742,9 @@ describe("Test BaseBidNFT", async () => {
                 "Can not sale for 0 ETH!"
             );
 
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[1]).to.equal(0);
             expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
         });
@@ -766,10 +766,10 @@ describe("Test BaseBidNFT", async () => {
             await cancelTheSaleTX.wait();
 
             expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[1]).to.equal(0);
         });
 
         it("FAIL - not onwer of token", async () => {
@@ -787,13 +787,13 @@ describe("Test BaseBidNFT", async () => {
                 "Cant perform this action, you must be owner of this token!"
             );
 
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[1]).to.equal(
                 sellPrice
             );
             expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(
                 myBaseBidNFT.address
             );
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[0]).to.equal(
                 addr1.address
             );
         });
@@ -809,9 +809,9 @@ describe("Test BaseBidNFT", async () => {
                 "Cant perform this action, token is not on sale!"
             );
 
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToPriceOnSale(tokenId)).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[1]).to.equal(0);
             expect(await myBaseERC721.connect(addr1).ownerOf(tokenId)).to.equal(addr1.address);
-            expect(await myBaseBidNFT.connect(addr1).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr1).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
         });
@@ -847,8 +847,8 @@ describe("Test BaseBidNFT", async () => {
             const gasUsed = await getGasUsedForLastTx();
 
             expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
-            expect(await myBaseBidNFT.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
-            expect(await myBaseBidNFT.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr2).tokenIdToSale(tokenId))[1]).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr2).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
             expect(await addr1.getBalance()).to.equal(
@@ -898,8 +898,8 @@ describe("Test BaseBidNFT", async () => {
             gasUsed += await getGasUsedForLastTx();
 
             expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
-            expect(await myBaseBidNFT.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
-            expect(await myBaseBidNFT.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr2).tokenIdToSale(tokenId))[1]).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr2).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
             expect(await addr1.getBalance()).to.equal(
@@ -951,8 +951,8 @@ describe("Test BaseBidNFT", async () => {
             gasUsed += await getGasUsedForLastTx();
 
             expect(await myBaseERC721.connect(addr2).ownerOf(tokenId)).to.equal(addr2.address);
-            expect(await myBaseBidNFT.connect(addr2).tokenIdToPriceOnSale(tokenId)).to.equal(0);
-            expect(await myBaseBidNFT.connect(addr2).tokenIdToOwnerAddressOnSale(tokenId)).to.equal(
+            expect((await myBaseBidNFT.connect(addr2).tokenIdToSale(tokenId))[1]).to.equal(0);
+            expect((await myBaseBidNFT.connect(addr2).tokenIdToSale(tokenId))[0]).to.equal(
                 addrNull
             );
             expect(await addr1.getBalance()).to.equal(
@@ -1027,12 +1027,10 @@ describe("Test BaseBidNFT", async () => {
             const gasForRevertedTx = await getGasUsedForLastTx();
 
             expect(
-                await myBaseBidNFT.connect(myBaseBidNFT.address).tokenIdToPriceOnSale(tokenId)
+                (await myBaseBidNFT.connect(myBaseBidNFT.address).tokenIdToSale(tokenId))[1]
             ).to.equal(sellPrice);
             expect(
-                await myBaseBidNFT
-                    .connect(myBaseBidNFT.address)
-                    .tokenIdToOwnerAddressOnSale(tokenId)
+                (await myBaseBidNFT.connect(myBaseBidNFT.address).tokenIdToSale(tokenId))[0]
             ).to.equal(addr1.address);
             expect(await myBaseERC721.connect(myBaseBidNFT.address).ownerOf(tokenId)).to.equal(
                 myBaseBidNFT.address
@@ -1068,12 +1066,10 @@ describe("Test BaseBidNFT", async () => {
             const gasForRevertedTx = await getGasUsedForLastTx();
 
             expect(
-                await myBaseBidNFT.connect(myBaseBidNFT.address).tokenIdToPriceOnSale(tokenId)
+                (await myBaseBidNFT.connect(myBaseERC721.address).tokenIdToSale(tokenId))[1]
             ).to.equal(sellPrice);
             expect(
-                await myBaseBidNFT
-                    .connect(myBaseBidNFT.address)
-                    .tokenIdToOwnerAddressOnSale(tokenId)
+                (await myBaseBidNFT.connect(myBaseERC721.address).tokenIdToSale(tokenId))[0]
             ).to.equal(addr1.address);
             expect(await myBaseERC721.connect(myBaseBidNFT.address).ownerOf(tokenId)).to.equal(
                 myBaseBidNFT.address
