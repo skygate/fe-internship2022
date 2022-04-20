@@ -1,5 +1,5 @@
 import BaseERC721 from "./artifacts/contracts/BaseERC721.sol/BaseERC721.json";
-import BaseBidNFT from "./artifacts/contracts/BaseBidNFT.sol/BaseBidNFT.json";
+import Sales from "./artifacts/contracts/Sales.sol/Sales.json";
 import { ethers } from "ethers";
 import { MerkleTree } from "merkletreejs";
 
@@ -40,7 +40,7 @@ export const getBaseBidNFTContractComponents = (selectedProvider) => {
     const address = "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0";
     const provider = new ethers.providers.Web3Provider(selectedProvider);
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(address, BaseBidNFT.abi, signer);
+    const contract = new ethers.Contract(address, Sales.abi, signer);
 
     return [address, provider, signer, contract];
 };

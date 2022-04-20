@@ -255,11 +255,11 @@ contract Sales is Ownable {
         require(_wantedTokens.length > 0, "You cant make offer without requesting a NFT");
         require(
             checkIfTokensHasSameOwner(_offeredTokens, msg.sender),
-            "Tokens must have same owner"
+            "Offered tokens must have same owner"
         );
         require(
             checkIfTokensHasSameOwner(_wantedTokens, baseERC721.ownerOf(_wantedTokens[0])),
-            "Tokens must have same owner"
+            "Requested tokens must have same owner"
         );
 
         for (uint256 i = 0; i < _offeredTokens.length; i++) {
@@ -276,14 +276,14 @@ contract Sales is Ownable {
     }
 
     function acceptSwapOffer(uint256 offerId) public payable {
-        require(tokenIdToSwapOffers[offerId].offerEnd <= block.timestamp, "Offer is not active");
+        require(tokenIdToSwapOffers[offerId].offerEnd >= block.timestamp, "Offer is not active");
         require(
             checkIfTokensHasSameOwner(tokenIdToSwapOffers[offerId].requestedTokens, msg.sender),
             "You need to be owner of all requested NFT to accept this offer!"
         );
         require(
             tokenIdToSwapOffers[offerId].requestedEth <= msg.value,
-            "You dont have enough ETH to accept this offer!"
+            "You dont send enough ETH to accept this offer!"
         );
 
         address offerMaker = tokenIdToSwapOffers[offerId].offerMaker;
@@ -301,12 +301,16 @@ contract Sales is Ownable {
         }
 
         if (requestedEth > 0) {
-            (bool success, ) = payable(msg.sender).call{value: msg.value}("");
+            (bool success, ) = payable(offerMaker).call{value: msg.value}("");
             require(success, "Transfer failed.");
         }
     }
 
     function cancelSwapOffer(uint256 offerId) public {
+        require(
+            msg.sender == tokenIdToSwapOffers[offerId].offerMaker,
+            "You are not allowed to cancel this offer"
+        );
         uint256[] memory offeredTokens = tokenIdToSwapOffers[offerId].offeredTokens;
         delete tokenIdToSwapOffers[offerId];
 
@@ -332,9 +336,9 @@ contract Sales is Ownable {
 
     function getOfferedTokensForSwap(uint256 tokenId) public view returns (uint256[] memory) {
         return tokenIdToSwapOffers[tokenId].offeredTokens;
-    } 
+    }
 
-        function getRequestedTokensForSwap(uint256 tokenId) public view returns (uint256[] memory) {
+    function getRequestedTokensForSwap(uint256 tokenId) public view returns (uint256[] memory) {
         return tokenIdToSwapOffers[tokenId].requestedTokens;
-    } 
+    }
 }
