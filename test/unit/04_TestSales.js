@@ -11,7 +11,7 @@ const {
     hashToken,
 } = require("./../utils");
 
-describe("Test BaseBidNFT", async () => {
+describe("Test Sales", async () => {
     const DECIMALS = "18";
     const INITIAL_PRICE = "200000000000000000000";
     const addrNull = "0x0000000000000000000000000000000000000000";
@@ -1157,6 +1157,279 @@ describe("Test BaseBidNFT", async () => {
             expect(await ethers.provider.getBalance(creatorArtist)).to.be.equal(
                 BigInt(creatorArtistBalanceBefor)
             );
+        });
+    });
+
+    const swapParematers = [
+        { offeredTokenIndex: [0], wantedTokenIndex: [1], requestedEth: "0" },
+        { offeredTokenIndex: [0], wantedTokenIndex: [1], requestedEth: "1" },
+        { offeredTokenIndex: [0, 1], wantedTokenIndex: [2], requestedEth: "0" },
+        { offeredTokenIndex: [0, 1], wantedTokenIndex: [2], requestedEth: "3" },
+        { offeredTokenIndex: [0], wantedTokenIndex: [1, 2], requestedEth: "0" },
+        { offeredTokenIndex: [0], wantedTokenIndex: [1, 2], requestedEth: "5" },
+        { offeredTokenIndex: [0, 1], wantedTokenIndex: [2, 3], requestedEth: "0" },
+        { offeredTokenIndex: [0, 1], wantedTokenIndex: [2, 3], requestedEth: "7" },
+    ];
+    describe("TEST creatSwapOffer()", async () => {
+        swapParematers.forEach(({ offeredTokenIndex, wantedTokenIndex, requestedEth }) => {
+            it(`PASS - [${offeredTokenIndex}] NFT for [${wantedTokenIndex}] NFT and ${requestedEth} ETH`, async () => {
+                const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+                offeredTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr1.address);
+                });
+                wantedTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr2.address);
+                });
+                await salesContract
+                    .connect(addr1)
+                    .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth);
+                const swapStruct = await salesContract.tokenIdToSwapOffers(offeredTokenIndex[0]);
+                expect(swapStruct["offerMaker"]).to.equal(addr1.address);
+                expect(swapStruct["requestedEth"]).to.equal(parsedRequestedEth);
+                expect(
+                    (await salesContract.getOfferedTokensForSwap(offeredTokenIndex[0])).length
+                ).to.be.equal(offeredTokenIndex.length);
+                expect(
+                    (await salesContract.getRequestedTokensForSwap(offeredTokenIndex[0])).length
+                ).to.be.equal(wantedTokenIndex.length);
+                offeredTokenIndex.forEach(async (tokenId) => {
+                    expect(await myBaseERC721.ownerOf(tokenId)).to.be.equal(salesContract.address);
+                    expect(
+                        await salesContract.getOfferedTokensForSwap(offeredTokenIndex[0])
+                    ).to.contains([ethers.BigNumber.from(tokenId)]);
+                });
+                wantedTokenIndex.forEach(async (tokenId) => {
+                    expect(await myBaseERC721.ownerOf(tokenId)).to.be.equal(addr2.address);
+                    expect(
+                        await salesContract.getRequestedTokensForSwap(offeredTokenIndex[0])
+                    ).to.contains([ethers.BigNumber.from(tokenId)]);
+                });
+            });
+            it(`FAIL - Null NFT for [${wantedTokenIndex}] NFT and ${requestedEth} ETH`, async () => {
+                const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+                offeredTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr1.address);
+                });
+                wantedTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr2.address);
+                });
+                await expect(
+                    salesContract
+                        .connect(addr1)
+                        .creatSwapOffer([], wantedTokenIndex, parsedRequestedEth)
+                ).to.be.revertedWith("You must have at least one token to offer");
+            });
+            it(`FAIL - [${offeredTokenIndex}] NFT for Null NFT and ${requestedEth} ETH`, async () => {
+                const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+                offeredTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr1.address);
+                });
+                wantedTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr2.address);
+                });
+                await expect(
+                    salesContract
+                        .connect(addr1)
+                        .creatSwapOffer(offeredTokenIndex, [], parsedRequestedEth)
+                ).to.be.revertedWith("You cant make offer without requesting a NFT");
+            });
+            it(`FAIL - not owned tokens [${wantedTokenIndex}] NFT for [${wantedTokenIndex}] NFT and ${requestedEth} ETH`, async () => {
+                const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+                offeredTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr1.address);
+                });
+                wantedTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr2.address);
+                });
+                await expect(
+                    salesContract
+                        .connect(addr1)
+                        .creatSwapOffer(wantedTokenIndex, wantedTokenIndex, parsedRequestedEth)
+                ).to.be.revertedWith("Offered tokens must have same owner");
+            });
+            it(`FAIL - [${offeredTokenIndex}] NFT for different owner [${offeredTokenIndex}] NFT and ${requestedEth} ETH`, async () => {
+                const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+                offeredTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr1.address);
+                });
+                wantedTokenIndex.forEach(async () => {
+                    await myBaseERC721.connect(owner).safeMint(addr2.address);
+                });
+                await myBaseERC721.connect(owner).safeMint(addr3.address);
+                wantedTokenIndex.push(wantedTokenIndex.slice(-1)[0] + 1);
+                await expect(
+                    salesContract
+                        .connect(addr1)
+                        .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth)
+                ).to.be.revertedWith("Requested tokens must have same owner");
+            });
+        });
+
+        describe("TEST acceptSwapOffer()", async () => {
+            swapParematers.forEach(({ offeredTokenIndex, wantedTokenIndex, requestedEth }) => {
+                it("PASS", async () => {
+                    const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+
+                    offeredTokenIndex.forEach(async () => {
+                        await myBaseERC721.connect(owner).safeMint(addr1.address);
+                    });
+                    wantedTokenIndex.forEach(async () => {
+                        await myBaseERC721.connect(owner).safeMint(addr2.address);
+                    });
+
+                    await salesContract
+                        .connect(addr1)
+                        .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth);
+
+                    const addr1BalanceBefor = await addr1.getBalance();
+
+                    await salesContract
+                        .connect(addr2)
+                        .acceptSwapOffer(offeredTokenIndex[0], { value: parsedRequestedEth });
+
+                    offeredTokenIndex.forEach(async (tokenId) => {
+                        expect(await myBaseERC721.ownerOf(tokenId)).to.be.equal(addr2.address);
+                    });
+
+                    wantedTokenIndex.forEach(async (tokenId) => {
+                        expect(await myBaseERC721.ownerOf(tokenId)).to.be.equal(addr1.address);
+                    });
+
+                    expect(await addr1.getBalance()).to.be.equal(
+                        BigInt(addr1BalanceBefor) + BigInt(parsedRequestedEth)
+                    );
+
+                    const swapOffer = await salesContract.tokenIdToSwapOffers(offeredTokenIndex[0]);
+                    expect(swapOffer["offerMaker"]).to.be.equal(addrNull);
+                    expect(swapOffer["offerEnd"]).to.be.equal(BigInt(0));
+                });
+
+                it(`FAIL - not owner of all requested NFT`, async () => {
+                    const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+
+                    offeredTokenIndex.forEach(async () => {
+                        await myBaseERC721.connect(owner).safeMint(addr1.address);
+                    });
+                    wantedTokenIndex.forEach(async () => {
+                        await myBaseERC721.connect(owner).safeMint(addr2.address);
+                    });
+
+                    await salesContract
+                        .connect(addr1)
+                        .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth);
+
+                    await myBaseERC721
+                        .connect(addr2)
+                        .transferFrom(addr2.address, addr3.address, wantedTokenIndex[0]);
+
+                    await expect(
+                        salesContract.connect(addr2).acceptSwapOffer(offeredTokenIndex[0], {
+                            value: parsedRequestedEth,
+                        })
+                    ).to.be.revertedWith(
+                        "You need to be owner of all requested NFT to accept this offer!"
+                    );
+                });
+
+                it(`FAIL - swapOffer time is over`, async () => {
+                    const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+
+                    offeredTokenIndex.forEach(async () => {
+                        await myBaseERC721.connect(owner).safeMint(addr1.address);
+                    });
+                    wantedTokenIndex.forEach(async () => {
+                        await myBaseERC721.connect(owner).safeMint(addr2.address);
+                    });
+
+                    await salesContract
+                        .connect(addr1)
+                        .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth);
+
+                    skiptTime(259_201); // 3days in seconds
+
+                    await expect(
+                        salesContract.connect(addr2).acceptSwapOffer(offeredTokenIndex[0], {
+                            value: parsedRequestedEth,
+                        })
+                    ).to.be.revertedWith("Offer is not active");
+                });
+            });
+
+            const swapParametersNotEnougthETH = [
+                { offeredTokenIndex: [0], wantedTokenIndex: [1], requestedEth: "1" },
+                { offeredTokenIndex: [0, 1], wantedTokenIndex: [2], requestedEth: "3" },
+                { offeredTokenIndex: [0], wantedTokenIndex: [1, 2], requestedEth: "5" },
+                { offeredTokenIndex: [0, 1], wantedTokenIndex: [2, 3], requestedEth: "7" },
+            ];
+            swapParametersNotEnougthETH.forEach(
+                ({ offeredTokenIndex, wantedTokenIndex, requestedEth }) => {
+                    it(`FAIL - not enougth ETH send`, async () => {
+                        const parsedRequestedEth = ethers.utils.parseEther(requestedEth);
+                        const sendEth = ethers.utils.parseEther("0.1");
+
+                        offeredTokenIndex.forEach(async () => {
+                            await myBaseERC721.connect(owner).safeMint(addr1.address);
+                        });
+                        wantedTokenIndex.forEach(async () => {
+                            await myBaseERC721.connect(owner).safeMint(addr2.address);
+                        });
+
+                        await salesContract
+                            .connect(addr1)
+                            .creatSwapOffer(
+                                offeredTokenIndex,
+                                wantedTokenIndex,
+                                parsedRequestedEth
+                            );
+
+                        await expect(
+                            salesContract.connect(addr2).acceptSwapOffer(offeredTokenIndex[0], {
+                                value: sendEth,
+                            })
+                        ).to.be.revertedWith("You dont send enough ETH to accept this offer!");
+                    });
+                }
+            );
+        });
+
+        describe("TEST cancelSwapOffer()", async () => {
+            it("PASS", async () => {
+                const parsedRequestedEth = ethers.utils.parseEther("1");
+                const offeredTokenIndex = [0];
+                const wantedTokenIndex = [1];
+
+                await myBaseERC721.connect(owner).safeMint(addr1.address);
+                await myBaseERC721.connect(owner).safeMint(addr2.address);
+
+                await salesContract
+                    .connect(addr1)
+                    .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth);
+
+                await salesContract.connect(addr1).cancelSwapOffer(offeredTokenIndex[0]);
+
+                expect(await myBaseERC721.ownerOf(offeredTokenIndex[0])).to.be.equal(addr1.address);
+
+                const swapOffer = await salesContract.tokenIdToSwapOffers(offeredTokenIndex[0]);
+                expect(swapOffer["offerMaker"]).to.be.equal(addrNull);
+                expect(swapOffer["offerEnd"]).to.be.equal(BigInt(0));
+            });
+
+            it("FAIL", async () => {
+                const parsedRequestedEth = ethers.utils.parseEther("1");
+                const offeredTokenIndex = [0];
+                const wantedTokenIndex = [1];
+
+                await myBaseERC721.connect(owner).safeMint(addr1.address);
+                await myBaseERC721.connect(owner).safeMint(addr2.address);
+
+                await salesContract
+                    .connect(addr1)
+                    .creatSwapOffer(offeredTokenIndex, wantedTokenIndex, parsedRequestedEth);
+
+                await expect(
+                    salesContract.connect(addr2).cancelSwapOffer(offeredTokenIndex[0])
+                ).to.be.revertedWith("You are not allowed to cancel this offer");
+            });
         });
     });
 });

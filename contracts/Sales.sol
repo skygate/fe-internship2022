@@ -19,9 +19,17 @@ contract Sales is Ownable {
         TOKENSTATUS tokenStatus;
     }
 
-    struct Sale { 
+    struct Sale {
         address seller;
         uint256 price;
+    }
+
+    struct SwapOffer {
+        address offerMaker;
+        uint256[] offeredTokens;
+        uint256[] requestedTokens;
+        uint256 requestedEth;
+        uint256 offerEnd;
     }
 
     event Start(address owner, Auctions auction, uint256 tokenId);
@@ -33,6 +41,7 @@ contract Sales is Ownable {
     mapping(uint256 => mapping(address => uint256)) private userBalance;
     mapping(uint256 => Auctions) public auctions;
     mapping(uint256 => Sale) public tokenIdToSale;
+    mapping(uint256 => SwapOffer) public tokenIdToSwapOffers; // first tokenId of offered token
 
     BaseERC721 private baseERC721;
     uint256 public adminFeeToWithdraw;
@@ -41,7 +50,7 @@ contract Sales is Ownable {
         baseERC721 = BaseERC721(_baseERC721adders);
     }
 
-        modifier isTokenOnSale(uint256 tokenId) {
+    modifier isTokenOnSale(uint256 tokenId) {
         require(
             tokenIdToSale[tokenId].price > 0,
             "Cant perform this action, token is not on sale!"
@@ -51,7 +60,8 @@ contract Sales is Ownable {
 
     modifier isOwnerOfToken(uint256 tokenId) {
         require(
-            baseERC721.ownerOf(tokenId) == msg.sender || tokenIdToSale[tokenId].seller == msg.sender,
+            baseERC721.ownerOf(tokenId) == msg.sender ||
+                tokenIdToSale[tokenId].seller == msg.sender,
             "Cant perform this action, you must be owner of this token!"
         );
         _;
@@ -233,5 +243,102 @@ contract Sales is Ownable {
         require(success, "Failed to send Ether");
         delete tokenIdToSale[tokenId].price;
         delete tokenIdToSale[tokenId].seller;
+    }
+
+    // function allow user to create swap using tokens created in this contract and ETH
+    function creatSwapOffer(
+        uint256[] memory _offeredTokens,
+        uint256[] memory _wantedTokens,
+        uint256 _wantedEth
+    ) public {
+        require(_offeredTokens.length > 0, "You must have at least one token to offer");
+        require(_wantedTokens.length > 0, "You cant make offer without requesting a NFT");
+        require(
+            checkIfTokensHasSameOwner(_offeredTokens, msg.sender),
+            "Offered tokens must have same owner"
+        );
+        require(
+            checkIfTokensHasSameOwner(_wantedTokens, baseERC721.ownerOf(_wantedTokens[0])),
+            "Requested tokens must have same owner"
+        );
+
+        for (uint256 i = 0; i < _offeredTokens.length; i++) {
+            baseERC721.transfer(msg.sender, address(this), _offeredTokens[i]);
+        }
+
+        tokenIdToSwapOffers[_offeredTokens[0]] = SwapOffer(
+            msg.sender,
+            _offeredTokens,
+            _wantedTokens,
+            _wantedEth,
+            (block.timestamp + 3 days)
+        );
+    }
+
+    function acceptSwapOffer(uint256 offerId) public payable {
+        require(tokenIdToSwapOffers[offerId].offerEnd >= block.timestamp, "Offer is not active");
+        require(
+            checkIfTokensHasSameOwner(tokenIdToSwapOffers[offerId].requestedTokens, msg.sender),
+            "You need to be owner of all requested NFT to accept this offer!"
+        );
+        require(
+            tokenIdToSwapOffers[offerId].requestedEth <= msg.value,
+            "You dont send enough ETH to accept this offer!"
+        );
+
+        address offerMaker = tokenIdToSwapOffers[offerId].offerMaker;
+        uint256[] memory offeredTokens = tokenIdToSwapOffers[offerId].offeredTokens;
+        uint256[] memory requestedTokens = tokenIdToSwapOffers[offerId].requestedTokens;
+        uint256 requestedEth = tokenIdToSwapOffers[offerId].requestedEth;
+        delete tokenIdToSwapOffers[offerId];
+
+        for (uint256 i = 0; i < offeredTokens.length; i++) {
+            baseERC721.transfer(address(this), msg.sender, offeredTokens[i]);
+        }
+
+        for (uint256 i = 0; i < requestedTokens.length; i++) {
+            baseERC721.transfer(msg.sender, offerMaker, requestedTokens[i]);
+        }
+
+        if (requestedEth > 0) {
+            (bool success, ) = payable(offerMaker).call{value: msg.value}("");
+            require(success, "Transfer failed.");
+        }
+    }
+
+    function cancelSwapOffer(uint256 offerId) public {
+        require(
+            msg.sender == tokenIdToSwapOffers[offerId].offerMaker,
+            "You are not allowed to cancel this offer"
+        );
+        uint256[] memory offeredTokens = tokenIdToSwapOffers[offerId].offeredTokens;
+        delete tokenIdToSwapOffers[offerId];
+
+        for (uint256 i = 0; i < offeredTokens.length; i++) {
+            baseERC721.transfer(address(this), msg.sender, offeredTokens[i]);
+        }
+    }
+
+    function checkIfTokensHasSameOwner(uint256[] memory tokensArray, address tokensOwner)
+        internal
+        view
+        returns (bool)
+    {
+        for (uint256 i = 0; i < tokensArray.length; i++) {
+            if (baseERC721.ownerOf(tokensArray[i]) == tokensOwner) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function getOfferedTokensForSwap(uint256 tokenId) public view returns (uint256[] memory) {
+        return tokenIdToSwapOffers[tokenId].offeredTokens;
+    }
+
+    function getRequestedTokensForSwap(uint256 tokenId) public view returns (uint256[] memory) {
+        return tokenIdToSwapOffers[tokenId].requestedTokens;
     }
 }
