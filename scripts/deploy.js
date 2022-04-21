@@ -5,17 +5,14 @@ const { MerkleTree } = require("merkletreejs");
 const { keccak256 } = require("@ethersproject/keccak256");
 
 async function main() {
-    const DECIMALS = "18";
-    const INITIAL_PRICE = "200000000000000000000";
-
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);
     console.log("Account balance:", (await deployer.getBalance()).toString());
 
-    const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
-    myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
-    await myMockV3Aggregator.deployed();
-    console.log("MyMockV3Aggregator address:", myMockV3Aggregator.address);
+    const MockAggregator = await ethers.getContractFactory("MockAggregator");
+    const mockAggregator = await MockAggregator.deploy();
+    await mockAggregator.deployed();
+    console.log("MockAggregator address:", mockAggregator.address);
 
     const creatorArtist = "0xbcd4042de499d14e55001ccbb24a551f3b954096";
     let artistAddressPerTokenId = {};
@@ -32,7 +29,6 @@ async function main() {
     const baseERC721 = await BaseERC721.deploy(
         "My base ERC721",
         "Base ERC721",
-        myMockV3Aggregator.address,
         artistMerkleTree.getHexRoot()
     );
     console.log("BaseERC721 address:", baseERC721.address);

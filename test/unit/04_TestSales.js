@@ -12,8 +12,6 @@ const {
 } = require("./../utils");
 
 describe("Test Sales", async () => {
-    const DECIMALS = "18";
-    const INITIAL_PRICE = "200000000000000000000";
     const addrNull = "0x0000000000000000000000000000000000000000";
     const creatorArtist = "0xbcd4042de499d14e55001ccbb24a551f3b954096";
     const startingBid = 100;
@@ -40,10 +38,6 @@ describe("Test Sales", async () => {
     let tokenZeroProof;
 
     beforeEach(async () => {
-        const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
-        myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
-        await myMockV3Aggregator.deployed();
-
         let artistAddressPerTokenId = {};
         for (let i = 0; i < 10; i++) {
             artistAddressPerTokenId[i] = creatorArtist;
@@ -59,7 +53,6 @@ describe("Test Sales", async () => {
         myBaseERC721 = await BaseERC721.deploy(
             "My base ERC721",
             "Base ERC721",
-            myMockV3Aggregator.address,
             artistMerkleTree.getHexRoot()
         );
         await myBaseERC721.deployed();

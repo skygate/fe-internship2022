@@ -6,8 +6,6 @@ const { MerkleTree } = require("merkletreejs");
 describe("TEST BaseERC721", async () => {
     const addrNull = "0x0000000000000000000000000000000000000000";
     const creatorArtist = "0xbcd4042de499d14e55001ccbb24a551f3b954096";
-    const DECIMALS = "18";
-    const INITIAL_PRICE = "200000000000000000000";
     const baseURI = "ipfs://QmZxyuVa643bQSSgshdeZbixuiM3Fh8V9CRKCvuSnM9CsV/";
 
     const basicTicketPrice = ethers.utils.parseEther("0.1"); // value set in BaseERC721.js
@@ -16,6 +14,7 @@ describe("TEST BaseERC721", async () => {
 
     let myBaseERC721;
     let salesContract;
+    let mockAggregator;
     let owner;
     let addr1;
     let addr2;
@@ -25,9 +24,9 @@ describe("TEST BaseERC721", async () => {
     let tokenZeroProof;
 
     beforeEach(async () => {
-        const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
-        myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
-        await myMockV3Aggregator.deployed();
+        const MockAggregator = await ethers.getContractFactory("MockAggregator");
+        mockAggregator = await MockAggregator.deploy();
+        await mockAggregator.deployed();
 
         let artistAddressPerTokenId = {};
         for (let i = 0; i < 10; i++) {
@@ -44,7 +43,6 @@ describe("TEST BaseERC721", async () => {
         myBaseERC721 = await BaseERC721.deploy(
             "My base ERC721",
             "Base ERC721",
-            myMockV3Aggregator.address,
             artistMerkleTree.getHexRoot()
         );
         await myBaseERC721.deployed();
@@ -60,10 +58,8 @@ describe("TEST BaseERC721", async () => {
 
     describe("TEST V3Aggregator", async () => {
         it("PASS - getLatestPrice()", async () => {
-            let result = await myBaseERC721.getLatestPrice();
-            expect(new ethers.BigNumber.from(result._hex).toString())
-                .equals(INITIAL_PRICE)
-                .toString();
+            let result = await myBaseERC721.getLatestPrice(mockAggregator.address);
+            expect(ethers.BigNumber.from(result._hex)).to.be.equal(ethers.utils.parseEther("133.7"));
         });
     });
 

@@ -16,7 +16,6 @@ contract BaseERC721Upgradeable is
     UUPSUpgradeable
 {
     using CountersUpgradeable for CountersUpgradeable.Counter;
-    AggregatorV3Interface internal priceFeed;
     uint256 public transactionFee; // 1000 = 1%
 
     CountersUpgradeable.Counter private _tokenIdCounter;
@@ -25,13 +24,11 @@ contract BaseERC721Upgradeable is
 
     function initialize(
         string memory _name,
-        string memory _symbol,
-        address _priceFeedAddress
+        string memory _symbol       
     ) public initializer {
         __Ownable_init();
         __ERC721_init(_name, _symbol);
         __UUPSUpgradeable_init();
-        priceFeed = AggregatorV3Interface(_priceFeedAddress);
         transactionFee = 1000;
     }
 
@@ -112,8 +109,8 @@ contract BaseERC721Upgradeable is
         delete tokenIdToOwnerAddressOnSale[tokenId];
     }
 
-    function getLatestPrice() public view virtual returns (int256) {
-        (, int256 answer, , , ) = priceFeed.latestRoundData();
+    function getLatestPrice(address dataFeedProxy) public view returns (int256) {
+        (, int256 answer, , , ) = AggregatorV3Interface(dataFeedProxy).latestRoundData();
         return answer;
     }
 
