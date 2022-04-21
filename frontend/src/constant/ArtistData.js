@@ -1,4 +1,4 @@
-{
+export const ArtistData = {
   "0": "0xbcd4042de499d14e55001ccbb24a551f3b954096",
   "1": "0xbcd4042de499d14e55001ccbb24a551f3b954096",
   "2": "0xbcd4042de499d14e55001ccbb24a551f3b954096",
