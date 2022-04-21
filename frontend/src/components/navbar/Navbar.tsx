@@ -37,7 +37,9 @@ export const Navbar = () => {
             <Link to="/create" style={{ textDecoration: "none" }}>
                 <button className={style.btnCreate}>Create</button>
             </Link>
-            <button className={style.btnWallet}>Wallet</button>
+            <Link to="/signin">
+                <button className={style.btnWallet}>Wallet</button>
+            </Link>
         </header>
     );
 };

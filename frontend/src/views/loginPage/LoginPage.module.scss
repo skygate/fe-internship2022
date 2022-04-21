@@ -1,0 +1,68 @@
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+@import "../../theme/typography.scss";
+
+.connectionSection {
+    max-width: 1440px;
+    width: 100%;
+    padding: $spacer-128 $spacer-160;
+    margin: 0 auto;
+}
+
+.connectionHeader {
+    text-align: left;
+    font-size: $font-size-headline-2;
+    line-height: $line-height-headline-2;
+    font-weight: $font-weight-700;
+    font-family: $font-family-dm-sans;
+    color: $c-neutrals-2;
+    letter-spacing: $letter-spacing--02em;
+    padding: $spacer-32 0;
+    margin: $spacer-8 0;
+    border-bottom: 2px solid $c-neutrals-6;
+}
+
+.walletConnectionContainer {
+    padding-top: $spacer-64;
+    margin-top: $spacer-16;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.walletOptionsContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.connectionLink {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-600;
+    color: $c-neutrals-2;
+    line-height: $line-height-body-1-bold;
+}
+
+.connectionButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: $spacer-32 0;
+}
+
+.walletIcon {
+    margin-right: $spacer-32;
+    width: 64px;
+}
+
+.qrCodeWrapper {
+    max-width: 450px;
+    max-height: 520px;
+}
+
+.qrCodeImage {
+    object-fit: cover;
+}
