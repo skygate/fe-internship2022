@@ -104,7 +104,7 @@ contract Sales is Ownable {
     function createAuction(uint256 tokenId, uint256 _startingBid) public isOwnerOfToken(tokenId) {
         baseERC721.transfer(msg.sender, address(this), tokenId);
 
-        uint256 auctionendAt = block.timestamp + 5 seconds;
+        uint256 auctionendAt = block.timestamp + 4 minutes; 
 
         auctions[tokenId] = Auctions(
             msg.sender,
