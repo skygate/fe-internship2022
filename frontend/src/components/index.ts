@@ -12,3 +12,8 @@ export { CategoryButtons } from "./categoryButtons/CategoryButtons";
 export { SelectFilters } from "./selectFilters/SelectFilters";
 export { NFTProductCard } from "./nftProductCard/NFTProductCard";
 export { HotCollectionItem } from "./hotCollectionItem/HotCollectionItem";
+export { UploadFile } from "./uploadFile/UploadFile";
+export { ToggleInputs } from "./toggleInputs/ToggleInputs";
+export { WideTextInputs } from "./wideTextInputs/WideTextInputs";
+export { RowTextInputs } from "./rowTextInputs/RowTextInputs";
+export { RenderTextInput } from "./renderTextInput/RenderTextInput";

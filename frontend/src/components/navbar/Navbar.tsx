@@ -1,15 +1,18 @@
-import style from "../navbar/navbar.module.scss";
-import logo from "../../assets/logo.svg";
-import magnifierIcon from "../../assets/magnifier.svg";
+import { Link } from "react-router-dom";
+import style from "./navbar.module.scss";
+import logo from "assets/logo.svg";
+import magnifierIcon from "assets/magnifier.svg";
 
 export const Navbar = () => {
     return (
         <header>
-            <div className={style.logo}>
-                <img src={logo} alt="logo" />
-            </div>
+            <Link to="/">
+                <div className={style.logo}>
+                    <img src={logo} alt="logo" />
+                </div>
+            </Link>
             <div className={style.searchInput}>
-                <label htmlFor="search">
+                <label htmlFor="search" className={style.label}>
                     <img src={magnifierIcon} alt="Magnifier icon" />
                 </label>
                 <input
@@ -20,18 +23,20 @@ export const Navbar = () => {
             </div>
             <nav>
                 <ul>
-                    <li>
+                    <li className={style.navItem}>
                         <a href="/">Discover</a>
                     </li>
-                    <li>
+                    <li className={style.navItem}>
                         <a href="/">Activity</a>
                     </li>
-                    <li>
+                    <li className={style.navItem}>
                         <a href="/">Resources</a>
                     </li>
                 </ul>
             </nav>
-            <button className={style.btnCreate}>Create</button>
+            <Link to="/create" style={{ textDecoration: "none" }}>
+                <button className={style.btnCreate}>Create</button>
+            </Link>
             <button className={style.btnWallet}>Wallet</button>
         </header>
     );

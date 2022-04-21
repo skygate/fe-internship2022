@@ -1,0 +1,36 @@
+@import "../../../theme/lightThemeColors.scss";
+@import "../../../theme/spacers.scss";
+@import "../../../theme/typography.scss";
+
+.form {
+    margin-top: $spacer-48;
+    display: flex;
+    flex-direction: column;
+}
+
+.formHeader {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    line-height: $line-height-body-2-bold;
+    font-weight: $font-weight-500;
+    color: $c-neutrals-2;
+    text-align: left;
+    margin-bottom: $spacer-32;
+}
+
+.submitButton {
+    background-color: $c-primary-1;
+    color: $c-neutrals-8;
+    font-size: $font-size-button-1;
+    line-height: $line-height-button-1;
+    font-weight: $font-weight-700;
+    padding: $spacer-16 $spacer-24;
+    border-radius: 90px;
+    align-self: flex-start;
+    margin: 0;
+}
+
+.submitButton img {
+    width: 10px;
+    height: 6px;
+}

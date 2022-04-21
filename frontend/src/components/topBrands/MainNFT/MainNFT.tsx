@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./MainNFT.module.scss";
-import { ProfilePicture } from "../..";
-import profilePicture from "../../../assets/profilePicture.png";
-import GreenETHValue from "../../greenETHValue/GreenETHValue";
+import { ProfilePicture } from "components";
+import profilePicture from "assets/profilePicture.png";
+import GreenETHValue from "components/greenETHValue/GreenETHValue";
 
 export function MainNFT() {
     const unitsInStock = 4;

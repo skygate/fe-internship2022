@@ -1,7 +1,7 @@
 import styles from "./HotCollections.module.scss";
 import React from "react";
-import { ExampleNFTList } from "../../../constant/ExampleNFTList";
-import { HotCollectionItem } from "../../../components";
+import { ExampleNFTList } from "constant/ExampleNFTList";
+import { HotCollectionItem } from "components";
 
 export function HotCollections() {
     return (

@@ -1,8 +1,8 @@
 import React from "react";
 import { FC } from "react";
-import { ProfilePicture } from "../..";
+import { ProfilePicture } from "components";
 import styles from "./CreatorsListItem.module.scss";
-import { NFTItem } from "../../types";
+import { NFTItem } from "components/types";
 
 interface Creator {
     nft: NFTItem;

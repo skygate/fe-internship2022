@@ -1,11 +1,11 @@
 import React from "react";
-import homeImage from "../../../assets/homeImage.png";
-import arrowLeft from "../../../assets/arrowLeft.svg";
-import arrowRight from "../../../assets/arrowRight.svg";
+import homeImage from "assets/homeImage.png";
+import arrowLeft from "assets/arrowLeft.svg";
+import arrowRight from "assets/arrowRight.svg";
 import style from "./creatorNetwork.module.scss";
-import profilePicture from "../../../assets/profilePicture.png";
-import exampleImage from "../../../assets/exampleImage.png";
-import { ProfileHorizontal } from "../../../components";
+import profilePicture from "assets/profilePicture.png";
+import exampleImage from "assets/exampleImage.png";
+import { ProfileHorizontal } from "components";
 
 export const CreatorNetwork = () => {
     return (

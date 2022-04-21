@@ -5,7 +5,7 @@ export interface NFT {
 }
 
 export interface NFTItem {
-    authorName: string;
-    profilePic: string;
+    authorName?: string;
+    profilePic?: string;
     NFTS: NFT[];
 }

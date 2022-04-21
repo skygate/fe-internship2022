@@ -1,0 +1,60 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.uploadContainer {
+    max-width: 640px;
+    margin-bottom: $spacer-48;
+}
+
+.title {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2-bold;
+    color: $c-neutrals-2;
+    text-align: left;
+}
+
+.info {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    font-weight: $font-weight-400;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
+    text-align: left;
+}
+
+.dropArea {
+    width: 640px;
+    height: 180px;
+    background-color: $c-neutrals-7;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin-top: $spacer-16;
+    cursor: pointer;
+}
+
+.fileInput {
+    display: none;
+}
+
+.dropArea img {
+    margin-bottom: 10px;
+}
+
+.dropArea p {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    font-weight: $font-weight-400;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
+}
+
+.active {
+    border: 2px solid green;
+}

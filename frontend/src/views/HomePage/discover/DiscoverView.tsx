@@ -1,8 +1,8 @@
 import React from "react";
-import { CategoryButtons } from "../../../components";
-import { SelectFilters } from "../../../components";
-import { NFTProductCard } from "../../../components";
-import { ExampleNFTList } from "../../../constant/ExampleNFTList";
+import { CategoryButtons } from "components";
+import { SelectFilters } from "components";
+import { NFTProductCard } from "components";
+import { ExampleNFTList } from "constant/ExampleNFTList";
 import style from "./discover.module.scss";
 
 interface DiscoverProps {

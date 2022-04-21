@@ -1,8 +1,8 @@
 import style from "./popular.module.scss";
-import arrowLeft from "../../assets/arrowLeft.svg";
-import arrowRight from "../../assets/arrowRight.svg";
-import { PopularItem } from "../";
-import profilePicture from "../../assets/profilePicture.png";
+import arrowLeft from "assets/arrowLeft.svg";
+import arrowRight from "assets/arrowRight.svg";
+import { PopularItem } from "components";
+import profilePicture from "assets/profilePicture.png";
 
 export const Popular = () => {
     return (

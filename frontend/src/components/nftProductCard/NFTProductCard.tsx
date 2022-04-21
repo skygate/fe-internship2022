@@ -3,7 +3,7 @@ import { NFTItem } from "../types";
 import { FC } from "react";
 import styles from "./NFTProductCard.module.scss";
 import { ProfilePicture } from "..";
-import { GreenETHValue } from "../greenETHValue/GreenETHValue";
+import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
 import Heart from "../../assets/Heart.svg";
 
 interface NFT {

@@ -1,0 +1,41 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: $spacer-48;
+}
+
+.label {
+    font-family: $font-family-poppins;
+    font-size: $font-size-hairline-2;
+    line-height: $line-height-hairline-2;
+    font-weight: $font-weight-700;
+    color: $c-neutrals-5;
+    text-align: left;
+    margin-bottom: $spacer-4;
+}
+
+.selectContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.select {
+    padding: $spacer-8;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 12px;
+    background-color: $c-neutrals-8;
+    margin-bottom: $spacer-20;
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-bold;
+    line-height: $line-height-caption-bold;
+    font-weight: $font-weight-500;
+    color: $c-neutrals-3;
+    text-align: left;
+    width: 190px;
+    height: 44px;
+}

@@ -1,9 +1,9 @@
 import React from "react";
-import { NFTProductCard } from "../../../components";
-import { ExampleNFTList } from "../../../constant/ExampleNFTList";
+import { NFTProductCard } from "components";
+import { ExampleNFTList } from "constant/ExampleNFTList";
 import styles from "./HotBid.module.scss";
-import arrowLeft from "../../../assets/arrowLeft.svg";
-import arrowRight from "../../../assets/arrowRight.svg";
+import arrowLeft from "assets/arrowLeft.svg";
+import arrowRight from "assets/arrowRight.svg";
 
 export function HotBid() {
     return (

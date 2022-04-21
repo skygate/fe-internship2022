@@ -1,39 +1,38 @@
-@import '../../theme/lightThemeColors.scss';
-@import '../../theme/spacers.scss';
-@import '../../theme/typography.scss';
-
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
 
 section.banner {
-  background-color: $c-neutrals-8;
-  padding-top: 8rem;
+    background-color: $c-neutrals-8;
+    padding-top: 8rem;
 }
 
 section.banner p {
-  font-family: $font-family-poppins;
-  font-size: $font-size-hairline-2;
-  line-height: $line-height-hairline-2;
-  font-weight: $font-weight-700;
-  color: $c-neutrals-4;
+    font-family: $font-family-poppins;
+    font-size: $font-size-hairline-2;
+    line-height: $line-height-hairline-2;
+    font-weight: $font-weight-700;
+    color: $c-neutrals-4;
 }
 
 section.banner h2 {
-  font-size: $font-size-headline-3;
-  color: $c-neutrals-2;
-  line-height: $line-height-headline-3;
-  margin: $spacer-8 0 $spacer-24 0;
+    font-size: $font-size-headline-3;
+    color: $c-neutrals-2;
+    line-height: $line-height-headline-3;
+    margin: $spacer-8 0 $spacer-24 0;
 }
 
 section.banner button {
-  font-size: $font-size-button-1;
-  line-height: $line-height-button-1;
-  font-weight: $font-weight-700;
-  color: $c-neutrals-2;
-  padding: $spacer-12 $spacer-20;
-  border-radius: 30px;
-  border: 2px solid $c-neutrals-6;
-  background-color: $c-neutrals-8;
+    font-size: $font-size-button-1;
+    line-height: $line-height-button-1;
+    font-weight: $font-weight-700;
+    color: $c-neutrals-2;
+    padding: $spacer-12 $spacer-20;
+    border-radius: 30px;
+    border: 2px solid $c-neutrals-6;
+    background-color: $c-neutrals-8;
 }
 
 section.banner button:hover {
-  cursor: pointer;
+    cursor: pointer;
 }

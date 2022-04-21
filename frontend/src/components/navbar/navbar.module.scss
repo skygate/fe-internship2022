@@ -1,6 +1,6 @@
-@import "../../theme/lightThemeColors.scss";
-@import "../../theme/spacers.scss";
-@import "../../theme/typography.scss";
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
 
 header {
     position: fixed;
@@ -15,27 +15,27 @@ header {
     z-index: 2;
 }
 
-div.logo {
+.logo {
     display: flex;
     flex-direction: row;
     padding-right: $spacer-32;
 }
 
-div.logo:hover {
+.logo:hover {
     cursor: pointer;
 }
 
-div.logo img {
+.logo img {
     height: 32px;
     padding-right: $spacer-8;
 }
 
-div.searchInput {
+.searchInput {
     position: relative;
     padding-right: $spacer-24;
 }
 
-div.searchInput label {
+.label {
     position: absolute;
     transform: translateY(-50%);
     top: 50%;
@@ -43,11 +43,11 @@ div.searchInput label {
     height: 15px;
 }
 
-label svg {
+.label svg {
     height: 15px;
 }
 
-div.searchInput input {
+.searchInput input {
     width: 427px;
     padding: $spacer-12 $spacer-12 $spacer-12 $spacer-48;
     background-color: $c-neutrals-7;
@@ -55,7 +55,7 @@ div.searchInput input {
     border: none;
 }
 
-div.searchInput input:focus {
+.searchInput input:focus {
     outline: none;
 }
 
@@ -73,29 +73,29 @@ nav ul {
     align-items: center;
 }
 
-nav ul li {
+.navItem {
     line-height: $line-height-button-2;
 }
 
-li a {
+.navItem a {
     text-decoration: none;
     color: $c-neutrals-4;
 }
 
-li:nth-child(1) {
+.navItem:nth-child(1) {
     padding-right: $spacer-20;
 }
 
-li:nth-child(2) {
+.navItem:nth-child(2) {
     padding-right: $spacer-20;
 }
 
-li:nth-child(3) {
+.navItem:nth-child(3) {
     padding: 0 0 0 $spacer-20;
     border-left: 2px solid $c-neutrals-6;
 }
 
-button.btnCreate {
+.btnCreate {
     padding: $spacer-12 $spacer-16;
     margin: 0 $spacer-8 0 $spacer-24;
     background-color: $c-primary-3;
@@ -106,7 +106,7 @@ button.btnCreate {
     font-weight: $font-weight-700;
 }
 
-button.btnWallet {
+.btnWallet {
     background-color: $c-neutrals-8;
     border: 2px solid $c-neutrals-6;
     border-radius: 90px;
@@ -115,7 +115,7 @@ button.btnWallet {
     font-size: $font-size-button-2;
 }
 
-button.btnCreate:hover,
-button.btnWallet:hover {
+.btnCreate:hover,
+.btnWallet:hover {
     cursor: pointer;
 }

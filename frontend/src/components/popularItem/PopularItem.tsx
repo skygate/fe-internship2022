@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import style from "./popularItem.module.scss";
-import icon from "../../assets/icon.svg";
-import iconPlus from "../../assets/plusIcon.svg";
-import arrow from "../../assets/arrow45deg.svg";
-import { ProfilePicture } from "../";
+import icon from "assets/icon.svg";
+import iconPlus from "assets/plusIcon.svg";
+import arrow from "assets/arrow45deg.svg";
+import { ProfilePicture } from "components";
 
 interface PopularItemProps {
     imageUrl: string;
