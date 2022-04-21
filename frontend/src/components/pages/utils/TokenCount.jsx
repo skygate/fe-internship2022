@@ -5,7 +5,7 @@ import { ButtonElement } from "../../atoms/button";
 const TokenCount = (props) => {
     const getTokenCount = async () => {
         if (props.activeAccountProps) {
-            await suggestDefaultNetworks(props.activeProviderGlobalProps);
+            // await suggestDefaultNetworks(props.activeProviderGlobalProps);
             const [, , , contract] = getBaseERC721ContractComponents(
                 props.activeProviderGlobalProps
             );
@@ -17,7 +17,7 @@ const TokenCount = (props) => {
                 })
                 .catch((error) => {
                     // console.log(error.message);
-                    console.log(error.data.message);
+                    console.log(error);
                 });
         } else {
             console.log(">>> Please login to perform this action!");

@@ -18,6 +18,7 @@ import WithdrawFromAuction from "./components/pages/bidNFT/WithdrawFromAuction";
 import TokenCount from "./components/pages/utils/TokenCount.jsx";
 import TokenOwner from "./components/pages/utils/TokenOwner.jsx";
 import TokenPriceOnSale from "./components/pages/utils/TokenPriceOnSale.jsx";
+import PriceFeeds from "./components/pages/utils/PriceFeeds.jsx";
 import JoinAirdrop from "./components/pages/airdrop/JoinAirdrop";
 import SetMerkleRoot from "./components/pages/airdrop/SetMerkleRoot";
 import ClaimAirdrop from "./components/pages/airdrop/ClaimAirdrop";
@@ -156,6 +157,10 @@ const App = () => {
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                             />
                                             <TokenPriceOnSale
+                                                activeAccountProps={activeAccount}
+                                                activeProviderGlobalProps={selectedProviderGlobal}
+                                            />
+                                            <PriceFeeds
                                                 activeAccountProps={activeAccount}
                                                 activeProviderGlobalProps={selectedProviderGlobal}
                                             />
