@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     using Counters for Counters.Counter;
     Counters.Counter private tokenIdCounter;
-    AggregatorV3Interface internal priceFeed;
     address baseBidNFTAddress;
 
     uint256 public adminFeeToWithdraw;
@@ -41,10 +40,8 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
     constructor(
         string memory _name,
         string memory _symbol,
-        address _priceFeedAddress,
         bytes32 _artistMerkleRoot
     ) ERC721(_name, _symbol) {
-        priceFeed = AggregatorV3Interface(_priceFeedAddress);
         artistMerkleRoot = _artistMerkleRoot;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         grantRole(ADMIN_ROLE, msg.sender);
@@ -112,8 +109,8 @@ contract BaseERC721 is ERC721, ERC721Holder, AccessControl {
         _burn(tokenId);
     }
 
-    function getLatestPrice() public view returns (int256) {
-        (, int256 answer, , , ) = priceFeed.latestRoundData();
+    function getLatestPrice(address dataFeedProxy) public view returns (int256) {
+        (, int256 answer, , , ) = AggregatorV3Interface(dataFeedProxy).latestRoundData();
         return answer;
     }
 

@@ -2,9 +2,6 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Test BaseERC721Upgradeable", async () => {
-    const DECIMALS = "18";
-    const INITIAL_PRICE = "200000000000000000000";
-
     let baseERC721Upgradeable;
     let owner;
     let addr1;
@@ -12,14 +9,10 @@ describe("Test BaseERC721Upgradeable", async () => {
     let addrs;
 
     beforeEach(async () => {
-        const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
-        myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
-        await myMockV3Aggregator.deployed();
-
         const BaseERC721Upgradeable = await ethers.getContractFactory("BaseERC721Upgradeable");
         baseERC721Upgradeable = await upgrades.deployProxy(
             BaseERC721Upgradeable,
-            ["My base ERC721Upgradeable", "Base ERC721Upgradeable", myMockV3Aggregator.address],
+            ["My base ERC721Upgradeable", "Base ERC721Upgradeable"],
             { kind: "uups" }
         );
         [owner, addr1, addr2, ...addrs] = await ethers.getSigners();

@@ -1,0 +1,17 @@
+// https://docs.chain.link/docs/ethereum-addresses/#Rinkeby%20Testnet
+// RINKEBY testnet
+export const PriceFeedProxy = {
+    "ETH/USD": "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
+    "BTC/USD": "0xECe365B379E1dD183B20fc5f022230C044d51404",
+    "LINK/USD": "0xd8bD0a1cB028a31AA859A21A3758685a95dE4623",
+    "DAI/USD": "0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF",
+    "BNB/USD": "0xcf0f51ca2cDAecb464eeE4227f5295F2384F84ED",
+};
+
+export const PriceFeedProxyLocalHost = {
+    "ETH/USD": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "BTC/USD": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "LINK/USD": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "DAI/USD": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "BNB/USD": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+};

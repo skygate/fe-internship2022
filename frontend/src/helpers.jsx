@@ -2,6 +2,7 @@ import BaseERC721 from "./artifacts/contracts/BaseERC721.sol/BaseERC721.json";
 import Sales from "./artifacts/contracts/Sales.sol/Sales.json";
 import { ethers } from "ethers";
 import { MerkleTree } from "merkletreejs";
+import { ArtistData } from "./constant/index";
 
 // https://github.com/BlockTheChainz/airdrop-merkle/blob/main/index.html
 const hexStringToUint8Array = (hexString) => {
@@ -211,14 +212,13 @@ export const signTypedDataSetMerkleRoot = async (
 };
 
 export const getArtistAddress = async (tokenID) => {
-    const data = require("./artistData.json");
-    return data[tokenID];
+    console.log(ArtistData[tokenID]);
+    return ArtistData[tokenID];
 };
 
 export const getArtistAddressProof = async (tokenId, creatorAddress) => {
-    const data = require("./artistData.json");
     const artistMerkleTree = new MerkleTree(
-        Object.entries(data).map((token) => hashToken(...token)),
+        Object.entries(ArtistData).map((token) => hashToken(...token)),
         ethers.utils.keccak256,
         { sortPairs: true }
     );

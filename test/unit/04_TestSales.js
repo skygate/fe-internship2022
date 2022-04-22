@@ -12,8 +12,6 @@ const {
 } = require("./../utils");
 
 describe("Test Sales", async () => {
-    const DECIMALS = "18";
-    const INITIAL_PRICE = "200000000000000000000";
     const addrNull = "0x0000000000000000000000000000000000000000";
     const creatorArtist = "0xbcd4042de499d14e55001ccbb24a551f3b954096";
     const startingBid = 100;
@@ -40,10 +38,6 @@ describe("Test Sales", async () => {
     let tokenZeroProof;
 
     beforeEach(async () => {
-        const MyMockV3Aggregator = await ethers.getContractFactory("MyMockV3Aggregator");
-        myMockV3Aggregator = await MyMockV3Aggregator.deploy(DECIMALS, INITIAL_PRICE);
-        await myMockV3Aggregator.deployed();
-
         let artistAddressPerTokenId = {};
         for (let i = 0; i < 10; i++) {
             artistAddressPerTokenId[i] = creatorArtist;
@@ -59,7 +53,6 @@ describe("Test Sales", async () => {
         myBaseERC721 = await BaseERC721.deploy(
             "My base ERC721",
             "Base ERC721",
-            myMockV3Aggregator.address,
             artistMerkleTree.getHexRoot()
         );
         await myBaseERC721.deployed();
@@ -94,7 +87,7 @@ describe("Test Sales", async () => {
             expect(eventCreateAuctionTx.auction[1]).to.equal(addrNull);
             expect(eventCreateAuctionTx.auction[2]).to.equal(0);
             expect(eventCreateAuctionTx.auction[3]).to.equal(startingBid);
-            expect(eventCreateAuctionTx.auction[4]).to.equal(timestampBefore + 6);
+            expect(eventCreateAuctionTx.auction[4]).to.equal(timestampBefore + 241);
             expect(eventCreateAuctionTx.auction[5]).to.equal(0);
             expect(eventCreateAuctionTx.tokenId).to.equal(0);
         });
@@ -111,7 +104,7 @@ describe("Test Sales", async () => {
                 .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
                     value: bid1AmountWithFee,
                 });
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             const eventBidTx = await getEventLastTx(await bidTx.wait(), "Bid");
 
@@ -132,7 +125,7 @@ describe("Test Sales", async () => {
                 .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
                     value: bid1AmountWithFee,
                 });
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             const endTx = await salesContract.connect(owner).endAuction(tokenId);
             const eventEndTx = await getEventLastTx(await endTx.wait(), "End");
@@ -161,7 +154,7 @@ describe("Test Sales", async () => {
                     value: bid2AmountWithFee,
                 });
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             const withdrawTx = await salesContract.connect(addr1).withdraw(tokenId);
             const eventwithdrawTx = await getEventLastTx(await withdrawTx.wait(), "Withdraw");
@@ -201,6 +194,7 @@ describe("Test Sales", async () => {
     });
 
     describe("TEST createAuction()", async () => {
+        //Test is unfinished: https://sky-gate.atlassian.net/browse/NMI-43
         it("PASS", async () => {
             await myBaseERC721.connect(owner).safeMint(owner.address);
 
@@ -213,10 +207,6 @@ describe("Test Sales", async () => {
                 .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
                     value: bid1AmountWithFee,
                 });
-            await skiptTime(6);
-
-            await salesContract.connect(owner).endAuction(tokenId);
-            await salesContract.connect(owner).withdraw(tokenId);
         });
     });
 
@@ -284,7 +274,7 @@ describe("Test Sales", async () => {
             expect(balance).to.equal(1);
 
             await salesContract.connect(owner).createAuction(tokenId, startingBid);
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await salesContract.connect(owner).endAuction(tokenId);
             await expect(
@@ -368,7 +358,7 @@ describe("Test Sales", async () => {
             balance = await myBaseERC721.connect(owner).balanceOf(owner.address);
             expect(balance).to.equal(0);
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await salesContract.connect(owner).endAuction(tokenId);
             agregateOwnerGas += await getGasUsedForLastTx();
@@ -386,7 +376,7 @@ describe("Test Sales", async () => {
             balance = await myBaseERC721.connect(addr2).balanceOf(addr2.address);
             expect(balance).to.equal(1);
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await expect(salesContract.connect(addr2).endAuction(tokenId)).to.be.revertedWith(
                 "You cannot end an auction that has not started"
@@ -425,7 +415,7 @@ describe("Test Sales", async () => {
                 .bidAuction(tokenId, bid1Amount, creatorArtist, tokenZeroProof, {
                     value: bid1AmountWithFee,
                 });
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await salesContract.connect(addr2).endAuction(tokenId);
             await expect(salesContract.connect(addr2).endAuction(tokenId)).to.be.revertedWith(
@@ -469,7 +459,7 @@ describe("Test Sales", async () => {
                     value: bid1AmountWithFee,
                 });
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await expect(salesContract.connect(owner).cancelAuction(tokenId)).to.be.revertedWith(
                 "The bidding period is over"
@@ -506,7 +496,7 @@ describe("Test Sales", async () => {
                 });
             agregateAddr3Gas += await getGasUsedForLastTx();
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await salesContract.connect(addr1).endAuction(tokenId);
             agregateAddr1Gas += await getGasUsedForLastTx();
@@ -647,7 +637,7 @@ describe("Test Sales", async () => {
                     value: bid1AmountWithFee,
                 });
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await salesContract.connect(addr1).endAuction(tokenId);
 
@@ -675,7 +665,7 @@ describe("Test Sales", async () => {
                     value: bid1AmountWithFee,
                 });
 
-            await skiptTime(5);
+            await skiptTime(241); // 4minutes 1 second
 
             await salesContract.connect(addr1).endAuction(tokenId);
 
