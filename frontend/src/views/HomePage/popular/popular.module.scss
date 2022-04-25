@@ -1,0 +1,116 @@
+@import "../../../theme/spacers.scss";
+@import "../../../theme/typography.scss";
+@import "../../../theme/lightThemeColors.scss";
+
+.popular {
+    background-color: $c-neutrals-7;
+    padding: $spacer-128 0;
+    max-height: 609px;
+    width: 100vw;
+}
+
+.container {
+    width: 1120px;
+    margin: auto;
+}
+
+.categoriesAndFilters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacer-64;
+}
+
+.leftSide {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    color: $c-neutrals-4;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-600;
+    font-size: $font-size-body-1-bold;
+    line-height: $line-height-body-1-bold;
+    text-align: left;
+}
+
+.categorySelect {
+    color: $c-neutrals-2;
+    background-color: $c-neutrals-7;
+    font-weight: $font-weight-700;
+    font-size: $font-size-headline-3;
+    line-height: $line-height-headline-3;
+    letter-spacing: $letter-spacing--01em;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    background-image: url("../../../assets/arrowDown.svg");
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 50%;
+}
+
+.categorySelect option {
+    font-size: $font-size-body-2;
+    background-color: $c-neutrals-7;
+}
+
+.filterSelect {
+    color: $c-neutrals-2;
+    background-color: $c-neutrals-8;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-500;
+    font-size: $font-size-caption-bold;
+    line-height: $line-height-caption-bold;
+    width: 256px;
+    padding: $spacer-8 $spacer-8 $spacer-8 $spacer-16;
+    border: 2px solid $c-neutrals-6;
+    outline: none;
+    border-radius: 12px;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    background-image: url("../../../assets/arrowDown2.svg");
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: 50%;
+}
+
+.popularItems {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 32px;
+    position: relative;
+}
+
+.items {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.swipeLeft,
+.swipeRight {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    max-height: 209px;
+    left: -5%;
+}
+
+.swipeRight {
+    left: auto;
+    right: -5%;
+}
+
+.swipeLeft:hover,
+.swipeRight:hover {
+    cursor: pointer;
+}

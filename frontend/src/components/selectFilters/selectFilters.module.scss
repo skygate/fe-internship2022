@@ -1,0 +1,29 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.selectFilter {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 255px;
+}
+
+label {
+    font-size: $font-size-hairline-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-hairline-2;
+    color: $c-neutrals-5;
+    padding-bottom: $spacer-8;
+}
+
+select {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-2;
+    padding: $spacer-8 0 $spacer-8 $spacer-8;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 10px;
+}

@@ -1,0 +1,180 @@
+@import "theme/typography.scss";
+@import "theme/spacers.scss";
+@import "theme/lightThemeColors.scss";
+
+.productCardContainer {
+    display: flex;
+    flex-direction: column;
+    padding: $spacer-12 0;
+}
+
+.nftImageWrapper {
+    width: 256px;
+    height: 303px;
+    position: relative;
+}
+
+.nftImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.nftImageWrapper:hover,
+.nftImageWrapper:focus {
+    .imageHoverSection {
+        display: block;
+    }
+}
+
+.imageHoverSection {
+    display: none;
+    background-color: rgba(14, 15, 18, 0.6);
+    position: absolute;
+    top: 0;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+}
+
+.placeBidContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: $spacer-4;
+}
+
+.placeBidButton {
+    background-color: $c-primary-1;
+    border-radius: 32px;
+    border: none;
+    padding: $spacer-12 $spacer-16;
+    font-weight: $font-weight-700;
+    font-family: $font-family-dm-sans;
+    font-size: $font-size-button-2;
+    line-height: $line-height-button-2;
+    color: $c-neutrals-8;
+}
+
+.imageHoverContainer {
+    display: flex;
+    flex-direction: column;
+    object-fit: cover;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding: $spacer-8 $spacer-8;
+}
+
+.purchasingAndIcon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.iconContainer {
+    display: flex;
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: $c-neutrals-8;
+    border-radius: 50%;
+    padding: 4px;
+}
+
+.heartIcon {
+    width: 18.33px;
+    height: 14.83px;
+}
+
+.purchasing {
+    color: $c-neutrals-8;
+    font-family: $font-family-poppins;
+    font-size: $font-size-hairline-2;
+    line-height: $line-height-hairline-2;
+    font-weight: $font-weight-700;
+    padding: $spacer-8;
+    background-color: $c-primary-4;
+    opacity: 100%;
+    border-radius: 2px;
+}
+
+.titleAndPrice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacer-12 0;
+}
+
+.avatarsAndUnits {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: $spacer-12;
+    border-bottom: 1px solid $c-neutrals-6;
+}
+
+.unitsInStock {
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-500;
+    font-size: $font-size-caption-bold;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-3;
+}
+
+.nftTitle {
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-500;
+    font-size: $font-size-body-2-bold;
+    line-height: $line-height-body-2-bold;
+}
+
+.avatars {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar {
+    width: 26px;
+    display: inline-block;
+}
+
+.avatar img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid $c-neutrals-8;
+}
+
+.avatar:not(:first-child) {
+    margin-left: -8px;
+}
+
+.bidSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $spacer-12;
+}
+
+.newBid,
+.highestBid {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    font-weight: $font-weight-400;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
+}
+
+.highestBidValue {
+    font-weight: $font-weight-600;
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2-bold;
+    line-height: $line-height-caption-2-bold;
+    color: $c-neutrals-3;
+}

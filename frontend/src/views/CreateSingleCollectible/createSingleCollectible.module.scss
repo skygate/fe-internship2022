@@ -1,0 +1,24 @@
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+@import "../../theme/typography.scss";
+
+.section {
+    width: 100vw;
+}
+
+.sectionContainer {
+    width: 1120px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.h2 {
+    font-size: $font-size-headline-2;
+    line-height: $font-size-headline-2;
+    font-weight: $font-weight-700;
+    letter-spacing: $letter-spacing--02em;
+    color: $c-neutrals-2;
+    text-align: left;
+}

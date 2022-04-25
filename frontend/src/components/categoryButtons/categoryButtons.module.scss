@@ -1,0 +1,22 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+button {
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    color: $c-neutrals-4;
+    margin: 0 $spacer-12;
+    padding: $spacer-8 $spacer-8;
+    border: none;
+    background-color: $c-neutrals-8;
+}
+
+.buttonSelect {
+    background-color: $c-neutrals-3;
+    color: $c-neutrals-8;
+    border-radius: 100px;
+    margin: 0 $spacer-12;
+    padding: $spacer-8 $spacer-8;
+}

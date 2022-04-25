@@ -1,0 +1,74 @@
+@import "theme/typography.scss";
+@import "theme/spacers.scss";
+@import "theme/lightThemeColors.scss";
+
+.hotCollectionItemContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.imageWrapper {
+    width: 350px;
+    height: 180px;
+}
+
+.collectionImage {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.collectionTitle {
+    font-weight: $font-weight-600;
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-1-bold;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-2;
+    margin: $spacer-4 0;
+}
+
+.collectionDescription {
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-400;
+    font-size: $font-size-caption-2;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
+    margin: $spacer-4 0;
+}
+
+.collectionInfoContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.authorInfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.authorName {
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-500;
+    font-size: $font-size-caption-bold;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-3;
+    margin: 0 $spacer-4;
+}
+
+.collectionLength {
+    font-family: $font-family-poppins;
+    font-size: $font-size-hairline-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-hairline-2;
+    color: $c-neutrals-2;
+    text-transform: uppercase;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+}

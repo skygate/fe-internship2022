@@ -1,0 +1,65 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.creatorContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    margin-top: $spacer-20;
+    padding-bottom: $spacer-20;
+    border-bottom: 1px solid $c-neutrals-6;
+}
+.creatorContainer:last-of-type {
+    border: none;
+}
+
+.avatarBadge {
+    color: $c-neutrals-8;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-600;
+    font-size: $font-size-caption-2-bold;
+    line-height: $line-height-caption-2-bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    left: -4px;
+    top: -4px;
+    background-color: $c-neutrals-2;
+    border: 2px solid $c-neutrals-8;
+    border-radius: 50%;
+}
+
+.creatorInfo {
+    padding-left: $spacer-8;
+}
+
+.creatorName {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption;
+    line-height: $line-height-caption;
+    font-weight: $font-weight-500;
+    color: $c-neutrals-2;
+}
+
+.creatorNFTSValue {
+    display: flex;
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2-bold;
+    font-weight: $font-weight-600;
+    line-height: $line-height-caption-2-bold;
+    color: $c-neutrals-3;
+}
+
+.ETHText {
+    color: $c-neutrals-4;
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    font-weight: $font-weight-400;
+    line-height: $line-height-caption-2;
+    padding-left: $spacer-2;
+}

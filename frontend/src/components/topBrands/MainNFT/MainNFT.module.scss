@@ -1,0 +1,71 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.mainImage {
+    width: 100%;
+    border-radius: 0.75rem;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mainImageWrapper {
+    width: 450px;
+    height: 420px;
+}
+
+.profileImage {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+.mainBidInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: $spacer-16;
+}
+
+.nftInfo {
+    display: flex;
+    align-items: center;
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+    padding-left: $spacer-16;
+}
+
+.currentBid {
+    display: flex;
+    flex-direction: column;
+}
+
+.NFTTitle {
+    font-family: $font-family-poppins;
+    font-style: normal;
+    font-weight: $font-weight-600;
+    font-size: $font-size-body-1-bold;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-2;
+}
+
+.units {
+    font-family: $font-family-poppins;
+    font-style: normal;
+    font-weight: $font-weight-500;
+    font-size: $font-size-caption-bold;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-3;
+}
+
+.highestBid {
+    font-family: $font-family-poppins;
+    font-style: normal;
+    font-weight: $font-weight-400;
+    font-size: $font-size-caption-2;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
+}
