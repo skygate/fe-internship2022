@@ -95,4 +95,5 @@
 
 // export default ImportNFT;
 
-export {}
+export const ImportNFT = () => <></>;
+export default ImportNFT;
