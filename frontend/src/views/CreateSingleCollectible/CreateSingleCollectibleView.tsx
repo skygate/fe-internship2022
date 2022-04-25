@@ -1,8 +1,6 @@
 import style from "./createSingleCollectible.module.scss";
-import { Navbar } from "./";
 import { Preview } from "./";
 import { CreateSingleCollectibleForm } from "./";
-import { Footer } from "components";
 
 interface ItemType {
     itemName: string;
@@ -33,7 +31,6 @@ export const CreateSingleCollectibleView = ({
 }: CreateSingleCollectibleViewProps) => {
     return (
         <>
-            <Navbar />
             <section className={style.section}>
                 <div className={style.sectionContainer}>
                     <div className={style.formContainer}>
@@ -51,8 +48,6 @@ export const CreateSingleCollectibleView = ({
                     />
                 </div>
             </section>
-
-            <Footer />
         </>
     );
 };
