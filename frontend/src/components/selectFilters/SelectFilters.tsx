@@ -75,11 +75,15 @@ export const SelectFilters = () => {
     const renderSelectFilters = () => {
         return filtersSelect.map((item) => {
             return (
-                <div className={style.selectFilter}>
+                <div className={style.selectFilter} key={item.label}>
                     <label htmlFor={item.name}>{item.label}</label>
                     <select name={item.name} id={item.name}>
                         {item.values.map((value) => {
-                            return <option value={value.id}>{value.value}</option>;
+                            return (
+                                <option value={value.id} key={value.id}>
+                                    {value.value}
+                                </option>
+                            );
                         })}
                     </select>
                 </div>

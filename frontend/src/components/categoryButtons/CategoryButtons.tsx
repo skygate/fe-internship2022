@@ -46,6 +46,7 @@ export const CategoryButtons = () => {
                             className={getButtonClassName(item.label)}
                             onClick={onClick}
                             value={item.label}
+                            key={item.label}
                         >
                             {item.label}
                         </button>
