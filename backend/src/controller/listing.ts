@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
+import { resourceUsage } from "process";
 import ExampleListingList from "../constants/ExampleListingList";
 import ExampleUserList from "../constants/ExampleUserList";
 import productsArray from "../controller/product";
 
-const listingList = ExampleListingList;
+let listingList = ExampleListingList;
 
 let fullInfoListings = new Array();
 function fillFullInfo() {
@@ -31,8 +32,8 @@ function fillFullInfo() {
 fillFullInfo();
 
 module.exports.getAllListings = (req: Request, res: Response) => {
-  ExampleListingList
-    ? res.json(ExampleListingList)
+  listingList.length > 0
+    ? res.json(listingList)
     : res.status(400).json({ errorMessage: "Rosources not found" });
 };
 
@@ -47,7 +48,7 @@ module.exports.getListing = (req: Request, res: Response) => {
 
 module.exports.getFullInfoListings = (req: Request, res: Response) => {
   fillFullInfo();
-  fullInfoListings
+  fullInfoListings.length > 0
     ? res.json(fullInfoListings)
     : res.status(400).json({ errorMessage: "Rosources not found" });
 };
@@ -87,6 +88,7 @@ module.exports.addListing = (req: Request, res: Response) => {
       };
       listingList.push(listing);
       fillFullInfo();
+      res.status(200).json({ errorMessage: "Successfully added listing" });
     } else {
       res.status(400).json({ errorMessage: "Data has missing properties" });
     }
@@ -94,19 +96,17 @@ module.exports.addListing = (req: Request, res: Response) => {
 };
 
 module.exports.deleteListing = (req: Request, res: Response) => {
-  if (typeof req.body == undefined) {
+  if (
+    typeof req.body == undefined ||
+    !listingList.find((listing) => listing.listingID === req.body.listingID)
+  ) {
     res.status(400).json({ errorMessage: "Rosources not found" });
   } else {
-    let index = listingList
-      .map(function (e) {
-        return e.listingID;
-      })
-      .indexOf(req.body.listingID);
-
-    index > -1
-      ? listingList.splice(index, 1)
-      : res.status(404).json({ errorMessage: "Rosources not found" });
+    listingList = listingList.filter(
+      (listing) => listing.listingID !== req.body.listingID
+    );
     fillFullInfo();
+    res.status(200).json({ errorMessage: "Successfully deleted listing" });
   }
 };
 
@@ -114,11 +114,9 @@ module.exports.editListing = (req: Request, res: Response) => {
   if (typeof req.body == undefined) {
     res.status(400).json({ errorMessage: "Rosources not found" });
   } else {
-    let index = listingList
-      .map(function (e) {
-        return e.listingID;
-      })
-      .indexOf(req.body.listingID);
+    let index = listingList.findIndex(
+      (listing) => listing.listingID === req.body.listingID
+    );
 
     if (index > -1) {
       req.body.price
@@ -134,6 +132,7 @@ module.exports.editListing = (req: Request, res: Response) => {
             )
           ))
         : (listingList[index].endDate = listingList[index].endDate);
+      res.status(200).json({ errorMessage: "Succesfully changed listing" });
     } else {
       res.status(404).json({ errorMessage: "Rosources not found" });
     }
