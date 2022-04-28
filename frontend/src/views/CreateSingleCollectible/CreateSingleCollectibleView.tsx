@@ -2,23 +2,18 @@ import style from "./createSingleCollectible.module.scss";
 import { Preview } from "./";
 import { CreateSingleCollectibleForm } from "./";
 
-interface ItemType {
-    itemName: string;
-    itemDescription: string;
-    imgUrl: string;
-    itemSize: string;
-    itemProperties: string;
-    itemRoyality: string;
-    putOnSale: boolean;
-    instantSellPrice: boolean;
-    unlockOncePurchased: boolean;
+interface Product {
+    productName: string;
+    productDescription: string;
+    productImageUrl: string;
+    productCategory: string;
 }
 
 interface CreateSingleCollectibleViewProps {
     onInputChange: (e: React.ChangeEvent) => void;
     onToggleChange: (e: React.ChangeEvent) => void;
     onImgSrcChange: (arg: string) => void;
-    item: ItemType;
+    item: Product;
     onClickClear: () => void;
 }
 
@@ -39,11 +34,12 @@ export const CreateSingleCollectibleView = ({
                             onInputChange={onInputChange}
                             onToggleChange={onToggleChange}
                             onImgSrcChange={onImgSrcChange}
+                            item={item}
                         />
                     </div>
                     <Preview
-                        imgUrl={item.imgUrl}
-                        itemName={item.itemName}
+                        imgUrl={item.productImageUrl}
+                        itemName={item.productName}
                         onClickClear={onClickClear}
                     />
                 </div>
