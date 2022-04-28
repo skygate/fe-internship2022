@@ -31,19 +31,25 @@ function fillFullInfo() {
 fillFullInfo();
 
 module.exports.getAllListings = (req: Request, res: Response) => {
-  res.json(ExampleListingList);
+  ExampleListingList
+    ? res.json(ExampleListingList)
+    : res.status(400).json({ errorMessage: "Rosources not found" });
 };
 
 module.exports.getListing = (req: Request, res: Response) => {
   const listing = ExampleListingList.find(
     (Listing) => Listing.listingID === req.params.id
   );
-  listing ? res.json(listing) : res.send("listing doesn`t exist");
+  listing
+    ? res.json(listing)
+    : res.status(400).json({ errorMessage: "Rosources not found" });
 };
 
 module.exports.getFullInfoListings = (req: Request, res: Response) => {
   fillFullInfo();
-  res.json(fullInfoListings);
+  fullInfoListings
+    ? res.json(fullInfoListings)
+    : res.status(400).json({ errorMessage: "Rosources not found" });
 };
 
 module.exports.getFullInfoListing = (req: Request, res: Response) => {
@@ -53,15 +59,12 @@ module.exports.getFullInfoListing = (req: Request, res: Response) => {
   );
   fullInfoListing
     ? res.json(fullInfoListing)
-    : res.status(404).json({ errorMessage: "Rosources not found" });
+    : res.status(400).json({ errorMessage: "Rosources not found" });
 };
 
 module.exports.addListing = (req: Request, res: Response) => {
   if (typeof req.body == undefined) {
-    res.json({
-      status: "error",
-      message: "data is undefined",
-    });
+    res.status(400).json({ errorMessage: "Request body is undefined" });
   } else {
     if (
       req.body.userID &&
@@ -85,20 +88,14 @@ module.exports.addListing = (req: Request, res: Response) => {
       listingList.push(listing);
       fillFullInfo();
     } else {
-      res.json({
-        status: "error",
-        message: "data has missing property",
-      });
+      res.status(400).json({ errorMessage: "Data has missing properties" });
     }
   }
 };
 
 module.exports.deleteListing = (req: Request, res: Response) => {
   if (typeof req.body == undefined) {
-    res.json({
-      status: "error",
-      message: "data is undefined",
-    });
+    res.status(400).json({ errorMessage: "Rosources not found" });
   } else {
     let index = listingList
       .map(function (e) {
@@ -115,10 +112,7 @@ module.exports.deleteListing = (req: Request, res: Response) => {
 
 module.exports.editListing = (req: Request, res: Response) => {
   if (typeof req.body == undefined) {
-    res.json({
-      status: "error",
-      message: "something went wrong! check your sent data",
-    });
+    res.status(400).json({ errorMessage: "Rosources not found" });
   } else {
     let index = listingList
       .map(function (e) {
