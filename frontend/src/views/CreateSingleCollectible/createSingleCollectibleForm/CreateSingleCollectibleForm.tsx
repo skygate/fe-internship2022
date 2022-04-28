@@ -4,21 +4,31 @@ import { ToggleInputs } from "components";
 import { WideTextInputs } from "components";
 import { RowTextInputs } from "components";
 import { UploadFile } from "components";
+
 import icon from "assets/arrowRight.svg";
+
+const SEND_FORM_URL = "http://localhost:8000/products";
 
 interface FormProps {
     onInputChange: (e: React.ChangeEvent) => void;
     onToggleChange: (e: React.ChangeEvent) => void;
     onImgSrcChange: (arg: string) => void;
+    item: {};
 }
 
 export const CreateSingleCollectibleForm = ({
     onInputChange,
     onToggleChange,
     onImgSrcChange,
+    item,
 }: FormProps) => {
-    const onFormSubmit = (e: React.FormEvent) => {
+    const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        await fetch(SEND_FORM_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(item),
+        });
     };
 
     return (
@@ -30,7 +40,7 @@ export const CreateSingleCollectibleForm = ({
             <ToggleInputs onToggleChange={onToggleChange} />
             <button type="submit" className={style.submitButton}>
                 Create item
-                <img src={icon} alt="" />
+                <img src={icon} alt="arrow icon" />
             </button>
         </form>
     );

@@ -6,8 +6,8 @@ interface WideTextInputsProps {
 }
 
 enum TextInputTypeWide {
-    ItemName,
-    Description,
+    ProductName,
+    ProductDescription,
 }
 
 interface TextInputWide {
@@ -19,14 +19,14 @@ interface TextInputWide {
 
 const textInputWideArray: TextInputWide[] = [
     {
-        name: TextInputTypeWide.ItemName,
-        id: "itemName",
+        name: TextInputTypeWide.ProductName,
+        id: "productName",
         label: "ITEM NAME",
         placeholder: "e.g. Redeemable Bitcoin Card with logo",
     },
     {
-        name: TextInputTypeWide.Description,
-        id: "itemDescription",
+        name: TextInputTypeWide.ProductDescription,
+        id: "productDescription",
         label: "DESCRIPTION",
         placeholder: "e.g. After purchasing you will be available to receive the logo",
     },

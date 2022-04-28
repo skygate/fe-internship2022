@@ -33,30 +33,23 @@ const textInputNarrowArray: TextInputNarrow[] = [
     },
 ];
 
-const royalityOptions: string[] = [];
-
-const createOptions = () => {
-    for (let i = 1; i <= 10; i++) {
-        royalityOptions.push(`${i * 10}%`);
-    }
-};
-
-createOptions();
+//docelowo wczytać z bazy danych
+const categoryOptions = ["PNG", "GIF", "WEBP", "MP4", "MP3"];
 
 export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
     return (
         <div className={style.row}>
             <div className={style.selectContainer}>
                 <label htmlFor="itemRoyality" className={style.label}>
-                    ROYALITY
+                    CATEGORY
                 </label>
                 <select
-                    name="itemRoyality"
-                    id="itemRoyality"
+                    name="productCategory"
+                    id="productCategory"
                     onChange={onInputChange}
                     className={style.select}
                 >
-                    {royalityOptions.map((item) => {
+                    {categoryOptions.map((item) => {
                         return (
                             <option value={item} key={item} className={style.option}>
                                 {item}

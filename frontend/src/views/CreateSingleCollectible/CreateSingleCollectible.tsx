@@ -1,39 +1,33 @@
 import React, { useState } from "react";
 import { CreateSingleCollectibleView } from "./CreateSingleCollectibleView";
 
-interface ItemType {
-    itemName: string;
-    itemDescription: string;
-    imgUrl: string;
-    itemSize: string;
-    itemProperties: string;
-    itemRoyality: string;
-    putOnSale: boolean;
-    instantSellPrice: boolean;
-    unlockOncePurchased: boolean;
+interface Product {
+    productId: null;
+    productName: string;
+    productDescription: string;
+    productImageUrl: string;
+    productCategory: string;
 }
 
-const defaultItem: ItemType = {
-    itemName: "Example Item Name",
-    itemDescription: "Example Item Description",
-    imgUrl: "https://images.theconversation.com/files/350865/original/file-20200803-24-50u91u.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1200&h=900.0&fit=crop",
-    itemSize: "5",
-    itemProperties: "Example properties",
-    itemRoyality: "10%",
-    putOnSale: false,
-    instantSellPrice: false,
-    unlockOncePurchased: false,
+const defaultItem: Product = {
+    productId: null,
+    productName: "exampleName100",
+    productDescription:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    productImageUrl: "https://picsum.photos/id/99/200",
+    productCategory: "category",
 };
 
 export const CreateSingleCollectible = () => {
-    const [item, setItem] = useState<ItemType>(defaultItem);
+    const [item, setItem] = useState<Product>(defaultItem);
 
     const onImgSrcChange = (arg: string) => {
-        setItem({ ...item, imgUrl: arg });
+        setItem({ ...item, productImageUrl: arg });
     };
 
     const onInputChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
+        console.log(target.id);
         setItem({ ...item, [target.id]: target.value });
     };
 
