@@ -12,6 +12,7 @@ const userRoute = require("./routes/user");
 const listingRoute = require("./routes/listing");
 
 app.use(cors());
+app.use(express.json());
 app.use("/products", productRoute);
 app.use("/user", userRoute);
 app.use("/listing", listingRoute);
