@@ -3,6 +3,7 @@ import ExampleListingList from "../constants/ExampleListingList";
 import ExampleUserList from "../constants/ExampleUserList";
 import productsArray from "../controller/product";
 
+<<<<<<< HEAD
 const listingList = ExampleListingList;
 
 let fullInfoListings = new Array();
@@ -29,6 +30,27 @@ function fillFullInfo() {
   });
 }
 fillFullInfo();
+=======
+const fullInfoListings = new Array();
+ExampleListingList.map((listing) => {
+  const listingItem = productsArray.find(
+    (product) => product.productId === listing.productID
+  );
+  fullInfoListings.push({
+    listingID: listing.listingID,
+    price: listing.price,
+    amount: listing.amount,
+    highestBid: listing.highestBid,
+    startDate: listing.startDate,
+    endDate: listing.endDate,
+    likes: listing.likes,
+    productImageUrl: listingItem.productImageUrl,
+    productName: listingItem.productName,
+    productDescription: listingItem.productDescription,
+    productID: listingItem.productId,
+  });
+});
+>>>>>>> 4ac93a034f07ed9ef365bcb1a7babd20fbcfc8fc
 
 module.exports.getAllListings = (req: Request, res: Response) => {
   res.json(ExampleListingList);
@@ -42,17 +64,24 @@ module.exports.getListing = (req: Request, res: Response) => {
 };
 
 module.exports.getFullInfoListings = (req: Request, res: Response) => {
+<<<<<<< HEAD
   fillFullInfo();
+=======
+>>>>>>> 4ac93a034f07ed9ef365bcb1a7babd20fbcfc8fc
   res.json(fullInfoListings);
 };
 
 module.exports.getFullInfoListing = (req: Request, res: Response) => {
+<<<<<<< HEAD
   fillFullInfo();
+=======
+>>>>>>> 4ac93a034f07ed9ef365bcb1a7babd20fbcfc8fc
   const fullInfoListing = fullInfoListings.find(
     (Listing) => Listing.listingID === req.params.id
   );
   fullInfoListing
     ? res.json(fullInfoListing)
+<<<<<<< HEAD
     : res.status(404).json({ errorMessage: "Rosources not found" });
 };
 
@@ -144,4 +173,7 @@ module.exports.editListing = (req: Request, res: Response) => {
       res.status(404).json({ errorMessage: "Rosources not found" });
     }
   }
+=======
+    : res.send("listing doesn`t exist");
+>>>>>>> 4ac93a034f07ed9ef365bcb1a7babd20fbcfc8fc
 };
