@@ -151,7 +151,7 @@ module.exports.placeBid = (req: Request, res: Response) => {
                 res.status(400).json({ errorMessage: "Something gone wrong" });
             }
         } else {
-            res.status(404).json({ errorMessage: "Rosources not found" });
+            res.status(400).json({ errorMessage: "Rosources not found" });
         }
     }
 };
