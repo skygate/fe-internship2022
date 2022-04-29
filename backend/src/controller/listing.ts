@@ -118,40 +118,42 @@ module.exports.editListing = (req: Request, res: Response) => {
                 : (listingList[index].endDate = listingList[index].endDate);
             res.status(200).json({ errorMessage: "Succesfully changed listing" });
         } else {
-            res.status(404).json({ errorMessage: "Rosources not found" });
+            res.status(400).json({ errorMessage: "Rosources not found" });
         }
     }
 };
 
 module.exports.placeBid = (req: Request, res: Response) => {
-    if (typeof req.body == undefined) {
-        res.status(400).json({ errorMessage: "Rosources not found" });
-    } else {
-        let index = listingList.findIndex((listing) => listing.listingID === req.body.listingID);
+    if (typeof req.body == undefined)
+        return res.status(400).json({ errorMessage: "Rosources not found" });
 
-        if (index > -1) {
-            if (
-                ((req.body.userID.length > 0 &&
-                    req.body.offer >
-                        listingList[index].bidHistory[listingList[index].bidHistory.length - 1]
-                            .offer) ||
-                    listingList[index].bidHistory.length === 0) &&
-                req.body.userID !== listingList[index].userID &&
-                req.body.userID !==
-                    listingList[index].bidHistory[listingList[index].bidHistory.length - 1].userID
-            ) {
-                listingList[index].bidHistory.push(<Bid>{
-                    userID: req.body.userID,
-                    bidID: `bid_${Math.random() * 1000000000000000}`,
-                    offer: req.body.offer,
-                    date: new Date(),
-                });
-                res.status(200).json({ errorMessage: "Succesfully placed a bid" });
-            } else {
-                res.status(400).json({ errorMessage: "Something gone wrong" });
-            }
-        } else {
-            res.status(400).json({ errorMessage: "Rosources not found" });
-        }
+    const auction = listingList.find((listing) => listing.listingID === req.body.listingID);
+    if (!auction) return res.status(400).json({ errorMessage: "Auction not found" });
+
+    const isUserIDEmpty = req.body.userID.length > 0;
+    if (!isUserIDEmpty) return res.status(400).json({ errorMessage: "UserID is empty" });
+
+    const isBidsHistoryEmpty = auction.bidHistory.length === 0;
+    const isNewOfferHighestThanPrevious = isBidsHistoryEmpty
+        ? true
+        : req.body.offer > auction.bidHistory[auction.bidHistory.length - 1].offer;
+    const isBiddingUserDifferentThanSeller = req.body.userID === auction.userID;
+    const isUserBiddingHimself = isBidsHistoryEmpty
+        ? false
+        : req.body.userID === auction.bidHistory[auction.bidHistory.length - 1].userID;
+
+    if (
+        (isBidsHistoryEmpty || (isNewOfferHighestThanPrevious && !isUserBiddingHimself)) &&
+        !isBiddingUserDifferentThanSeller
+    ) {
+        auction.bidHistory.push(<Bid>{
+            userID: req.body.userID,
+            bidID: `bid_${Math.random() * 1000000000000000}`,
+            offer: req.body.offer,
+            date: new Date(),
+        });
+        res.status(200).json({ errorMessage: "Succesfully placed a bid" });
+    } else {
+        res.status(400).json({ errorMessage: "Something gone wrong" });
     }
 };
