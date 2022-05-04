@@ -9,5 +9,6 @@ router.get("/fullInfo/:id", listing.getFullInfoListing);
 router.post("/", listing.addListing);
 router.delete("/", listing.deleteListing);
 router.patch("/", listing.editListing);
+router.post("/addBid", listing.placeBid);
 
 module.exports = router;
