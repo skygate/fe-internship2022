@@ -11,9 +11,10 @@ interface RenderTextInputProps {
     item: ObjectType;
     onInputChange: (e: React.ChangeEvent) => void;
     width?: string;
+    value: string;
 }
 
-export const RenderTextInput = ({ item, onInputChange, width }: RenderTextInputProps) => {
+export const RenderTextInput = ({ item, onInputChange, width, value }: RenderTextInputProps) => {
     return (
         <div className={style.inputContainer} key={item.id} style={{ width: `${width}` }}>
             <label htmlFor={item.id} className={style.label}>
@@ -25,6 +26,7 @@ export const RenderTextInput = ({ item, onInputChange, width }: RenderTextInputP
                 id={item.id}
                 className={style.input}
                 onChange={onInputChange}
+                value={value}
             />
         </div>
     );
