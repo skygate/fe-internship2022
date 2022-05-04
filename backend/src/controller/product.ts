@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import product from "../models/product";
 
 let productsArray = new Array(20);
 
@@ -25,28 +26,41 @@ const createProductsArray = (arr: Product[]) => {
 
 createProductsArray(productsArray);
 
-module.exports.getAllProducts = (req: Request, res: Response) => {
-    res.json(productsArray);
-};
-
-module.exports.getProduct = (req: Request, res: Response) => {
-    const id: number = Number(req.params.id);
-
-    productsArray.find((item) => item.productId === `productId${id}`)
-        ? res.json(productsArray[id])
-        : res.send("Nie ma takiego produktu");
-};
-export default productsArray;
-
-module.exports.addProduct = (req: Request, res: Response) => {
-    const product = req.body;
-    if (!product) {
-        res.status(400).json({ errorMessage: "Data has missing properties" });
+export const getAllProducts = async (req: Request, res: Response) => {
+    try {
+        const products = await product.find();
+        res.status(200).json(products);
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
     }
-    product.productId = `productId${Math.floor(Math.random() * 9000000000) + 1000000000}`;
-    productsArray.push(product);
-    res.status(200).json({ errorMessage: "Successfully added product" });
 };
+
+export const getProduct = async (req: Request, res: Response) => {
+    try {
+        const foundProduct = await product.findById(req.params.id).exec();
+        res.status(200).json(foundProduct);
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+export const addProduct = async (req: Request, res: Response) => {
+    const { productName, productDescription, productImageUrl, productCategory } = req.body;
+    const newProduct = new product({
+        productName,
+        productDescription,
+        productImageUrl,
+        productCategory,
+    });
+    try {
+        await newProduct.save();
+        res.status(201).json(newProduct);
+    } catch (error: any) {
+        res.status(409).json({ message: error.message });
+    }
+};
+
+export default productsArray;
 
 module.exports.deleteProduct = (req: Request, res: Response) => {
     if (!req.body || !productsArray.find((product) => product.productId === req.body.productId)) {
