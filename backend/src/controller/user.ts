@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import user from "../models/users";
 const initializePassport = require("../passport-config");
-
-const usersArray = new Array(1);
 
 interface User {
     username: string;
