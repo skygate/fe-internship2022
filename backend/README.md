@@ -1,3 +1,5 @@
+TO START: NPM RUN DEV
+
 LISTNIG ENDPOINTS:
 router.get("/all", listing.getAllListings); // response: list of all listings
 router.get("/all/:id", listing.getListing); // response: listing with exact listingID
@@ -20,6 +22,7 @@ router.patch("/", listing.editListing); // request body:{
 price: new price for item
 amount: new amount of item
 longerDuration: how much longer will be auciont duration ( adding next hours to existing duration, NOT NEW duration )
+router.post("/addBid", listing.placeBid); //request body: listingID, userID, offer
 
 YOU MUST NOT ENTER ALL PROPERTIES. IF YOU DON`T ENTER NEW PROP IT WILL NOT CHANGE (stay with previous version)
 }

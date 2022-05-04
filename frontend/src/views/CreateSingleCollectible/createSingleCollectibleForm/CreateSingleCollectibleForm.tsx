@@ -1,4 +1,3 @@
-import React from "react";
 import style from "./createSingleCollectibleForm.module.scss";
 import { ToggleInputs } from "components";
 import { WideTextInputs } from "components";
@@ -7,30 +6,19 @@ import { UploadFile } from "components";
 
 import icon from "assets/arrowRight.svg";
 
-const SEND_FORM_URL = "http://localhost:8000/products";
-
 interface FormProps {
     onInputChange: (e: React.ChangeEvent) => void;
     onToggleChange: (e: React.ChangeEvent) => void;
     onImgSrcChange: (arg: string) => void;
-    item: {};
+    onFormSubmit: (e: React.FormEvent) => void;
 }
 
 export const CreateSingleCollectibleForm = ({
     onInputChange,
     onToggleChange,
     onImgSrcChange,
-    item,
+    onFormSubmit,
 }: FormProps) => {
-    const onFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        await fetch(SEND_FORM_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(item),
-        });
-    };
-
     return (
         <form className={style.form} onSubmit={onFormSubmit}>
             <UploadFile onImgSrcChange={onImgSrcChange} />

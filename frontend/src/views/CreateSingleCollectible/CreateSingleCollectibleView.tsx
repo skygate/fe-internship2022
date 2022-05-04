@@ -1,6 +1,7 @@
 import style from "./createSingleCollectible.module.scss";
 import { Preview } from "./";
 import { CreateSingleCollectibleForm } from "./";
+import React from "react";
 
 interface Product {
     productName: string;
@@ -15,6 +16,7 @@ interface CreateSingleCollectibleViewProps {
     onImgSrcChange: (arg: string) => void;
     item: Product;
     onClickClear: () => void;
+    onFormSubmit: (e: React.FormEvent) => void;
 }
 
 export const CreateSingleCollectibleView = ({
@@ -23,6 +25,7 @@ export const CreateSingleCollectibleView = ({
     onImgSrcChange,
     item,
     onClickClear,
+    onFormSubmit,
 }: CreateSingleCollectibleViewProps) => {
     return (
         <>
@@ -34,7 +37,7 @@ export const CreateSingleCollectibleView = ({
                             onInputChange={onInputChange}
                             onToggleChange={onToggleChange}
                             onImgSrcChange={onImgSrcChange}
-                            item={item}
+                            onFormSubmit={onFormSubmit}
                         />
                     </div>
                     <Preview

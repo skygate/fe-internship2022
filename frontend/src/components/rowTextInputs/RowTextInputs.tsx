@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import style from "./rowTextInputs.module.scss";
 import { RenderTextInput } from "components";
+import { createFormState } from "components/types/createFormState";
+import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
 
 interface RowTextInputsProps {
     onInputChange: (e: React.ChangeEvent) => void;
@@ -16,27 +18,31 @@ interface TextInputNarrow {
     id: string;
     label: string;
     placeholder: string;
+    value: string;
 }
-
-const textInputNarrowArray: TextInputNarrow[] = [
-    {
-        name: TextInputTypeNarrow.Size,
-        id: "itemSize",
-        label: "SIZE",
-        placeholder: "e.g. Size",
-    },
-    {
-        name: TextInputTypeNarrow.Properties,
-        id: "itemProperties",
-        label: "PROPERTIES",
-        placeholder: "e.g. Properties",
-    },
-];
 
 //docelowo wczytać z bazy danych
 const categoryOptions = ["PNG", "GIF", "WEBP", "MP4", "MP3"];
 
 export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
+    const formState: createFormState = useContext(FormContext);
+
+    const textInputNarrowArray: TextInputNarrow[] = [
+        {
+            name: TextInputTypeNarrow.Size,
+            id: "productSize",
+            label: "SIZE",
+            placeholder: "e.g. Size",
+            value: formState.productSize,
+        },
+        {
+            name: TextInputTypeNarrow.Properties,
+            id: "productProperties",
+            label: "PROPERTIES",
+            placeholder: "e.g. Properties",
+            value: formState.productProperties,
+        },
+    ];
     return (
         <div className={style.row}>
             <div className={style.selectContainer}>
@@ -65,6 +71,7 @@ export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
                         item={item}
                         onInputChange={onInputChange}
                         width={"190px"}
+                        value={item.value}
                     />
                 );
             })}
