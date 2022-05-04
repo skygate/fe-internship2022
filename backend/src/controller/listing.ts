@@ -130,7 +130,7 @@ module.exports.placeBid = (req: Request, res: Response) => {
     const auction = listingList.find((listing) => listing.listingID === req.body.listingID);
     if (!auction) return res.status(400).json({ errorMessage: "Auction not found" });
 
-    const isUserIDEmpty = req.body.userID.length > 0;
+    const isUserIDEmpty = !!req.body.userID;
     if (!isUserIDEmpty) return res.status(400).json({ errorMessage: "UserID is empty" });
 
     const isBidsHistoryEmpty = auction.bidHistory.length === 0;
