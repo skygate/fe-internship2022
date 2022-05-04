@@ -17,13 +17,13 @@ interface User {
     // coverPicture: string;
 }
 
-const createUsersArray = (arr: User[]) => {
+const createUsersArray = async (arr: User[]) => {
     for (let i = 0; i < arr.length; i++) {
         arr[i] = {
             userID: i,
             username: `ExampleUser${i}`,
             email: `e${i}@e`,
-            password: `password${i}`,
+            password: await bcrypt.hash(`password${i}`, 10),
         };
     }
 };
@@ -33,7 +33,7 @@ createUsersArray(usersArray);
 initializePassport(
     passport,
     (email: string) => usersArray.find((user) => user.email === email),
-    (id: number) => usersArray.find((user) => user.id === id)
+    (id: number) => usersArray.find((user) => user.userID === id)
 );
 
 module.exports.getAllUsers = (req: Request, res: Response) => {
@@ -46,6 +46,13 @@ module.exports.getUser = (req: Request, res: Response) => {
 };
 
 module.exports.registerUser = async (req: Request, res: Response) => {
+    const existingUser = usersArray.find((user: User) => user.email == req.body.email);
+
+    if (existingUser != null) {
+        res.send("User already exists");
+        return;
+    }
+
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         usersArray.push({
@@ -65,3 +72,17 @@ module.exports.loginUser = passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: false,
 });
+
+// const checkIfAuthenticated = (req: Request, res: Response, next: () => void) => {
+//     if (req.isAuthenticated()) {
+//         return next();
+//     }
+//     res.send("authenticated");
+// };
+
+// const checkIfNotAuthenticated = (req: Request, res: Response, next: () => void) => {
+//     if (req.isAuthenticated()) {
+//         return res.send("not authenticated");
+//     }
+//     next();
+// };

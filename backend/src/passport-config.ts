@@ -13,7 +13,6 @@ function initialize(passport: any, getUserByEmail: any, getUserById: any) {
         }
 
         try {
-            // if (password == user.password) {
             if (await bcrypt.compare(password, user.password)) {
                 console.log("ok");
                 return done(null, user);
@@ -29,7 +28,7 @@ function initialize(passport: any, getUserByEmail: any, getUserById: any) {
     passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
     passport.serializeUser((user: any, done: any) => done(null, user.userID));
     passport.deserializeUser((id: any, done: any) => {
-        return done(null, getUserById);
+        return done(null, getUserById(id));
     });
 }
 

@@ -2,7 +2,6 @@ import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import uniqid from "uniqid";
-import passport from "passport";
 
 const app: Express = express();
 dotenv.config();
