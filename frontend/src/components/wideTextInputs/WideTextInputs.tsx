@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { RenderTextInput } from "components";
+import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
+import { createFormState } from "components/types/createFormState";
 
 interface WideTextInputsProps {
     onInputChange: (e: React.ChangeEvent) => void;
@@ -15,28 +17,39 @@ interface TextInputWide {
     id: string;
     label: string;
     placeholder: string;
+    value: string;
 }
 
-const textInputWideArray: TextInputWide[] = [
-    {
-        name: TextInputTypeWide.ProductName,
-        id: "productName",
-        label: "ITEM NAME",
-        placeholder: "e.g. Redeemable Bitcoin Card with logo",
-    },
-    {
-        name: TextInputTypeWide.ProductDescription,
-        id: "productDescription",
-        label: "DESCRIPTION",
-        placeholder: "e.g. After purchasing you will be available to receive the logo",
-    },
-];
-
 export const WideTextInputs = ({ onInputChange }: WideTextInputsProps) => {
+    const formState: createFormState = useContext(FormContext);
+
+    const textInputWideArray: TextInputWide[] = [
+        {
+            name: TextInputTypeWide.ProductName,
+            id: "productName",
+            label: "ITEM NAME",
+            placeholder: "e.g. Redeemable Bitcoin Card with logo",
+            value: formState.productName,
+        },
+        {
+            name: TextInputTypeWide.ProductDescription,
+            id: "productDescription",
+            label: "DESCRIPTION",
+            placeholder: "e.g. After purchasing you will be available to receive the logo",
+            value: formState.productDescription,
+        },
+    ];
     return (
         <div>
             {textInputWideArray.map((item) => {
-                return <RenderTextInput key={item.id} item={item} onInputChange={onInputChange} />;
+                return (
+                    <RenderTextInput
+                        key={item.id}
+                        item={item}
+                        onInputChange={onInputChange}
+                        value={item.value}
+                    />
+                );
             })}
         </div>
     );
