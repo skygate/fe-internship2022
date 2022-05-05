@@ -6,10 +6,6 @@ interface User {
     username: string;
     email: string;
     password: string;
-    // about: string;
-    // websiteUrl: string;
-    // profilePicture: string;
-    // coverPicture: string;
 }
 
 const LocalStrategy = require("passport-local").Strategy;
@@ -18,10 +14,10 @@ const bcrypt = require("bcrypt");
 function initialize(
     passport: PassportStatic,
     getUserByEmail: (email: string) => User,
-    getUserById: (id: number) => User
+    getUserById: (id: string) => Express.User
 ) {
     const authenticateUser: VerifyFunction = async (email, password, done) => {
-        const user = getUserByEmail(email);
+        const user = await getUserByEmail(email);
         if (user == null) {
             return done(null, false, { message: "No user with that email" });
         }
@@ -40,8 +36,8 @@ function initialize(
     };
 
     passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
-    passport.serializeUser((user: Express.User, done) => done(null, user.userID));
-    passport.deserializeUser((id: number, done) => {
+    passport.serializeUser((user: Express.User, done) => done(null, user._id));
+    passport.deserializeUser((id: string, done) => {
         return done(null, getUserById(id));
     });
 }
