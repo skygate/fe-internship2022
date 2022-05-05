@@ -10,6 +10,16 @@ module.exports.getProfiles = async (req: Request, res: Response) => {
     }
 };
 
+module.exports.getProfile = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const foundProfile = await profile.findById(id);
+        res.status(200).json(foundProfile);
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
 module.exports.addProfile = async (req: Request, res: Response) => {
     const { about, websiteUrl, profilePicture, coverPicture } = req.body;
     const { userID } = req.params;
@@ -24,9 +34,9 @@ module.exports.addProfile = async (req: Request, res: Response) => {
 
     try {
         newProfile.save();
-        res.status(201).json(newProfile);
+        res.status(200).json(newProfile);
     } catch (error: any) {
-        res.status(409).json({ message: error.message });
+        res.status(404).json({ message: error.message });
     }
 };
 
@@ -45,8 +55,18 @@ module.exports.editProfile = async (req: Request, res: Response) => {
             },
             { new: true }
         );
-        res.status(201).send("ok");
+        res.status(200).send("ok");
     } catch (error: any) {
         res.status(404).json({ message: error.message });
+    }
+};
+
+module.exports.deleteProfile = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        await profile.findByIdAndDelete(id);
+        res.status(200).send("deleted");
+    } catch (error) {
+        res.status(404).send("not working");
     }
 };
