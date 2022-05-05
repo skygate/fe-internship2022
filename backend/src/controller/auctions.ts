@@ -16,7 +16,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .find()
                 .populate({
                     path: "productID",
-                    select: "productDescription productName productImageUrl productCategory",
+                    select: "ownerID productDescription productName productImageUrl productCategory",
                 })
                 .exec();
             res.status(200).json(auctionsWithInfo);
@@ -40,7 +40,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .findById(req.query.id)
                 .populate({
                     path: "productID",
-                    select: "productDescription productName productImageUrl productCategory",
+                    select: "ownerID productDescription productName productImageUrl productCategory",
                 })
                 .exec();
             auctionWithInfo !== null
