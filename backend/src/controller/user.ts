@@ -12,13 +12,21 @@ const initializePassport = require("../passport-config");
 // const createUsersArray = async () => {
 //     for (let i = 0; i < 20; i++) {
 //         const newUser = new user({
-//             userID: Date.now().toString() + i,
 //             username: `ExampleUser${i}`,
 //             email: `mail${i}@mail.pl`,
 //             password: await bcrypt.hash(`password${i}`, 10),
 //         });
 
-//         newUser.save();
+//         await newUser.save();
+//         const { _id } = await user.findOne({ username: `ExampleUser${i}` });
+//         const newProfile = new profile({
+//             userID: _id,
+//             about: "",
+//             websiteUrl: "",
+//             profilePicture: "",
+//             coverPicture: "",
+//         });
+//         await newProfile.save();
 //     }
 // };
 
