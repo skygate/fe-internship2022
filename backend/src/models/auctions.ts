@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const auctionSchema = new mongoose.Schema({
+const auctionsSchema = new mongoose.Schema({
     userID: String,
     productID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Products" },
     price: Number,
@@ -16,5 +16,5 @@ const auctionSchema = new mongoose.Schema({
     endDate: Date,
     likes: Number,
 });
-const auction = mongoose.model("Auctions", auctionSchema);
-export default auction;
+const auctions = mongoose.model("Auctions", auctionsSchema);
+export default auctions;

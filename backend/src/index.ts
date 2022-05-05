@@ -11,13 +11,13 @@ const mongo = process.env.MONGO || "";
 //routes
 const productRoute = require("./routes/product");
 const userRoute = require("./routes/user");
-const auctionRoute = require("./routes/auction");
+const auctionsRoute = require("./routes/auctions");
 
 app.use(cors());
 app.use(express.json());
 app.use("/products", productRoute);
 app.use("/user", userRoute);
-app.use("/auction", auctionRoute);
+app.use("/auctions", auctionsRoute);
 
 mongoose
     .connect(mongo, { useNewUrlParser: true, useUnifiedTopology: true })

@@ -1,27 +1,67 @@
 import { Request, Response } from "express";
-import auction from "../models/auction";
+import auctions from "../models/auctions";
 
-export const getAllAuctions = async (req: Request, res: Response) => {
-    try {
-        const auctions = await auction.find();
-        res.status(200).json(auctions);
-    } catch (error: any) {
-        res.status(404).json({ message: error.message });
-    }
-};
-
-export const getAuction = async (req: Request, res: Response) => {
-    try {
-        const foundAuction = await auction.findById(req.params.id).exec();
-        res.status(200).json(foundAuction);
-    } catch (error: any) {
-        res.status(404).json({ message: error.message });
-    }
+export const getAllAuctions = (req: Request, res: Response) => {
+    const defaultAuctions = async () => {
+        try {
+            const auctionsList = await auctions.find();
+            res.status(200).json(auctionsList);
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+    const fullInfoAuctions = async () => {
+        try {
+            const auctionsWithInfo = await auctions
+                .find()
+                .populate({
+                    path: "productID",
+                    select: "productDescription productName productImageUrl productCategory",
+                })
+                .exec();
+            res.status(200).json(auctionsWithInfo);
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+    const defaultAuction = async () => {
+        try {
+            const foundAuction = await auctions.findById(req.query.id).exec();
+            foundAuction !== null
+                ? res.status(200).json(foundAuction)
+                : res.status(400).json({ message: "error" });
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+    const fullInfoAuction = async () => {
+        try {
+            const auctionWithInfo = await auctions
+                .findById(req.query.id)
+                .populate({
+                    path: "productID",
+                    select: "productDescription productName productImageUrl productCategory",
+                })
+                .exec();
+            auctionWithInfo !== null
+                ? res.status(200).json(auctionWithInfo)
+                : res.status(404).json({ message: "error" });
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+    req.query.id
+        ? req.query.full === "true"
+            ? fullInfoAuction()
+            : defaultAuction()
+        : req.query.full === "true"
+        ? fullInfoAuctions()
+        : defaultAuctions();
 };
 
 export const addAuction = async (req: Request, res: Response) => {
     const { userID, productID, amount, price } = req.body;
-    const newAuction = new auction({
+    const newAuction = new auctions({
         userID,
         productID,
         amount,
@@ -42,11 +82,11 @@ export const addAuction = async (req: Request, res: Response) => {
 export const addBid = async (req: Request, res: Response) => {
     if (typeof req.body == undefined)
         return res.status(400).json({ errorMessage: "Rosources not found" });
-    const { auctionID, userID, offer } = req.body;
+    const { userID, offer } = req.body;
 
     let foundAuction;
     try {
-        foundAuction = await auction.findById(auctionID).exec();
+        foundAuction = await auctions.findById(req.params.id).exec();
     } catch (error: any) {
         res.status(404).json({ message: error.message });
     }
@@ -87,7 +127,7 @@ export const editAuction = async (req: Request, res: Response) => {
     } else {
         let foundAuction;
         try {
-            foundAuction = await auction.findById(req.body.auctionID).exec();
+            foundAuction = await auctions.findById(req.params.id).exec();
         } catch (error: any) {
             res.status(404).json({ message: error.message });
         }
@@ -117,38 +157,8 @@ export const editAuction = async (req: Request, res: Response) => {
 
 export const deleteAuction = async (req: Request, res: Response) => {
     try {
-        auction.findByIdAndDelete(req.body.auctionID).exec();
+        auctions.findByIdAndDelete(req.params.id).exec();
         res.status(200).json({ message: "Auction was succesfully deleted" });
-    } catch (error: any) {
-        res.status(404).json({ message: error.message });
-    }
-};
-
-export const getAllAuctionsWithFullInfo = async (req: Request, res: Response) => {
-    try {
-        const auctionsWithInfo = await auction
-            .find()
-            .populate({
-                path: "productID",
-                select: "productDescription productName productImageUrl productCategory",
-            })
-            .exec();
-        res.status(200).json(auctionsWithInfo);
-    } catch (error: any) {
-        res.status(404).json({ message: error.message });
-    }
-};
-
-export const getAuctionWithFullInfo = async (req: Request, res: Response) => {
-    try {
-        const auctionWithInfo = await auction
-            .findById(req.params.id)
-            .populate({
-                path: "productID",
-                select: "productDescription productName productImageUrl productCategory",
-            })
-            .exec();
-        res.status(200).json(auctionWithInfo);
     } catch (error: any) {
         res.status(404).json({ message: error.message });
     }

@@ -1,28 +1,36 @@
 TO START: NPM RUN DEV
 
-LISTNIG ENDPOINTS:
-router.get("/all", listing.getAllListings); // response: list of all listings
-router.get("/all/:id", listing.getListing); // response: listing with exact listingID
-router.get("/fullInfo/", listing.getFullInfoListings); // response: list of all listings with info for ProductCard component
-router.get("/fullInfo/:id", listing.getFullInfoListing); // respone: listing with info for ProduuctCard component with exact listingID
+auctions endpoint: /auctions (with queries)
+GET:
+/auctions => all auctions
+/auctions/?full=true => all auctions with info about product
+/auctions/?full=true&id=62726815591b057d3ae115ad => auction for defined ID with product info
+/auctions/?id=62726815591b057d3ae115ad => auction for defined ID without product info
 
-router.post("/", listing.addListing); //request body: {
-userID: id of user who adding listing,
-productID: id of listing product,
-price: price of product,
-amount: amount of product,
-duration: duration of auction in HOURS!!! (from moment of adding listing)
+POST:
+/auctions with body:
+{
+"userID": "user_2",
+"amount": 1,
+"productID": "627230b0dcab962b192e0a0a",
+"duration": 24,
+"price": 15
+} =====> adding new auction
+/auctions/6272683e591b057d3ae115af(auctionID)/bid with body:
+{
+"userID": "user_112",
+"offer": 15
+} =====> placing bid
 
-PRICE IS NOT REQUIRED. WITHOUT PRICE IT WILL BE ONLY BIDS AUCTION, WITHOUT BUY NOW OPTIONS. REST OF PROPS ARE REQUIRED
-}
+PATCH:
+/auctions/6272683e591b057d3ae115af(auctionID) with body:
+{
+new price:
+longerDuration(hours to add):
+price:
+amount:
+likes:
+} YOU MUST NOT ADD EVERY PROPERTY => edit auction
 
-router.delete("/", listing.deleteListing); //request body: listingID - removes listing with exact listingID
-
-router.patch("/", listing.editListing); // request body:{
-price: new price for item
-amount: new amount of item
-longerDuration: how much longer will be auciont duration ( adding next hours to existing duration, NOT NEW duration )
-router.post("/addBid", listing.placeBid); //request body: listingID, userID, offer
-
-YOU MUST NOT ENTER ALL PROPERTIES. IF YOU DON`T ENTER NEW PROP IT WILL NOT CHANGE (stay with previous version)
-}
+DELETE:
+/auctions/6273b3e22147a4f9ba224b75(auctionID) ==> delete auction
