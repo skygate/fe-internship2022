@@ -3,26 +3,30 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import user from "../models/users";
-const initializePassport = require("../passport-config");
+import profile from "../models/profile";
 
-interface User {
-    username: string;
-    email: string;
-    password: string;
-}
+const initializePassport = require("../passport-config");
 
 //FUNKCJA DO GENEROWANIA BAZY USERÓW
 
 // const createUsersArray = async () => {
 //     for (let i = 0; i < 20; i++) {
 //         const newUser = new user({
-//             userID: Date.now().toString() + i,
 //             username: `ExampleUser${i}`,
 //             email: `mail${i}@mail.pl`,
 //             password: await bcrypt.hash(`password${i}`, 10),
 //         });
 
-//         newUser.save();
+//         await newUser.save();
+//         const { _id } = await user.findOne({ username: `ExampleUser${i}` });
+//         const newProfile = new profile({
+//             userID: _id,
+//             about: "",
+//             websiteUrl: "",
+//             profilePicture: "",
+//             coverPicture: "",
+//         });
+//         await newProfile.save();
 //     }
 // };
 
@@ -72,14 +76,23 @@ module.exports.registerUser = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new user({
-        userID: Date.now().toString(),
         username: username,
         email: email,
         password: hashedPassword,
     });
 
     try {
-        newUser.save();
+        await newUser.save();
+        const { _id } = await user.findOne({ email: email });
+        const newProfile = new profile({
+            userID: _id,
+            about: "",
+            websiteUrl: "",
+            profilePicture: "",
+            coverPicture: "",
+        });
+        newProfile.save();
+
         res.status(201).json(newUser);
     } catch (error: any) {
         res.status(409).json({ message: error.message });

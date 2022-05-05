@@ -3,8 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import uniqid from "uniqid";
 
-
-
 const mongoose = require("mongoose");
 
 const app: Express = express();
@@ -16,14 +14,14 @@ const mongo = process.env.MONGO || "";
 const productRoute = require("./routes/product");
 const userRoute = require("./routes/user");
 const listingRoute = require("./routes/listing");
+const profileRoute = require("./routes/profile");
 
 app.use(cors());
 app.use(express.json());
 app.use("/products", productRoute);
 app.use("/user", userRoute);
 app.use("/listing", listingRoute);
-
-
+app.use("/profiles", profileRoute);
 
 mongoose
     .connect(mongo, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -31,4 +29,3 @@ mongoose
         app.listen(port, () => console.log(`Server Running on Port: http://localhost:${port}`))
     )
     .catch((error: any) => console.log(`${error} did not connect`));
-
