@@ -13,14 +13,14 @@ const mongo = process.env.MONGO || "";
 //routes
 const productRoute = require("./routes/product");
 const userRoute = require("./routes/user");
-const listingRoute = require("./routes/listing");
+const auctionsRoute = require("./routes/auctions");
 const profileRoute = require("./routes/profile");
 
 app.use(cors());
 app.use(express.json());
 app.use("/products", productRoute);
 app.use("/user", userRoute);
-app.use("/listing", listingRoute);
+app.use("/auctions", auctionsRoute);
 app.use("/profiles", profileRoute);
 
 mongoose
