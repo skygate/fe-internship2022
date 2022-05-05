@@ -73,13 +73,6 @@ module.exports.registerUser = async (req: Request, res: Response) => {
         password: hashedPassword,
     });
 
-    const newProfile = new profile({
-        about: "",
-        websiteUrl: "",
-        profilePicture: "",
-        coverPicture: "",
-    });
-
     try {
         await newUser.save();
         const { _id } = await user.findOne({ email: email });
