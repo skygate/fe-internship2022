@@ -1,4 +1,4 @@
-import { Product } from "./Productt";
+import { ProductInterface } from "./ProductInterface";
 import { Bid } from "./Bid";
 export interface AuctionWithProductInfo {
     profileID: string;
@@ -10,5 +10,5 @@ export interface AuctionWithProductInfo {
     endDate: Date;
     likes: number;
     price: number;
-    productID: Product;
+    productID: ProductInterface;
 }

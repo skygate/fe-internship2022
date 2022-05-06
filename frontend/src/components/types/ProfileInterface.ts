@@ -1,4 +1,4 @@
-export interface Profile {
+export interface ProfileInterface {
     __v: string;
     _id: string;
     about: string;

@@ -1,4 +1,4 @@
-export interface Product {
+export interface ProductInterface {
     _id: string;
     ownerID: string;
     productName: string;
