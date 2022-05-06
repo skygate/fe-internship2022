@@ -15,6 +15,7 @@ const productRoute = require("./routes/product");
 const userRoute = require("./routes/user");
 const auctionsRoute = require("./routes/auctions");
 const profileRoute = require("./routes/profile");
+const categoriesRoute = require("./routes/categories");
 
 app.use(cors());
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use("/products", productRoute);
 app.use("/user", userRoute);
 app.use("/auctions", auctionsRoute);
 app.use("/profiles", profileRoute);
+app.use("/categories", categoriesRoute);
 
 mongoose
     .connect(mongo, { useNewUrlParser: true, useUnifiedTopology: true })
