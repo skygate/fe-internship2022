@@ -1,27 +1,28 @@
 import React from "react";
-import style from "./renderTextInput.module.scss";
+import style from "./renderInput.module.scss";
 
 interface ObjectType {
     id: string;
     label: string;
     placeholder: string;
+    type?: string;
 }
 
-interface RenderTextInputProps {
+interface RenderInputProps {
     item: ObjectType;
     onInputChange: (e: React.ChangeEvent) => void;
     width?: string;
     value: string;
 }
 
-export const RenderTextInput = ({ item, onInputChange, width, value }: RenderTextInputProps) => {
+export const RenderInput = ({ item, onInputChange, width, value }: RenderInputProps) => {
     return (
         <div className={style.inputContainer} key={item.id} style={{ width: `${width}` }}>
             <label htmlFor={item.id} className={style.label}>
                 {item.label}
             </label>
             <input
-                type="text"
+                type={item.type || "text"}
                 placeholder={item.placeholder}
                 id={item.id}
                 className={style.input}

@@ -1,0 +1,62 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.viewContainer {
+    margin-top: $spacer-160;
+}
+
+.wrapper {
+    margin: auto;
+    margin: 0 auto $spacer-24;
+    padding: $spacer-16;
+    border: 2px solid $c-neutrals-6;
+    width: 500px;
+    border-radius: 30px;
+}
+
+.title {
+    font-size: $font-size-headline-4;
+    font-weight: $font-weight-700;
+    line-height: $line-height-headline-2;
+    letter-spacing: $letter-spacing--02em;
+    color: $c-neutrals-2;
+    margin-bottom: $spacer-20;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.submitButton {
+    padding: $spacer-16;
+    color: $c-neutrals-8;
+    background-color: $c-primary-1;
+    border-radius: 20px;
+    margin: 0;
+}
+
+.createContainer {
+    width: 500px;
+    margin: auto;
+    padding: $spacer-16;
+}
+
+.p {
+    margin-bottom: $spacer-16;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2-bold;
+    color: $c-neutrals-2;
+}
+
+.createButton {
+    padding: $spacer-16;
+    color: $c-neutrals-2;
+    background-color: $c-neutrals-6;
+    border-radius: 20px;
+    margin: 0;
+    width: 100%;
+}
