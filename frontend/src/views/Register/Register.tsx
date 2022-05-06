@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import styles from "./Login.module.scss";
+import styles from "./Register.module.scss";
 import { RenderInput } from "components";
 
 enum InputType {
     Email,
+    Username,
     Password,
 }
 
@@ -18,14 +19,16 @@ interface Inputs {
 
 interface FormState {
     email: string;
+    username: string;
     password: string;
 }
 
-const LOGIN_URL = "http://localhost:8000/user/login";
+const REGISTER_URL = "http://localhost:8000/user/register";
 
-export const Login = () => {
+export const Register = () => {
     const [formState, setFormState] = useState<FormState>({
         email: "",
+        username: "",
         password: "",
     });
 
@@ -34,8 +37,15 @@ export const Login = () => {
             name: InputType.Email,
             id: "email",
             label: "Email",
-            placeholder: "email",
+            placeholder: "Email",
             value: formState.email,
+        },
+        {
+            name: InputType.Username,
+            id: "username",
+            label: "Username",
+            placeholder: "Username",
+            value: formState.username,
         },
         {
             name: InputType.Password,
@@ -67,13 +77,13 @@ export const Login = () => {
             });
         };
 
-        postData(LOGIN_URL);
+        postData(REGISTER_URL);
     };
 
     return (
         <div className={styles.viewContainer}>
             <div className={styles.wrapper}>
-                <h4 className={styles.title}>Sign-In</h4>
+                <h4 className={styles.title}>Register</h4>
                 <form action="" className={styles.form} onSubmit={onFormSubmit}>
                     {inputsArray.map((item) => {
                         return (
@@ -86,15 +96,9 @@ export const Login = () => {
                         );
                     })}
                     <button type="submit" className={styles.submitButton}>
-                        Sign in
+                        Register
                     </button>
                 </form>
-            </div>
-            <div className={styles.createContainer}>
-                <p className={styles.p}>New to SkyGate?</p>
-                <Link to="/register">
-                    <button className={styles.createButton}>Create your account</button>
-                </Link>
             </div>
         </div>
     );
