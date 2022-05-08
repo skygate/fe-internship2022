@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { RenderInput } from "components";
 
+interface User {
+    username: string;
+}
+
 enum InputType {
     Email,
     Password,
@@ -29,6 +33,8 @@ export const Login = () => {
         password: "",
     });
 
+    const [loggedUser, setLoggedUser] = useState<User>();
+
     const inputsArray: Inputs[] = [
         {
             name: InputType.Email,
@@ -51,23 +57,27 @@ export const Login = () => {
         setFormState({ ...formState, [target.id]: target.value });
     };
 
+    const postData = async (url: string) => {
+        await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000/",
+            },
+            body: JSON.stringify(formState),
+        })
+            .then((res) => res.json())
+            .then((data) => setLoggedUser(data));
+    };
+
     const onFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        const postData = async (url: string) => {
-            await fetch(url, {
-                method: "POST",
-                mode: "cors",
-                cache: "no-cache",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formState),
-            });
-        };
-
         postData(LOGIN_URL);
+        console.log(loggedUser);
     };
 
     return (

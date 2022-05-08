@@ -5,8 +5,6 @@ import passport from "passport";
 import user from "../models/users";
 import profile from "../models/profile";
 
-const initializePassport = require("../passport-config");
-
 //FUNKCJA DO GENEROWANIA BAZY USERÓW
 
 // const createUsersArray = async () => {
@@ -32,11 +30,15 @@ const initializePassport = require("../passport-config");
 
 // createUsersArray();
 
-initializePassport(
-    passport,
-    (email: string) => user.findOne({ email: email }),
-    (id: string) => user.findById(id)
-);
+// initializePassport(
+//     passport
+//     // async (email: string) => {
+//     //     const foundUser = await user.findOne({ email: email });
+//     //     console.log(foundUser);
+//     //     return foundUser;
+//     // },
+//     // async (id: string) => await user.findById(id)
+// );
 
 module.exports.getAllUsers = async (req: Request, res: Response) => {
     try {
@@ -59,28 +61,24 @@ module.exports.getUser = async (req: Request, res: Response) => {
 };
 
 module.exports.registerUser = async (req: Request, res: Response) => {
+    console.log(req.body);
     const { email, username, password } = req.body;
-
     const existingEmail = await user.findOne({ email: email });
     const existingUsername = await user.findOne({ username: username });
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
     if (existingEmail != null || existingUsername != null) {
         res.send(`User already exists`);
         return;
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new user({
         username: username,
         email: email,
         password: hashedPassword,
     });
-
     try {
         await newUser.save();
         const { _id } = await user.findOne({ email: email });
@@ -92,29 +90,20 @@ module.exports.registerUser = async (req: Request, res: Response) => {
             coverPicture: "",
         });
         newProfile.save();
-
         res.status(201).json(newUser);
     } catch (error: any) {
         res.status(409).json({ message: error.message });
     }
 };
 
-module.exports.loginUser = passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-    failureFlash: false,
-});
-
-// const checkIfAuthenticated = (req: Request, res: Response, next: () => void) => {
-//     if (req.isAuthenticated()) {
-//         return next();
-//     }
-//     res.send("authenticated");
-// };
-
-// const checkIfNotAuthenticated = (req: Request, res: Response, next: () => void) => {
-//     if (req.isAuthenticated()) {
-//         return res.send("not authenticated");
-//     }
-//     next();
-// };
+module.exports.loginUser = (req: Request, res: Response, next: any) => {
+    passport.authenticate("local", (err, user, info) => {
+        if (err) throw err;
+        if (!user) res.send("user doesn't exist");
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        req.logIn(user, (err) => {
+            if (err) throw err;
+            res.status(200).send(req.user);
+        });
+    })(req, res, next);
+};
