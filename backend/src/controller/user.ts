@@ -30,16 +30,6 @@ import profile from "../models/profile";
 
 // createUsersArray();
 
-// initializePassport(
-//     passport
-//     // async (email: string) => {
-//     //     const foundUser = await user.findOne({ email: email });
-//     //     console.log(foundUser);
-//     //     return foundUser;
-//     // },
-//     // async (id: string) => await user.findById(id)
-// );
-
 module.exports.getAllUsers = async (req: Request, res: Response) => {
     try {
         const users = await user.find();
@@ -61,7 +51,6 @@ module.exports.getUser = async (req: Request, res: Response) => {
 };
 
 module.exports.registerUser = async (req: Request, res: Response) => {
-    console.log(req.body);
     const { email, username, password } = req.body;
     const existingEmail = await user.findOne({ email: email });
     const existingUsername = await user.findOne({ username: username });

@@ -1,23 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import styles from "./Login.module.scss";
-import { RenderInput } from "components";
+import { LoginView } from "./LoginView";
+import { LoginInputs } from "components/types/index";
+import { LoginInputType } from "components/types/index";
 
 interface User {
     username: string;
-}
-
-enum InputType {
-    Email,
-    Password,
-}
-
-interface Inputs {
-    name: InputType;
-    id: string;
-    label: string;
-    placeholder: string;
-    value: string;
 }
 
 interface FormState {
@@ -26,25 +13,26 @@ interface FormState {
 }
 
 const LOGIN_URL = "http://localhost:8000/user/login";
+const DEFAULT_STATE = {
+    email: "",
+    password: "",
+};
 
 export const Login = () => {
-    const [formState, setFormState] = useState<FormState>({
-        email: "",
-        password: "",
-    });
+    const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
 
     const [loggedUser, setLoggedUser] = useState<User>();
 
-    const inputsArray: Inputs[] = [
+    const inputsArray: LoginInputs[] = [
         {
-            name: InputType.Email,
+            name: LoginInputType.Email,
             id: "email",
             label: "Email",
             placeholder: "email",
             value: formState.email,
         },
         {
-            name: InputType.Password,
+            name: LoginInputType.Password,
             id: "password",
             label: "Password",
             placeholder: "Password",
@@ -81,31 +69,10 @@ export const Login = () => {
     };
 
     return (
-        <div className={styles.viewContainer}>
-            <div className={styles.wrapper}>
-                <h4 className={styles.title}>Sign-In</h4>
-                <form action="" className={styles.form} onSubmit={onFormSubmit}>
-                    {inputsArray.map((item) => {
-                        return (
-                            <RenderInput
-                                key={item.id}
-                                item={item}
-                                onInputChange={onInputChange}
-                                value={item.value}
-                            />
-                        );
-                    })}
-                    <button type="submit" className={styles.submitButton}>
-                        Sign in
-                    </button>
-                </form>
-            </div>
-            <div className={styles.createContainer}>
-                <p className={styles.p}>New to SkyGate?</p>
-                <Link to="/register">
-                    <button className={styles.createButton}>Create your account</button>
-                </Link>
-            </div>
-        </div>
+        <LoginView
+            onFormSubmit={onFormSubmit}
+            onInputChange={onInputChange}
+            inputsArray={inputsArray}
+        />
     );
 };

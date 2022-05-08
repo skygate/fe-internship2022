@@ -1,21 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import styles from "./Register.module.scss";
-import { RenderInput } from "components";
-
-enum InputType {
-    Email,
-    Username,
-    Password,
-}
-
-interface Inputs {
-    name: InputType;
-    id: string;
-    label: string;
-    placeholder: string;
-    value: string;
-}
+import { RegisterInputType, RegisterInputs } from "components/types/index";
+import { RegisterView } from "./RegisterView";
 
 interface FormState {
     email: string;
@@ -24,31 +9,32 @@ interface FormState {
 }
 
 const REGISTER_URL = "http://localhost:8000/user/register";
+const DEFAULT_STATE = {
+    email: "",
+    username: "",
+    password: "",
+};
 
 export const Register = () => {
-    const [formState, setFormState] = useState<FormState>({
-        email: "",
-        username: "",
-        password: "",
-    });
+    const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
 
-    const inputsArray: Inputs[] = [
+    const inputsArray: RegisterInputs[] = [
         {
-            name: InputType.Email,
+            name: RegisterInputType.Email,
             id: "email",
             label: "Email",
             placeholder: "Email",
             value: formState.email,
         },
         {
-            name: InputType.Username,
+            name: RegisterInputType.Username,
             id: "username",
             label: "Username",
             placeholder: "Username",
             value: formState.username,
         },
         {
-            name: InputType.Password,
+            name: RegisterInputType.Password,
             id: "password",
             label: "Password",
             placeholder: "Password",
@@ -81,25 +67,10 @@ export const Register = () => {
     };
 
     return (
-        <div className={styles.viewContainer}>
-            <div className={styles.wrapper}>
-                <h4 className={styles.title}>Register</h4>
-                <form action="" className={styles.form} onSubmit={onFormSubmit}>
-                    {inputsArray.map((item) => {
-                        return (
-                            <RenderInput
-                                key={item.id}
-                                item={item}
-                                onInputChange={onInputChange}
-                                value={item.value}
-                            />
-                        );
-                    })}
-                    <button type="submit" className={styles.submitButton}>
-                        Register
-                    </button>
-                </form>
-            </div>
-        </div>
+        <RegisterView
+            inputsArray={inputsArray}
+            onInputChange={onInputChange}
+            onFormSubmit={onFormSubmit}
+        />
     );
 };
