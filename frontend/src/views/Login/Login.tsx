@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { LoginView } from "./LoginView";
 import { LoginInputs } from "components/types/index";
 import { LoginInputType } from "components/types/index";
+import { loginUser } from "API";
 
 interface User {
     username: string;
@@ -29,6 +30,9 @@ export const Login = () => {
             id: "email",
             label: "Email",
             placeholder: "email",
+            type: "email",
+            required: true,
+            minlength: 3,
             value: formState.email,
         },
         {
@@ -36,6 +40,9 @@ export const Login = () => {
             id: "password",
             label: "Password",
             placeholder: "Password",
+            type: "password",
+            required: true,
+            minlength: 3,
             value: formState.password,
         },
     ];
@@ -45,27 +52,9 @@ export const Login = () => {
         setFormState({ ...formState, [target.id]: target.value });
     };
 
-    const postData = async (url: string) => {
-        await fetch(url, {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "Access-Control-Allow-Origin": "http://localhost:3000/",
-            },
-            body: JSON.stringify(formState),
-        })
-            .then((res) => res.json())
-            .then((data) => setLoggedUser(data));
-    };
-
     const onFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        postData(LOGIN_URL);
-        console.log(loggedUser);
+        loginUser(LOGIN_URL, formState).then((data) => setLoggedUser(data));
     };
 
     return (

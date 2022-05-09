@@ -15,16 +15,15 @@ export const LoginView = ({ onFormSubmit, onInputChange, inputsArray }: LoginVie
             <div className={styles.wrapper}>
                 <h4 className={styles.title}>Sign-In</h4>
                 <form action="" className={styles.form} onSubmit={onFormSubmit}>
-                    {inputsArray.map((item) => {
-                        return (
-                            <RenderInput
-                                key={item.id}
-                                item={item}
-                                onInputChange={onInputChange}
-                                value={item.value}
-                            />
-                        );
-                    })}
+                    {inputsArray.map((item) => 
+                        <RenderInput
+                            key={item.id}
+                            item={item}
+                            onInputChange={onInputChange}
+                            value={item.value}
+                        />
+                        
+                    )}
                     <button type="submit" className={styles.submitButton}>
                         Sign in
                     </button>

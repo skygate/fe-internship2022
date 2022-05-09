@@ -1,5 +1,12 @@
 TO START: NPM RUN DEV
 
+In backend/node_modules/@types/passport/index.d.ts update User interface to:
+    interface User {
+        _id: string,
+        username: string,
+        email: string
+    }
+
 auctions endpoint: /auctions (with queries)
 GET:
 /auctions => all auctions

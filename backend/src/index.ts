@@ -37,8 +37,6 @@ app.use(
     })
 );
 
-console.log('test')
-
 app.use(passport.initialize());
 app.use(passport.session());
 require("./passport-config");

@@ -6,6 +6,8 @@ interface ObjectType {
     label: string;
     placeholder: string;
     type?: string;
+    required?: boolean;
+    minlength?: number;
 }
 
 interface RenderInputProps {
@@ -28,6 +30,8 @@ export const RenderInput = ({ item, onInputChange, width, value }: RenderInputPr
                 className={style.input}
                 onChange={onInputChange}
                 value={value}
+                required={item.required}
+                minLength={item.minlength}
             />
         </div>
     );

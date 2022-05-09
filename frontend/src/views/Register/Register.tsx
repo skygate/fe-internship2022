@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { RegisterInputType, RegisterInputs } from "components/types/index";
 import { RegisterView } from "./RegisterView";
+import { registerUser } from "API";
 
 interface FormState {
     email: string;
     username: string;
     password: string;
+    confirmPassword: string;
 }
 
 const REGISTER_URL = "http://localhost:8000/user/register";
@@ -13,6 +15,7 @@ const DEFAULT_STATE = {
     email: "",
     username: "",
     password: "",
+    confirmPassword: "",
 };
 
 export const Register = () => {
@@ -24,6 +27,9 @@ export const Register = () => {
             id: "email",
             label: "Email",
             placeholder: "Email",
+            type: "email",
+            required: true,
+            minlength: 3,
             value: formState.email,
         },
         {
@@ -31,6 +37,9 @@ export const Register = () => {
             id: "username",
             label: "Username",
             placeholder: "Username",
+            type: "text",
+            required: true,
+            minlength: 3,
             value: formState.username,
         },
         {
@@ -38,7 +47,20 @@ export const Register = () => {
             id: "password",
             label: "Password",
             placeholder: "Password",
+            type: "password",
+            required: true,
+            minlength: 3,
             value: formState.password,
+        },
+        {
+            name: RegisterInputType.ConfirmPassword,
+            id: "confirmPassword",
+            label: "Confirm password",
+            placeholder: "Confirm password",
+            type: "password",
+            required: true,
+            minlength: 3,
+            value: formState.confirmPassword,
         },
     ];
 
@@ -47,23 +69,18 @@ export const Register = () => {
         setFormState({ ...formState, [target.id]: target.value });
     };
 
+    const checkPasswordMatch = (data: FormState) => {
+        if (data.password !== data.confirmPassword) {
+            alert("hasla nie sa takie same");
+            return false;
+        }
+        return true;
+    };
+
     const onFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        const postData = async (url: string) => {
-            await fetch(url, {
-                method: "POST",
-                mode: "cors",
-                cache: "no-cache",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formState),
-            });
-        };
-
-        postData(REGISTER_URL);
+        if (checkPasswordMatch(formState)) return;
+        registerUser(REGISTER_URL, formState);
     };
 
     return (

@@ -8,5 +8,8 @@ export interface LoginInputs {
     id: string;
     label: string;
     placeholder: string;
+    type: string,
+    required: boolean,
+    minlength: number,
     value: string;
 }
