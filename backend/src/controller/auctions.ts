@@ -24,6 +24,20 @@ export const getAllAuctions = (req: Request, res: Response) => {
             res.status(404).json({ message: error.message });
         }
     };
+    const fullInfoAuctionsOfUser = async () => {
+        try {
+            const auctionsWithInfo = await auctions
+                .find({ profileID: req.query.profileID })
+                .populate({
+                    path: "productID",
+                    select: "ownerID productDescription productName productImageUrl productCategory",
+                })
+                .exec();
+            res.status(200).json(auctionsWithInfo);
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
     const defaultAuction = async () => {
         try {
             const foundAuction = await auctions.findById(req.query.id).exec();
@@ -50,7 +64,9 @@ export const getAllAuctions = (req: Request, res: Response) => {
             res.status(404).json({ message: error.message });
         }
     };
-    req.query.id
+    req.query.profileID && req.query.full === "true"
+        ? fullInfoAuctionsOfUser()
+        : req.query.id
         ? req.query.full === "true"
             ? fullInfoAuction()
             : defaultAuction()
@@ -60,9 +76,9 @@ export const getAllAuctions = (req: Request, res: Response) => {
 };
 
 export const addAuction = async (req: Request, res: Response) => {
-    const { userID, productID, amount, price } = req.body;
+    const { profileID, productID, amount, price } = req.body;
     const newAuction = new auctions({
-        userID,
+        profileID,
         productID,
         amount,
         price,
@@ -82,7 +98,7 @@ export const addAuction = async (req: Request, res: Response) => {
 export const addBid = async (req: Request, res: Response) => {
     if (typeof req.body == undefined)
         return res.status(400).json({ errorMessage: "Rosources not found" });
-    const { userID, offer } = req.body;
+    const { profileID, offer } = req.body;
 
     let foundAuction;
     try {
@@ -92,26 +108,27 @@ export const addBid = async (req: Request, res: Response) => {
     }
     if (!foundAuction) return res.status(400).json({ errorMessage: "Auction not found" });
 
-    const isUserIDEmpty = !!req.body.userID;
-    if (!isUserIDEmpty) return res.status(400).json({ errorMessage: "UserID is empty" });
+    const isProfileIDEmpty = !!req.body.profileID;
+    if (!isProfileIDEmpty) return res.status(400).json({ errorMessage: "ProfileID is empty" });
     const isBidsHistoryEmpty = foundAuction.bidHistory.length === 0;
     const isNewOfferHighestThanPrevious = isBidsHistoryEmpty
         ? true
         : req.body.offer > foundAuction.bidHistory[foundAuction.bidHistory.length - 1].offer;
-    const isBiddingUserDifferentThanSeller = req.body.userID === foundAuction.userID;
-    const isUserBiddingHimself = isBidsHistoryEmpty
+    const isBiddingProfileDifferentThanSeller = req.body.profileID === foundAuction.profileID;
+    const isProfileBiddingHimself = isBidsHistoryEmpty
         ? false
-        : req.body.userID === foundAuction.bidHistory[foundAuction.bidHistory.length - 1].userID;
+        : req.body.profileID ===
+          foundAuction.bidHistory[foundAuction.bidHistory.length - 1].profileID;
 
     const newBid = {
-        userID,
+        profileID,
         offer,
         date: new Date(),
     };
 
     if (
-        (isBidsHistoryEmpty || (isNewOfferHighestThanPrevious && !isUserBiddingHimself)) &&
-        !isBiddingUserDifferentThanSeller
+        (isBidsHistoryEmpty || (isNewOfferHighestThanPrevious && !isProfileBiddingHimself)) &&
+        !isBiddingProfileDifferentThanSeller
     ) {
         foundAuction.bidHistory.push(newBid);
         foundAuction.save();
