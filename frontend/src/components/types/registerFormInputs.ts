@@ -1,10 +1,10 @@
 import React from "react";
 
 export enum RegisterInputType {
-    Email,
-    Username,
-    Password,
-    ConfirmPassword
+    Email="email",
+    Username="username",
+    Password="password",
+    ConfirmPassword="confirmPassword"
 }
 
 export interface RegisterInputs {
@@ -13,7 +13,4 @@ export interface RegisterInputs {
     label: string;
     placeholder: string;
     type: string;
-    required: boolean;
-    minlength: number;
-    value: string;
 }

@@ -1,5 +1,5 @@
-import React from "react";
-import style from "./renderInput.module.scss";
+import style from "./passwordInput.module.scss";
+import * as Yup from "yup";
 
 interface ObjectType {
     id: string;
@@ -15,10 +15,18 @@ interface RenderInputProps {
     onInputChange: (e: React.ChangeEvent) => void;
     width?: string;
     value: string;
-    error?: string;
 }
+// const passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+export const yupRegisterPasswordValidation = Yup.string()
+    .required("Required")
+    .min(3, "Password too short")
+    .max(24, "Password too long");
+//   .matches(
+//     passwordRegExp,
+//     'Your password must contain small and capital letters, special character and number.',
+//   );
 
-export const RenderInput = ({ item, onInputChange, width, value, error }: RenderInputProps) => {
+export const PasswordInput = ({ item, onInputChange, value, width }: RenderInputProps) => {
     return (
         <div className={style.inputContainer} key={item.id} style={{ width: `${width}` }}>
             <label htmlFor={item.id} className={style.label}>
@@ -31,10 +39,9 @@ export const RenderInput = ({ item, onInputChange, width, value, error }: Render
                 className={style.input}
                 onChange={onInputChange}
                 value={value}
-                required={item.required}
-                minLength={item.minlength}
+                // required={item.required}
+                // minLength={item.minlength}
             />
-            {error ? <p className={style.error}>{error}</p> : null}
         </div>
     );
 };
