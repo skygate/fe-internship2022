@@ -10,7 +10,6 @@ interface FormState {
     password: string;
 }
 
-const LOGIN_URL = "http://localhost:8000/user/login";
 const DEFAULT_STATE = {
     email: "",
     password: "",
@@ -52,19 +51,16 @@ export const Login = () => {
     const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (loggedUser) return;
-        try {
-            loginUser(LOGIN_URL, formState).then((data) => {
-                if (data.hasOwnProperty("message")) {
-                    setErrorMessage(data.message);
-                    setFormState(DEFAULT_STATE);
-                    return;
-                }
-                setLoggedUser(data);
+
+        loginUser(formState).then((data) => {
+            if (data.hasOwnProperty("message")) {
+                setErrorMessage(data.message);
                 setFormState(DEFAULT_STATE);
-            });
-        } catch (error) {
-            throw new Error("Couldn't login user");
-        }
+                return;
+            }
+            setLoggedUser(data);
+            setFormState(DEFAULT_STATE);
+        });
     };
 
     return (

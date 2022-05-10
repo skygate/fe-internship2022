@@ -15,8 +15,6 @@ const validationSchema = Yup.object().shape({
         .required("Required"),
 });
 
-const REGISTER_URL = "http://localhost:8000/user/register";
-
 export const Register = () => {
     const [response, setResponse] = useState<string | null>(null);
 
@@ -37,14 +35,11 @@ export const Register = () => {
         validateOnChange: false,
         onSubmit: async (values) => {
             setResponse(null);
-            try {
-                await registerUser(REGISTER_URL, values).then((data) => {
-                    setResponse(data.message);
-                    if (data.message === "User added succesfully") formik.resetForm();
-                });
-            } catch (error) {
-                throw new Error("Couldn't add user");
-            }
+            await registerUser(values).then((data) => {
+                setResponse(data.message);
+                if (data.message === "User added succesfully") formik.resetForm();
+            });
+
             hideMessage();
         },
     });
