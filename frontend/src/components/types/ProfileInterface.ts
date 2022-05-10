@@ -10,15 +10,7 @@ export interface ProfileInterface {
     instagramUrl: string;
     twitterUrl: string;
     facebookUrl: string;
-    following: [
-        {
-            profileID: string;
-        }
-    ];
-    followers: [
-        {
-            profileID: string;
-        }
-    ];
+    following: string[];
+    followers: string[];
     joinDate: Date;
 }

@@ -10,16 +10,8 @@ const profileSchema = new mongoose.Schema({
     instagramUrl: String,
     twitterUrl: String,
     facebookUrl: String,
-    following: [
-        {
-            profileID: String,
-        },
-    ],
-    followers: [
-        {
-            profileID: String,
-        },
-    ],
+    following: [],
+    followers: [],
     joinDate: Date,
 });
 
