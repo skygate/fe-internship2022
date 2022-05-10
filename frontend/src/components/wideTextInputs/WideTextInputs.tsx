@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { RenderTextInput } from "components";
+import { RenderInput } from "components";
 import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
 import { createFormState } from "components/types/createFormState";
 
@@ -43,7 +43,7 @@ export const WideTextInputs = ({ onInputChange }: WideTextInputsProps) => {
         <div>
             {textInputWideArray.map((item) => {
                 return (
-                    <RenderTextInput
+                    <RenderInput
                         key={item.id}
                         item={item}
                         onInputChange={onInputChange}

@@ -1,30 +1,61 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import uniqid from "uniqid";
-
-const mongoose = require("mongoose");
-
-const app: Express = express();
+const passport = require("passport");
+const session = require("express-session");
 dotenv.config();
 const port = process.env.PORT;
 const mongo = process.env.MONGO || "";
 
-//routes
+const mongoose = require("mongoose");
+const MongoStore = require("connect-mongo");
+const app: Express = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        credentials: true,
+    })
+);
+
+app.use(
+    session({
+        secret: "secretcode",
+        resave: true,
+        saveUninitialized: true,
+        store: MongoStore.create({
+            mongoUrl: mongo,
+            collectionName: "sessions",
+        }),
+        cookie: {
+            maxAge: 24 * 60 * 60 * 1000, //24h
+        },
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+require("./passport-config");
+
+// IMPORT ROUTES
 const productRoute = require("./routes/product");
 const userRoute = require("./routes/user");
 const auctionsRoute = require("./routes/auctions");
 const profileRoute = require("./routes/profile");
 const categoriesRoute = require("./routes/categories");
 
-app.use(cors());
-app.use(express.json());
+// USE ROUTES
 app.use("/products", productRoute);
 app.use("/user", userRoute);
 app.use("/auctions", auctionsRoute);
 app.use("/profiles", profileRoute);
 app.use("/categories", categoriesRoute);
 
+// CONNECT MONGO
 mongoose
     .connect(mongo, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() =>

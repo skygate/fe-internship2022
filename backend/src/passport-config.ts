@@ -1,45 +1,40 @@
-import { PassportStatic } from "passport";
 import { VerifyFunction } from "passport-local/index";
-
-interface User {
-    userID: number;
-    username: string;
-    email: string;
-    password: string;
-}
-
+import users from "./models/users";
+import bcrypt from "bcrypt";
+const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
 
-function initialize(
-    passport: PassportStatic,
-    getUserByEmail: (email: string) => User,
-    getUserById: (id: string) => Express.User
-) {
-    const authenticateUser: VerifyFunction = async (email, password, done) => {
-        const user = await getUserByEmail(email);
-        if (user == null) {
-            return done(null, false, { message: "No user with that email" });
+const authenticateUser: VerifyFunction = async (email: string, password: string, done) => {
+    const user = await users.findOne({ email: email });
+    if (user == null) return done(null, false);
+
+    try {
+        if (await bcrypt.compare(password, user.password)) {
+            return done(null, user);
+        } else {
+            return done(null, false, { message: "Password incorrect" });
         }
+    } catch (e) {
+        return done(null);
+    }
+};
 
-        try {
-            if (await bcrypt.compare(password, user.password)) {
-                console.log("ok");
-                return done(null, user);
-            } else {
-                console.log("bledne haslo");
-                return done(null, false, { message: "Password incorrect" });
-            }
-        } catch (e) {
-            return done(e);
-        }
-    };
+const strategy = new LocalStrategy({ usernameField: "email" }, authenticateUser);
+passport.use(strategy);
 
-    passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
-    passport.serializeUser((user: Express.User, done) => done(null, user._id));
-    passport.deserializeUser((id: string, done) => {
-        return done(null, getUserById(id));
+
+passport.serializeUser((user: Express.User, done: (err: null, id: string) => void) => {
+    done(null, user._id);
+});
+
+passport.deserializeUser((id: string, done: (err: Error, user: {}) => void) => {
+    users.findOne({ _id: id }, (err: Error, user: Express.User) => {
+        const userInformation = {
+            username: user.username,
+            email: user.email,
+        };
+        done(err, userInformation);
     });
-}
+});
 
-module.exports = initialize;
+module.exports = authenticateUser;
