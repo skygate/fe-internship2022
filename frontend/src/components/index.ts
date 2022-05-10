@@ -16,5 +16,6 @@ export { UploadFile } from "./uploadFile/UploadFile";
 export { ToggleInputs } from "./toggleInputs/ToggleInputs";
 export { WideTextInputs } from "./wideTextInputs/WideTextInputs";
 export { RowTextInputs } from "./rowTextInputs/RowTextInputs";
-export { RenderInput } from "./renderInput/RenderInput";
 export { ProductCard } from "./productCard/ProductCard";
+export { ProfileInfoPanel } from "./profileInfoPanel/ProfileInfoPanel";
+export { RenderInput } from "./renderInput/RenderInput";
