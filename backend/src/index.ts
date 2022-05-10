@@ -46,12 +46,14 @@ const productRoute = require("./routes/product");
 const userRoute = require("./routes/user");
 const auctionsRoute = require("./routes/auctions");
 const profileRoute = require("./routes/profile");
+const categoriesRoute = require("./routes/categories");
 
 // USE ROUTES
 app.use("/products", productRoute);
 app.use("/user", userRoute);
 app.use("/auctions", auctionsRoute);
 app.use("/profiles", profileRoute);
+app.use("/categories", categoriesRoute);
 
 // CONNECT MONGO
 mongoose

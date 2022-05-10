@@ -5,6 +5,7 @@ let productsArray = new Array(20);
 
 interface Product {
     productId: string;
+    ownerID: string;
     productName: string;
     productDescription: string;
     productImageUrl: string;
@@ -15,6 +16,7 @@ const createProductsArray = (arr: Product[]) => {
     for (let i = 0; i < arr.length; i++) {
         arr[i] = {
             productId: `productId${i}`,
+            ownerID: `owner_${i}`,
             productName: `exampleName${i}`,
             productDescription:
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -45,8 +47,9 @@ export const getProduct = async (req: Request, res: Response) => {
 };
 
 export const addProduct = async (req: Request, res: Response) => {
-    const { productName, productDescription, productImageUrl, productCategory } = req.body;
+    const { productName, productDescription, productImageUrl, productCategory, ownerID } = req.body;
     const newProduct = new product({
+        ownerID,
         productName,
         productDescription,
         productImageUrl,

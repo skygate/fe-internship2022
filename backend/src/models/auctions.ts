@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 const auctionsSchema = new mongoose.Schema({
-    userID: String,
+    profileID: String,
     productID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Products" },
     price: Number,
     amount: Number,
     bidHistory: [
         {
-            userID: String,
+            profileID: String,
             bidID: String,
             offer: Number,
             date: Date,

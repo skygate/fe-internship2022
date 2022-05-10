@@ -1,5 +1,6 @@
 TO START: NPM RUN DEV
 
+
 In backend/node_modules/@types/passport/index.d.ts update User interface to:
     interface User {
         _id: string,
@@ -41,3 +42,12 @@ likes:
 
 DELETE:
 /auctions/6273b3e22147a4f9ba224b75(auctionID) ==> delete auction
+
+categories endpoints: /categories
+GET:
+/categories => return all categories
+/categories/?id=(categoryID) => return category with this id
+POST:
+/categories with body:{categoryName: "NAME"} => add category
+DELETE:
+/categories/categoryID => delete category
