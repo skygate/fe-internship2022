@@ -1,0 +1,108 @@
+@import "../../theme/lightThemeColors.scss";
+@import "../../theme/spacers.scss";
+@import "../../theme/typography.scss";
+
+
+
+
+
+
+
+.profileContainer{
+    display: flex;
+    padding: $spacer-32;
+    flex-direction: column;
+    background-color: $c-neutrals-8;
+    border: 1px solid $c-neutrals-6;
+    border-radius: 16px;
+    box-shadow: 0px 40px 32px -24px rgba(15, 15, 15, 0.12);
+}
+
+.profileAvatar{
+    margin: 0 $spacer-16;
+}
+
+.usernameText {
+    color: $c-neutrals-2;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+    font-size: $line-height-body-1-bold;
+    font-family: $font-family-poppins;
+    padding-top: $spacer-12;
+}
+.aboutText {
+    color: $c-neutrals-4;
+    font-family: $font-family-poppins;
+    line-height: $line-height-caption-2;
+    font-weight: $font-weight-400;
+    font-size: $font-size-caption-2;
+}
+
+.aboutWrapper {
+    padding-top: $spacer-20;
+    display: -webkit-box;
+    color: $c-neutrals-4;
+    max-width: 200px;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .aboutExpanded {
+    padding-top: $spacer-20;
+    max-width: 200px;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+}
+
+
+
+.website {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: $spacer-20;
+    padding-bottom: $spacer-48;
+    text-align: center;
+}
+
+.websiteText {
+    padding-left: $spacer-8;
+    line-height: $line-height-button-2;
+    font-size: $font-size-button-2;
+    color: $c-neutrals-2;
+    font-weight: $font-weight-700;
+    font-family: $font-family-dm-sans;
+    text-align: center;
+}
+
+.followButton {
+    border:none;
+    font-family: $font-family-dm-sans;
+    color: $c-neutrals-8;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    font-size: $font-size-button-2;
+    background-color: $c-primary-1;
+    border-radius: 90px;
+    padding: 12px 16px;
+    max-width: 75px;
+    margin: 0 auto
+}
+
+.socialMediaContainer {
+    display: flex;
+    justify-content: space-between;
+    padding: $spacer-48;
+    border-bottom: 1px solid $c-neutrals-6;
+}
+
+.memberSince {
+    color: $c-neutrals-4;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-400;
+    font-size: $font-size-caption-2;
+    line-height: $line-height-caption-2;
+    margin-top: $spacer-48;
+}
