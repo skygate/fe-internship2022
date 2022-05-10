@@ -21,15 +21,31 @@ module.exports.getProfile = async (req: Request, res: Response) => {
 };
 
 module.exports.addProfile = async (req: Request, res: Response) => {
-    const { about, websiteUrl, profilePicture, coverPicture } = req.body;
+    const {
+        about,
+        websiteUrl,
+        profilePicture,
+        coverPicture,
+        profileName,
+        instagramUrl,
+        twitterUrl,
+        facebookUrl,
+    } = req.body;
     const { userID } = req.params;
 
     const newProfile = new profile({
         userID: userID,
+        profileName: profileName,
         about: about,
         websiteUrl: websiteUrl,
         profilePicture: profilePicture,
         coverPicture: coverPicture,
+        instagramUrl: instagramUrl,
+        twitterUrl: twitterUrl,
+        facebookUrl: facebookUrl,
+        joinDate: new Date(),
+        following: new Array(),
+        followers: new Array(),
     });
 
     try {
@@ -42,7 +58,16 @@ module.exports.addProfile = async (req: Request, res: Response) => {
 
 module.exports.editProfile = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { about, websiteUrl, profilePicture, coverPicture } = req.body;
+    const {
+        about,
+        websiteUrl,
+        profilePicture,
+        coverPicture,
+        instagramUrl,
+        facebookUrl,
+        twitterUrl,
+        profileName,
+    } = req.body;
 
     try {
         await profile.findByIdAndUpdate(
@@ -52,6 +77,10 @@ module.exports.editProfile = async (req: Request, res: Response) => {
                 websiteUrl: websiteUrl,
                 profilePicture: profilePicture,
                 coverPicture: coverPicture,
+                instagramUrl: instagramUrl,
+                facebookUrl: facebookUrl,
+                twitterUrl: twitterUrl,
+                profileName: profileName,
             },
             { new: true }
         );
