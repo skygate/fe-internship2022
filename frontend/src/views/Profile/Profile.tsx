@@ -50,9 +50,6 @@ export function Profile() {
         })();
     }, [profileID]);
 
-    console.log(auctions);
-    console.log(profile);
-
     return (
         <div className={styles.profileContainer}>
             <div className={styles.coverPhotoWrapper}>
