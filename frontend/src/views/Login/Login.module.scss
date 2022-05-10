@@ -60,3 +60,17 @@
     margin: 0;
     width: 100%;
 }
+
+.error {
+    color: $c-primary-3;
+    font-size: $font-size-body-2-bold;
+    margin-top: $spacer-16;
+    padding-bottom: $spacer-32;
+}
+
+.user {
+    color: $c-neutrals-2;
+    font-size: $font-size-body-2-bold;
+    margin-top: $spacer-16;
+    padding-bottom: $spacer-32;
+}

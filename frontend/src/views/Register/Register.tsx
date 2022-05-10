@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { RegisterInputType, RegisterInputs } from "components/types/index";
 import { RegisterView } from "./RegisterView";
-import { registerUser } from "API";
-import { FormikConfig, useFormik } from "formik";
+import { registerUser } from "API/UserService";
+import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import { yupRegisterPasswordValidation } from "components/passwordInput/PasswordInput";
 
@@ -15,25 +15,18 @@ const validationSchema = Yup.object().shape({
         .required("Required"),
 });
 
-interface FormState {
-    email: string;
-    username: string;
-    password: string;
-    confirmPassword: string;
-}
-
 const REGISTER_URL = "http://localhost:8000/user/register";
-const DEFAULT_STATE = {
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-};
 
 export const Register = () => {
-    const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
+    const [response, setResponse] = useState<string | null>(null);
 
-    const formik = useFormik({
+    const hideMessage = () => {
+        setTimeout(() => {
+            setResponse(null);
+        }, 2000);
+    };
+
+    const formik: FormikValues = useFormik({
         initialValues: {
             email: "",
             username: "",
@@ -42,9 +35,17 @@ export const Register = () => {
         },
         validationSchema,
         validateOnChange: false,
-        onSubmit: (values) => {
-            registerUser(REGISTER_URL, values);
-            console.log(values);
+        onSubmit: async (values) => {
+            setResponse(null);
+            try {
+                await registerUser(REGISTER_URL, values).then((data) => {
+                    setResponse(data.message);
+                    if (data.message === "User added succesfully") formik.resetForm();
+                });
+            } catch (error) {
+                throw new Error("Couldn't add user");
+            }
+            hideMessage();
         },
     });
 
@@ -79,5 +80,5 @@ export const Register = () => {
         },
     ];
 
-    return <RegisterView inputsArray={inputsArray} formik={formik} />;
+    return <RegisterView inputsArray={inputsArray} formik={formik} response={response} />;
 };

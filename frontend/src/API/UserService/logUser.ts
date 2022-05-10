@@ -10,6 +10,6 @@ export const loginUser = async (url: string, data: {}) => {
             "Access-Control-Allow-Origin": "http://localhost:3000/",
         },
         body: JSON.stringify(data),
-    })  
+    });  
     return response.json();
 };

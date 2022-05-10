@@ -1,7 +1,5 @@
-
-
 export const registerUser = async (url: string, data: {}) => {
-    await fetch(url, {
+    const response = await fetch(url, {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -11,4 +9,5 @@ export const registerUser = async (url: string, data: {}) => {
         },
         body: JSON.stringify(data),
     });
+    return response.json();
 };

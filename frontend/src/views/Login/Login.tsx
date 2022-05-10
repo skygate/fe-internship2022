@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { LoginView } from "./LoginView";
 import { LoginInputs } from "components/types/index";
 import { LoginInputType } from "components/types/index";
-import { loginUser } from "API";
-
-interface User {
-    username: string;
-}
+import { loginUser } from "API/UserService";
+import { User } from "components/types";
 
 interface FormState {
     email: string;
@@ -21,8 +18,8 @@ const DEFAULT_STATE = {
 
 export const Login = () => {
     const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
-
-    const [loggedUser, setLoggedUser] = useState<User>();
+    const [loggedUser, setLoggedUser] = useState<User | null>(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const inputsArray: LoginInputs[] = [
         {
@@ -52,9 +49,22 @@ export const Login = () => {
         setFormState({ ...formState, [target.id]: target.value });
     };
 
-    const onFormSubmit = (e: React.FormEvent) => {
+    const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        loginUser(LOGIN_URL, formState).then((data) => setLoggedUser(data));
+        if (loggedUser) return;
+        try {
+            loginUser(LOGIN_URL, formState).then((data) => {
+                if (data.hasOwnProperty("message")) {
+                    setErrorMessage(data.message);
+                    setFormState(DEFAULT_STATE);
+                    return;
+                }
+                setLoggedUser(data);
+                setFormState(DEFAULT_STATE);
+            });
+        } catch (error) {
+            throw new Error("Couldn't login user");
+        }
     };
 
     return (
@@ -62,6 +72,8 @@ export const Login = () => {
             onFormSubmit={onFormSubmit}
             onInputChange={onInputChange}
             inputsArray={inputsArray}
+            errorMessage={errorMessage}
+            loggedUser={loggedUser}
         />
     );
 };

@@ -1,38 +1,19 @@
 import styles from "./Register.module.scss";
 import { RenderInput } from "components";
 import { RegisterInputs } from "components/types/index";
-import React from "react";
-import { FormikConfig, useFormik } from "formik";
-import * as Yup from "yup";
-
-const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Required"),
-    username: Yup.string().min(3, "Username too short").required("required"),
-    password: Yup.string().min(3, "Password too short").required("required"),
-    confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password")], "Passwords must match")
-        .required("required"),
-});
-
-interface initialValues {
-    email: string;
-    username: string;
-    password: string;
-    confirmPassword: string;
-}
+import { FormikValues } from "formik";
 
 interface RegisterViewProps {
     inputsArray: RegisterInputs[];
-    // formik: (FormikConfig<initialValues>):FormikProps<undefined>;
-    formik: any;
+    formik: FormikValues;
+    response: string | null;
 }
 
-export const RegisterView = ({ inputsArray, formik }: RegisterViewProps) => {
+export const RegisterView = ({ inputsArray, formik, response }: RegisterViewProps) => {
     return (
         <div className={styles.viewContainer}>
             <div className={styles.wrapper}>
                 <h4 className={styles.title}>Register</h4>
-
                 <form action="" className={styles.form} onSubmit={formik.handleSubmit} noValidate>
                     {inputsArray.map((item) => (
                         <RenderInput
@@ -46,6 +27,7 @@ export const RegisterView = ({ inputsArray, formik }: RegisterViewProps) => {
                     <button type="submit" className={styles.submitButton}>
                         Register
                     </button>
+                    {response ? <span className={styles.response}>{response}</span> : null}
                 </form>
             </div>
         </div>

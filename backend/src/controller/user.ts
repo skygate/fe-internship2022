@@ -54,12 +54,9 @@ module.exports.registerUser = async (req: Request, res: Response) => {
     const { email, username, password } = req.body;
     const existingEmail = await user.findOne({ email: email });
     const existingUsername = await user.findOne({ username: username });
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+ 
     if (existingEmail != null || existingUsername != null) {
-        res.send(`User already exists`);
+        res.status(409).json({message: "User already exists"});
         return;
     }
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -79,20 +76,24 @@ module.exports.registerUser = async (req: Request, res: Response) => {
             coverPicture: "",
         });
         newProfile.save();
-        res.status(201).json(newUser);
+        res.status(201).json({message: "User added succesfully"});
     } catch (error: any) {
         res.status(409).json({ message: error.message });
     }
 };
 
 module.exports.loginUser = (req: Request, res: Response, next: any) => {
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    
     passport.authenticate("local", (err, user, info) => {
         if (err) throw err;
-        if (!user) res.send("user doesn't exist");
-        res.setHeader("Access-Control-Allow-Credentials", "true");
+        if (!user) {
+            res.status(200).json({message: "User doesn't exist"});
+            return
+        } 
         req.logIn(user, (err) => {
             if (err) throw err;
-            res.status(200).send(req.user);
+            res.status(200).json(req.user);
         });
     })(req, res, next);
 };

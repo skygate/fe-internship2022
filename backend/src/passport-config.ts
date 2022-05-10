@@ -22,6 +22,7 @@ const authenticateUser: VerifyFunction = async (email: string, password: string,
 const strategy = new LocalStrategy({ usernameField: "email" }, authenticateUser);
 passport.use(strategy);
 
+
 passport.serializeUser((user: Express.User, done: (err: null, id: string) => void) => {
     done(null, user._id);
 });
