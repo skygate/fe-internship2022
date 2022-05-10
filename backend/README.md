@@ -1,7 +1,12 @@
 TO START: NPM RUN DEV
 
-BEFORE START:
-replace interface User {} to interface User {\_id: string} in node_modules/@types/passport/index.d.ts
+
+In backend/node_modules/@types/passport/index.d.ts update User interface to:
+    interface User {
+        _id: string,
+        username: string,
+        email: string
+    }
 
 auctions endpoint: /auctions (with queries)
 GET:

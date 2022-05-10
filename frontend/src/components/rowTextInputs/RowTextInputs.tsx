@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import style from "./rowTextInputs.module.scss";
-import { RenderTextInput } from "components";
+import { RenderInput } from "components";
 import { createFormState } from "components/types/createFormState";
 import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
 
@@ -66,7 +66,7 @@ export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
             </div>
             {textInputNarrowArray.map((item) => {
                 return (
-                    <RenderTextInput
+                    <RenderInput
                         key={item.id}
                         item={item}
                         onInputChange={onInputChange}
