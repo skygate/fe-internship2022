@@ -2,8 +2,13 @@ import { Link } from "react-router-dom";
 import style from "./navbar.module.scss";
 import logo from "assets/logo.svg";
 import magnifierIcon from "assets/magnifier.svg";
+import { RootState } from "store/store";
+
+import { useSelector } from "react-redux";
 
 export const Navbar = () => {
+    const { profile } = useSelector((state: RootState) => state.profile);
+
     return (
         <header>
             <Link to="/">
@@ -40,6 +45,7 @@ export const Navbar = () => {
             <Link to="/login">
                 <button className={style.btnWallet}>Log in</button>
             </Link>
+            <p>{profile}</p>
         </header>
     );
 };

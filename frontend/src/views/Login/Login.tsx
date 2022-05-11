@@ -4,6 +4,9 @@ import { LoginInputs } from "interfaces/index";
 import { LoginInputType } from "interfaces/index";
 import { loginUser } from "API/UserService";
 import { User } from "interfaces";
+import { useDispatch, useSelector } from "react-redux";
+import { saveProfile } from "store/profile";
+import { RootState } from "store/store";
 
 interface FormState {
     email: string;
@@ -17,9 +20,8 @@ const DEFAULT_STATE = {
 
 export const Login = () => {
     const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
-    const [loggedUser, setLoggedUser] = useState<User | null>(null);
     const [errorMessage, setErrorMessage] = useState(null);
-
+    const dispatch = useDispatch();
     const inputsArray: LoginInputs[] = [
         {
             name: LoginInputType.Email,
@@ -42,7 +44,7 @@ export const Login = () => {
             value: formState.password,
         },
     ];
-
+    const { profile } = useSelector((state: RootState) => state.profile);
     const onInputChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
         setFormState({ ...formState, [target.id]: target.value });
@@ -50,7 +52,7 @@ export const Login = () => {
 
     const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (loggedUser) return;
+        // if (loggedUser) return;
 
         loginUser(formState).then((data) => {
             if (data.hasOwnProperty("message")) {
@@ -58,7 +60,8 @@ export const Login = () => {
                 setFormState(DEFAULT_STATE);
                 return;
             }
-            setLoggedUser(data);
+
+            dispatch(saveProfile(data._id));
             setFormState(DEFAULT_STATE);
         });
     };
@@ -69,7 +72,7 @@ export const Login = () => {
             onInputChange={onInputChange}
             inputsArray={inputsArray}
             errorMessage={errorMessage}
-            loggedUser={loggedUser}
+            loggedUser={profile}
         />
     );
 };

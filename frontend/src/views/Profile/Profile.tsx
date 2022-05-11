@@ -17,11 +17,28 @@ const profileDisplayOptions = [
 ];
 
 async function getProfile(profileID: string): Promise<ProfileInterface | null> {
+    // try {
+    //     const profileInfo = await fetch(`http://localhost:8000/profiles/${profileID}`);
+    //     return profileInfo.json();
+    // } catch (err) {
+    //     return null;
+    // }
+
     try {
-        const profileInfo = await fetch(`http://localhost:8000/profiles/${profileID}`);
-        return profileInfo.json();
-    } catch (err) {
-        return null;
+        const response = await fetch(`http://localhost:8000/profiles/${profileID}`, {
+            method: "GET",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Access-Control-Allow-Origin": "http://localhost:3000/",
+            },
+        });
+        return response.json();
+    } catch (error) {
+        throw new Error("Couldn't log user");
     }
 }
 

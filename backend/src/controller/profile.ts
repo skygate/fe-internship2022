@@ -12,6 +12,7 @@ module.exports.getProfiles = async (req: Request, res: Response) => {
 
 module.exports.getProfile = async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(req.user);
     try {
         const foundProfile = await profile.findById(id);
         res.status(200).json(foundProfile);

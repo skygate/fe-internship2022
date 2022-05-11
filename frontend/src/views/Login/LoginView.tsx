@@ -3,14 +3,17 @@ import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { LoginInputs } from "interfaces/index";
 import { User } from "interfaces";
+import React from "react";
 
 interface LoginViewProps {
     onFormSubmit: (e: React.FormEvent) => void;
     onInputChange: (e: React.ChangeEvent) => void;
     inputsArray: LoginInputs[];
     errorMessage: string | null;
-    loggedUser: User | null;
+    loggedUser: string | null;
 }
+
+const url = "http://localhost:8000/user/logout";
 
 export const LoginView = ({
     onFormSubmit,
@@ -19,6 +22,24 @@ export const LoginView = ({
     errorMessage,
     loggedUser,
 }: LoginViewProps) => {
+    const logoutUser = async (e: React.MouseEvent) => {
+        e.preventDefault();
+
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+        });
+
+        return response.json();
+    };
+
     return (
         <div className={styles.viewContainer}>
             <div className={styles.wrapper}>
@@ -33,14 +54,13 @@ export const LoginView = ({
                         />
                     ))}
                     {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
-                    {loggedUser ? (
-                        <p className={styles.user}>Hello, {loggedUser.username}</p>
-                    ) : null}
+                    {loggedUser ? <p className={styles.user}>Hello, {loggedUser}</p> : null}
                     <button type="submit" className={styles.submitButton}>
                         Sign in
                     </button>
                 </form>
             </div>
+            <button onClick={logoutUser}>Log out</button>
             <div className={styles.createContainer}>
                 <p className={styles.p}>New to SkyGate?</p>
                 <Link to="/register">

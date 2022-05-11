@@ -97,3 +97,8 @@ module.exports.loginUser = (req: Request, res: Response, next: any) => {
         });
     })(req, res, next);
 };
+
+module.exports.logoutUser = function (req: Request, res: Response) {
+    req.logout();
+    res.status(200).json({message: "User logged out"})
+};
