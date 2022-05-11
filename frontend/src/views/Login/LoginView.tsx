@@ -1,8 +1,8 @@
 import { RenderInput } from "components";
 import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
-import { LoginInputs } from "components/types/index";
-import { User } from "components/types";
+import { LoginInputs } from "interfaces/index";
+import { User } from "interfaces";
 
 interface LoginViewProps {
     onFormSubmit: (e: React.FormEvent) => void;

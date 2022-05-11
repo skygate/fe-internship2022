@@ -1,6 +1,6 @@
 import styles from "./Register.module.scss";
 import { RenderInput } from "components";
-import { RegisterInputs } from "components/types/index";
+import { RegisterInputs } from "interfaces/index";
 import { FormikValues } from "formik";
 
 interface RegisterViewProps {

@@ -1,5 +1,5 @@
 import React from "react";
-import { NFTItem } from "../types";
+import { NFTItem } from "../../interfaces";
 import { FC } from "react";
 import styles from "./HotCollectionItem.module.scss";
 import { ProfilePicture } from "..";

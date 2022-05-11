@@ -1,7 +1,7 @@
 import { FC } from "react";
 import styles from "./NFTListItem.module.scss";
 import { ProfilePicture, GreenETHValue } from "components";
-import { NFTItem } from "components/types";
+import { NFTItem } from "interfaces";
 
 interface Props {
     nft: NFTItem;

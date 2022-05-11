@@ -2,7 +2,7 @@ import React from "react";
 import { FC } from "react";
 import { ProfilePicture } from "components";
 import styles from "./CreatorsListItem.module.scss";
-import { NFTItem } from "components/types";
+import { NFTItem } from "interfaces";
 
 interface Creator {
     nft: NFTItem;

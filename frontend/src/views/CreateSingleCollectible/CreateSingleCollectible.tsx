@@ -1,7 +1,7 @@
 import React, { useState, createContext } from "react";
 import { CreateSingleCollectibleView } from "./CreateSingleCollectibleView";
-import { Product } from "components/types/product";
-import { createFormState } from "components/types/createFormState";
+import { Product } from "interfaces/product";
+import { createFormState } from "interfaces/createFormState";
 
 const defaultItem: Product = {
     productId: null,

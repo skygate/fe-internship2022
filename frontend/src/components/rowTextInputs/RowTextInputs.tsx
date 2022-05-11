@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import style from "./rowTextInputs.module.scss";
 import { RenderInput } from "components";
-import { createFormState } from "components/types/createFormState";
+import { createFormState } from "interfaces/createFormState";
 import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
 
 interface RowTextInputsProps {

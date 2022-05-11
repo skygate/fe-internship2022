@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { RenderInput } from "components";
 import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
-import { createFormState } from "components/types/createFormState";
+import { createFormState } from "interfaces/createFormState";
 
 interface WideTextInputsProps {
     onInputChange: (e: React.ChangeEvent) => void;
