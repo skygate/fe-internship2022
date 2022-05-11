@@ -1,7 +1,7 @@
 import styles from "./ProfileInfoPanel.module.scss";
 import { FC } from "react";
 import { useState } from "react";
-import { ProfileInterface } from "components/types/ProfileInterface";
+import { ProfileInterface } from "interfaces/ProfileInterface";
 import { ProfilePicture } from "components/profilePicture/ProfilePicture";
 import Globe from "../../assets/Globe.svg";
 import facebook from "../../assets/facebook.svg";

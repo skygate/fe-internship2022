@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RegisterInputType, RegisterInputs } from "components/types/index";
+import { RegisterInputType, RegisterInputs } from "interfaces/index";
 import { RegisterView } from "./RegisterView";
 import { registerUser } from "API/UserService";
 import { FormikValues, useFormik } from "formik";

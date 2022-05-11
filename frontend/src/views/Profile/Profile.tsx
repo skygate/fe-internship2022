@@ -1,8 +1,8 @@
 import styles from "./Profile.module.scss";
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { ProfileInterface } from "../../components/types/ProfileInterface";
-import { AuctionWithProductInfo } from "../../components/types/AuctionWithProductInfo";
+import { ProfileInterface } from "../../interfaces/ProfileInterface";
+import { AuctionWithProductInfo } from "../../interfaces/AuctionWithProductInfo";
 import { ProfileInfoPanel } from "../../components";
 import imageIcon from "../../assets/imageIcon.svg";
 import editIcon from "../../assets/editIcon.svg";

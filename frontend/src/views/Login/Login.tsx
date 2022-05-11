@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { LoginView } from "./LoginView";
-import { LoginInputs } from "components/types/index";
-import { LoginInputType } from "components/types/index";
+import { LoginInputs } from "interfaces/index";
+import { LoginInputType } from "interfaces/index";
 import { loginUser } from "API/UserService";
-import { User } from "components/types";
+import { User } from "interfaces";
 
 interface FormState {
     email: string;
