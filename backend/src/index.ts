@@ -26,13 +26,15 @@ app.use(
     session({
         secret: "secretcode",
         resave: true,
-        saveUninitialized: true,
+        saveUninitialized: false,
         store: MongoStore.create({
             mongoUrl: mongo,
             collectionName: "sessions",
+            autoRemove: "interval",
+            autoRemoveInterval:  60 *2 // 2h
         }),
         cookie: {
-            maxAge: 24 * 60 * 60 * 1000, //24h
+            maxAge: 2 * 60 * 60 * 1000, //2h
         },
     })
 );

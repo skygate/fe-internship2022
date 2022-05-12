@@ -102,3 +102,8 @@ module.exports.logoutUser = function (req: Request, res: Response) {
     req.logout();
     res.status(200).json({message: "User logged out"})
 };
+
+module.exports.getLoggedUser = async (req:Request, res: Response) => {
+    if (req.user === undefined) return res.status(401).json({message: "User not authenticated"})
+    res.status(200).json(req.user);
+}

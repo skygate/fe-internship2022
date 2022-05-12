@@ -11,8 +11,10 @@ module.exports.getProfiles = async (req: Request, res: Response) => {
 };
 
 module.exports.getProfile = async (req: Request, res: Response) => {
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    // Handling authentication on every fetch
+    // if (req.user === undefined) return res.status(401).json({message: "Not authenticated"});
     const { id } = req.params;
-    console.log(req.user);
     try {
         const foundProfile = await profile.findById(id);
         res.status(200).json(foundProfile);

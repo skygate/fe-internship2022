@@ -17,13 +17,6 @@ const profileDisplayOptions = [
 ];
 
 async function getProfile(profileID: string): Promise<ProfileInterface | null> {
-    // try {
-    //     const profileInfo = await fetch(`http://localhost:8000/profiles/${profileID}`);
-    //     return profileInfo.json();
-    // } catch (err) {
-    //     return null;
-    // }
-
     try {
         const response = await fetch(`http://localhost:8000/profiles/${profileID}`, {
             method: "GET",

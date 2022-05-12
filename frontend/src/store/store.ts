@@ -1,12 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import profileReducer from './profile';
+import { useDispatch } from 'react-redux';
+import userReducer from './user';
 
 
 
 export const store = configureStore({
     reducer: {
-        profile: profileReducer
+        user: userReducer
     }
 });
-export type RootState = ReturnType<typeof store.getState>
 
+export type AppDispatch = typeof store.dispatch
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export type RootState = ReturnType<typeof store.getState>

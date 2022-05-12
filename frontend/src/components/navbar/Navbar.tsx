@@ -7,7 +7,7 @@ import { RootState } from "store/store";
 import { useSelector } from "react-redux";
 
 export const Navbar = () => {
-    const { profile } = useSelector((state: RootState) => state.profile);
+    const user = useSelector((state: RootState) => state.user);
 
     return (
         <header>
@@ -45,7 +45,7 @@ export const Navbar = () => {
             <Link to="/login">
                 <button className={style.btnWallet}>Log in</button>
             </Link>
-            <p>{profile}</p>
+            <p>{user.userID}</p>
         </header>
     );
 };

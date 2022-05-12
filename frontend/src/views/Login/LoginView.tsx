@@ -2,7 +2,6 @@ import { RenderInput } from "components";
 import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { LoginInputs } from "interfaces/index";
-import { User } from "interfaces";
 import React from "react";
 
 interface LoginViewProps {
@@ -10,7 +9,6 @@ interface LoginViewProps {
     onInputChange: (e: React.ChangeEvent) => void;
     inputsArray: LoginInputs[];
     errorMessage: string | null;
-    loggedUser: string | null;
 }
 
 const url = "http://localhost:8000/user/logout";
@@ -20,7 +18,6 @@ export const LoginView = ({
     onInputChange,
     inputsArray,
     errorMessage,
-    loggedUser,
 }: LoginViewProps) => {
     const logoutUser = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -54,7 +51,6 @@ export const LoginView = ({
                         />
                     ))}
                     {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
-                    {loggedUser ? <p className={styles.user}>Hello, {loggedUser}</p> : null}
                     <button type="submit" className={styles.submitButton}>
                         Sign in
                     </button>
