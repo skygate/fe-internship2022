@@ -1,58 +1,34 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-
-export interface UserState {
-  userID: string,
-  status: string
-}
-
-
-const url = 'http://localhost:8000/user/logged';
-
-export const setUser = createAsyncThunk(
-  'user/setUser',
-  async () => {
-    return await fetch(url,  {
-        method: "GET",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000/",
-        },
-       
-    }).then(res => res.json())
-    
-  }
-)
-
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { postUser } from "./helpers";
+import { UserState } from "./types";
 
 const initialState: UserState = {
-  userID: '',
-  status: ''
-}
+    userID: "",
+    status: "",
+};
+
+export const setUser = createAsyncThunk("user/setUser", () => {
+    // window.location.reload(false);
+    return postUser();
+});
 
 export const userSlice = createSlice({
-  name: 'user',
-  initialState,
-reducers: {},
-  extraReducers: (builder) => {
-      builder.addCase(setUser.pending, (state, action) => {
-           state.status = "loading";
-      })
-      builder.addCase(setUser.fulfilled, (state, action) => {
-          state.userID = action.payload.userID;
-           state.status = "success";
-      })
-      builder.addCase(setUser.rejected, (state, action) => {
-           state.status = "failed";
-      })
-
-},
-})
-
-// Action creators are generated for each case reducer function
-// export const { setUser as setUserAction } = userSlice.actions;
+    name: "user",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder.addCase(setUser.pending, (state, action) => {
+            state.status = "loading";
+        });
+        builder.addCase(setUser.fulfilled, (state, action) => {
+            state.userID = action.payload;
+            state.status = "success";
+        });
+        builder.addCase(setUser.rejected, (state, action) => {
+            state.status = "failed";
+            state.userID = "";
+        });
+    },
+});
 
 export default userSlice.reducer;

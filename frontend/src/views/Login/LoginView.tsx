@@ -9,34 +9,16 @@ interface LoginViewProps {
     onInputChange: (e: React.ChangeEvent) => void;
     inputsArray: LoginInputs[];
     errorMessage: string | null;
+    logoutUser: (e: React.MouseEvent) => void;
 }
-
-const url = "http://localhost:8000/user/logout";
 
 export const LoginView = ({
     onFormSubmit,
     onInputChange,
     inputsArray,
     errorMessage,
+    logoutUser,
 }: LoginViewProps) => {
-    const logoutUser = async (e: React.MouseEvent) => {
-        e.preventDefault();
-
-        const response = await fetch(url, {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-        });
-
-        return response.json();
-    };
-
     return (
         <div className={styles.viewContainer}>
             <div className={styles.wrapper}>

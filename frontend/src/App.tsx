@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import "./App.css";
 import Router from "./routes";
-import { useDispatch } from "react-redux";
 import { setUser } from "store/user";
-import { AppDispatch } from "store/store";
+import { useAppDispatch } from "store/store";
 
 function App() {
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         dispatch(setUser()); // !!!!!

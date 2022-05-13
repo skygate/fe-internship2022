@@ -3,8 +3,8 @@ import { LoginView } from "./LoginView";
 import { LoginInputs } from "interfaces/index";
 import { LoginInputType } from "interfaces/index";
 import { loginUser } from "API/UserService";
-import { useSelector } from "react-redux";
-import { RootState } from "store/store";
+import { useAppDispatch } from "store/store";
+import { setUser } from "store/user";
 
 interface FormState {
     email: string;
@@ -17,6 +17,7 @@ const DEFAULT_STATE = {
 };
 
 export const Login = () => {
+    const dispatch = useAppDispatch();
     const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
     const [errorMessage, setErrorMessage] = useState(null);
     const inputsArray: LoginInputs[] = [
@@ -41,7 +42,6 @@ export const Login = () => {
             value: formState.password,
         },
     ];
-    const user = useSelector((state: RootState) => state.user);
     const onInputChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
         setFormState({ ...formState, [target.id]: target.value });
@@ -57,7 +57,25 @@ export const Login = () => {
                 return;
             }
             setFormState(DEFAULT_STATE);
+            dispatch(setUser());
         });
+    };
+
+    const logoutUser = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        const logoutUrl = "http://localhost:8000/user/logout";
+        await fetch(logoutUrl, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+        });
+        dispatch(setUser());
     };
 
     return (
@@ -66,6 +84,7 @@ export const Login = () => {
             onInputChange={onInputChange}
             inputsArray={inputsArray}
             errorMessage={errorMessage}
+            logoutUser={logoutUser}
         />
     );
 };
