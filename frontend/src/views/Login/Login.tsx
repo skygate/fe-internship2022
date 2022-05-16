@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { LoginView } from "./LoginView";
 import { LoginInputs } from "interfaces/index";
 import { LoginInputType } from "interfaces/index";
-import { loginUser } from "API/UserService";
-import { User } from "interfaces";
+import { loginUser, logoutUser } from "API/UserService";
+import { useAppDispatch } from "store/store";
+import { setUser } from "store/user";
 
 interface FormState {
     email: string;
@@ -16,10 +17,9 @@ const DEFAULT_STATE = {
 };
 
 export const Login = () => {
+    const dispatch = useAppDispatch();
     const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
-    const [loggedUser, setLoggedUser] = useState<User | null>(null);
     const [errorMessage, setErrorMessage] = useState(null);
-
     const inputsArray: LoginInputs[] = [
         {
             name: LoginInputType.Email,
@@ -50,17 +50,22 @@ export const Login = () => {
 
     const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (loggedUser) return;
 
         loginUser(formState).then((data) => {
-            if (data.hasOwnProperty("message")) {
-                setErrorMessage(data.message);
+            if (data.data.hasOwnProperty("message")) {
+                setErrorMessage(data.data.message);
                 setFormState(DEFAULT_STATE);
                 return;
             }
-            setLoggedUser(data);
             setFormState(DEFAULT_STATE);
+            dispatch(setUser());
         });
+    };
+
+    const onLogoutUser = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        await logoutUser();
+        dispatch(setUser());
     };
 
     return (
@@ -69,7 +74,7 @@ export const Login = () => {
             onInputChange={onInputChange}
             inputsArray={inputsArray}
             errorMessage={errorMessage}
-            loggedUser={loggedUser}
+            logoutUser={onLogoutUser}
         />
     );
 };

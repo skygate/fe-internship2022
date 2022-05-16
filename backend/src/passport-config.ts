@@ -30,8 +30,7 @@ passport.serializeUser((user: Express.User, done: (err: null, id: string) => voi
 passport.deserializeUser((id: string, done: (err: Error, user: {}) => void) => {
     users.findOne({ _id: id }, (err: Error, user: Express.User) => {
         const userInformation = {
-            username: user.username,
-            email: user.email,
+            userID: user._id,
         };
         done(err, userInformation);
     });

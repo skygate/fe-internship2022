@@ -2,14 +2,14 @@ import { RenderInput } from "components";
 import { Link } from "react-router-dom";
 import styles from "./Login.module.scss";
 import { LoginInputs } from "interfaces/index";
-import { User } from "interfaces";
+import React from "react";
 
 interface LoginViewProps {
     onFormSubmit: (e: React.FormEvent) => void;
     onInputChange: (e: React.ChangeEvent) => void;
     inputsArray: LoginInputs[];
     errorMessage: string | null;
-    loggedUser: User | null;
+    logoutUser: (e: React.MouseEvent) => void;
 }
 
 export const LoginView = ({
@@ -17,7 +17,7 @@ export const LoginView = ({
     onInputChange,
     inputsArray,
     errorMessage,
-    loggedUser,
+    logoutUser,
 }: LoginViewProps) => {
     return (
         <div className={styles.viewContainer}>
@@ -33,14 +33,12 @@ export const LoginView = ({
                         />
                     ))}
                     {errorMessage ? <p className={styles.error}>{errorMessage}</p> : null}
-                    {loggedUser ? (
-                        <p className={styles.user}>Hello, {loggedUser.username}</p>
-                    ) : null}
                     <button type="submit" className={styles.submitButton}>
                         Sign in
                     </button>
                 </form>
             </div>
+            <button onClick={logoutUser}>Log out</button>
             <div className={styles.createContainer}>
                 <p className={styles.p}>New to SkyGate?</p>
                 <Link to="/register">

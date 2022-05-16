@@ -7,7 +7,6 @@ import { HotBid } from "./";
 import { HotCollections } from "./";
 
 export const HomePage = () => {
-
     return (
         <>
             <Banner />
@@ -19,5 +18,4 @@ export const HomePage = () => {
             <Discover />
         </>
     );
-
 };
