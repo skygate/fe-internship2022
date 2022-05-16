@@ -3,7 +3,6 @@ import styles from "./productCard.module.scss";
 import { ProfilePicture } from "..";
 import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
 import Heart from "../../assets/Heart.svg";
-import format from "date-fns/format";
 
 interface ProductCardProps {
     item: AuctionItem;
@@ -18,9 +17,9 @@ export const ProductCard = ({ item }: ProductCardProps) => {
         const currentDate = Date.now();
         const productStartDate = new Date(item.startDate).getTime();
         const timePassed = currentDate - productStartDate;
-        const hours = getHours(timePassed);
+        const hoursPassed = getHours(timePassed);
 
-        if (hours > 24) return false;
+        if (hoursPassed > 24) return false;
         return true;
     };
 
