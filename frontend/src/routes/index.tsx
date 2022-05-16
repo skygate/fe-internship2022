@@ -8,7 +8,6 @@ function Router() {
             <Navbar />
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/signin" element={<LoginPage />} />
                 <Route path="/create" element={<CreateSingleCollectible />} />
                 <Route path="/profile/:profileID" element={<Profile />} />
                 <Route path="/create" element={<CreateSingleCollectible />} />

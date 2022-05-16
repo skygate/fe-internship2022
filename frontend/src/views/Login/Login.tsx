@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { LoginView } from "./LoginView";
 import { LoginInputs } from "interfaces/index";
 import { LoginInputType } from "interfaces/index";
-import { loginUser } from "API/UserService";
+import { loginUser, logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
 import { setUser } from "store/user";
 
@@ -42,6 +42,7 @@ export const Login = () => {
             value: formState.password,
         },
     ];
+
     const onInputChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
         setFormState({ ...formState, [target.id]: target.value });
@@ -51,8 +52,8 @@ export const Login = () => {
         e.preventDefault();
 
         loginUser(formState).then((data) => {
-            if (data.hasOwnProperty("message")) {
-                setErrorMessage(data.message);
+            if (data.data.hasOwnProperty("message")) {
+                setErrorMessage(data.data.message);
                 setFormState(DEFAULT_STATE);
                 return;
             }
@@ -61,20 +62,9 @@ export const Login = () => {
         });
     };
 
-    const logoutUser = async (e: React.MouseEvent) => {
+    const onLogoutUser = async (e: React.MouseEvent) => {
         e.preventDefault();
-        const logoutUrl = "http://localhost:8000/user/logout";
-        await fetch(logoutUrl, {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-        });
+        await logoutUser();
         dispatch(setUser());
     };
 
@@ -84,7 +74,7 @@ export const Login = () => {
             onInputChange={onInputChange}
             inputsArray={inputsArray}
             errorMessage={errorMessage}
-            logoutUser={logoutUser}
+            logoutUser={onLogoutUser}
         />
     );
 };

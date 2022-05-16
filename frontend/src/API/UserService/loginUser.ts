@@ -1,23 +1,10 @@
-import Config from 'config';
-
-const url = `${Config.API_URL}/user/login`;
+import axiosInstance from "services/axios";
 
 export const loginUser = async (data: {}) => {
     try {
-        const response = await fetch(url, {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "http://localhost:3000/",
-        },
-        body: JSON.stringify(data),
-    });  
-    return response.json();
+        const response = axiosInstance.post("/user/login", JSON.stringify(data));
+        return response;
     } catch (error) {
-        throw new Error("Couldn't log user")
-    }  
+        throw new Error("Couldn't log user");
+    }
 };

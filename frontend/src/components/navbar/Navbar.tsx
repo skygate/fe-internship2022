@@ -3,7 +3,6 @@ import style from "./navbar.module.scss";
 import logo from "assets/logo.svg";
 import magnifierIcon from "assets/magnifier.svg";
 import { RootState } from "store/store";
-import { useSelector } from "react-redux";
 import { useAppSelector } from "store/store";
 
 export const Navbar = () => {
@@ -46,7 +45,6 @@ export const Navbar = () => {
                 <button className={style.btnWallet}>Log in</button>
             </Link>
             <p>{user.userID}</p>
-            {/* <p>{useSelector((state: RootState) => state.user.userID)}</p> */}
         </header>
     );
 };

@@ -8,7 +8,6 @@ const initialState: UserState = {
 };
 
 export const setUser = createAsyncThunk("user/setUser", () => {
-    // window.location.reload(false);
     return postUser();
 });
 
