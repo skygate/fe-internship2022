@@ -10,8 +10,8 @@ function App() {
     const user = useAppSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        dispatch(setUser()); // !!!!!
-    }, []); //path na roterze
+        dispatch(setUser());
+    }, []);
 
     useEffect(() => {
         dispatch(getProfilesForLoggedUser(user.userID));
