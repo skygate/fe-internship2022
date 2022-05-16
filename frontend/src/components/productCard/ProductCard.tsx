@@ -1,11 +1,11 @@
-import { ListingItem } from "../../interfaces";
+import { AuctionItem } from "../../interfaces";
 import styles from "./productCard.module.scss";
 import { ProfilePicture } from "..";
 import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
 import Heart from "../../assets/Heart.svg";
 
 interface ProductCardProps {
-    item: ListingItem;
+    item: AuctionItem;
 }
 
 export const ProductCard = ({ item }: ProductCardProps) => {
@@ -13,8 +13,8 @@ export const ProductCard = ({ item }: ProductCardProps) => {
         <div className={styles.productCardContainer}>
             <div className={styles.nftImageWrapper}>
                 <img
-                    src={item.productImageUrl}
-                    alt={item.productName}
+                    src={item.productID.productImageUrl}
+                    alt={item.productID.productName}
                     className={styles.nftImage}
                 />
                 <div className={styles.imageHoverSection}>
@@ -34,7 +34,7 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                 </div>
             </div>
             <div className={styles.titleAndPrice}>
-                <span className={styles.nftTitle}>{item.productName}</span>
+                <span className={styles.nftTitle}>{item.productID.productName}</span>
                 <span className={styles.nftPrice}>
                     <GreenETHValue ETHValue={item.price} />
                 </span>
@@ -42,13 +42,13 @@ export const ProductCard = ({ item }: ProductCardProps) => {
             <div className={styles.avatarsAndUnits}>
                 <div className={styles.avatars}>
                     <div className={styles.avatar}>
-                        <ProfilePicture url={item.productImageUrl} width={"24px"} />
+                        <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
                     </div>
                     <div className={styles.avatar}>
-                        <ProfilePicture url={item.productImageUrl} width={"24px"} />
+                        <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
                     </div>
                     <div className={styles.avatar}>
-                        <ProfilePicture url={item.productImageUrl} width={"24px"} />
+                        <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
                     </div>
                     {/* replace it with other prop (for example bidding people?) */}
                 </div>
