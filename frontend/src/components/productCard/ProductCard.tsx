@@ -3,12 +3,27 @@ import styles from "./productCard.module.scss";
 import { ProfilePicture } from "..";
 import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
 import Heart from "../../assets/Heart.svg";
+import format from "date-fns/format";
 
 interface ProductCardProps {
     item: AuctionItem;
 }
 
+const getHours = (miliseconds: number) => {
+    return miliseconds / 1000 / 60 / 24;
+};
+
 export const ProductCard = ({ item }: ProductCardProps) => {
+    const isHotBid = () => {
+        const currentDate = Date.now();
+        const productStartDate = new Date(item.startDate).getTime();
+        const timePassed = currentDate - productStartDate;
+        const hours = getHours(timePassed);
+
+        if (hours > 24) return false;
+        return true;
+    };
+
     return (
         <div className={styles.productCardContainer}>
             <div className={styles.nftImageWrapper}>
@@ -50,7 +65,6 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                     <div className={styles.avatar}>
                         <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
                     </div>
-                    {/* replace it with other prop (for example bidding people?) */}
                 </div>
                 <span className={styles.unitsInStock}>{item.amount} in stock</span>
             </div>
@@ -58,7 +72,7 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                 <span className={styles.highestBid}>
                     Highest bid <span className={styles.highestBidValue}>{item.price} ETH</span>
                 </span>
-                <span className={styles.newBid}>new bid 🔥</span>
+                {isHotBid() ? <span className={styles.newBid}>new bid 🔥</span> : null}
             </div>
         </div>
     );
