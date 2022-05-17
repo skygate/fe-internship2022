@@ -16,26 +16,6 @@ interface DiscoverProps {
     onMaxPriceRangeChange: (e: React.ChangeEvent) => void;
 }
 
-const product: AuctionItem = {
-    _id: "6278c5af91f277cb5b7a67af",
-    profileID: "6278c3cd91f277cb5b7a679c",
-    productID: {
-        _id: "6278c4c291f277cb5b7a67a2",
-        ownerID: "6278c3cd91f277cb5b7a679c",
-        productName: "testItem12",
-        productDescription: "loremipsum",
-        productImageUrl: "https://cdn.pixabay.com/photo/2020/05/04/10/18/cat-5128568__340.jpg",
-        productCategory: "6273c2700c3805793434ec32",
-    },
-    price: 1000,
-    amount: 1,
-    bidHistory: [],
-    startDate: "2022-05-09T07:41:35.211Z",
-    endDate: "2022-05-10T07:41:35.211Z",
-    likes: 0,
-    __v: 0,
-};
-
 export const DiscoverView = ({
     priceRangeStyle,
     priceRangeMin,
@@ -94,10 +74,9 @@ export const DiscoverView = ({
                 </div>
             </form>
             <div className={style.itemsContainer}>
-                {/* {productsData
+                {productsData
                     ? productsData.map((item, index) => <ProductCard key={index} item={item} />)
-                    : "Nie znaleziono produktów"} */}
-                <ProductCard item={product} />
+                    : "Nie znaleziono produktów"}
             </div>
         </section>
     );
