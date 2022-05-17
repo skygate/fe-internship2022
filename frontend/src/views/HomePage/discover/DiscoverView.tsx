@@ -2,8 +2,9 @@ import React from "react";
 import { CategoryButtons } from "components";
 import { SelectFilters } from "components";
 import { ProductCard } from "components";
-// import { ExampleNFTList } from 'constant/ExampleNFTList';
 import style from "./discover.module.scss";
+
+import { AuctionItem } from "interfaces/index";
 
 interface DiscoverProps {
     priceRangeStyle: { background: string };

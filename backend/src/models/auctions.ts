@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const auctionsSchema = new mongoose.Schema({
     profileID: String,
     productID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Products" },
@@ -6,10 +7,16 @@ const auctionsSchema = new mongoose.Schema({
     amount: Number,
     bidHistory: [
         {
-            profileID: String,
-            bidID: String,
-            offer: Number,
-            date: Date,
+            bid: {
+                profileID: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: true,
+                    ref: "Profiles",
+                },
+                bidID: String,
+                offer: Number,
+                date: Date,
+            },
         },
     ],
     startDate: Date,
