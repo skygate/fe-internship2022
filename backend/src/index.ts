@@ -31,7 +31,7 @@ app.use(
             mongoUrl: mongo,
             collectionName: "sessions",
             autoRemove: "interval",
-            autoRemoveInterval:  60 *2 // 2h
+            autoRemoveInterval: 60 * 2, // 2h
         }),
         cookie: {
             maxAge: 2 * 60 * 60 * 1000, //2h
@@ -49,6 +49,7 @@ const userRoute = require("./routes/user");
 const auctionsRoute = require("./routes/auctions");
 const profileRoute = require("./routes/profile");
 const categoriesRoute = require("./routes/categories");
+const userProfilesRoute = require("./routes/userProfiles");
 
 // USE ROUTES
 app.use("/products", productRoute);
@@ -56,6 +57,7 @@ app.use("/user", userRoute);
 app.use("/auctions", auctionsRoute);
 app.use("/profiles", profileRoute);
 app.use("/categories", categoriesRoute);
+app.use("/userProfiles", userProfilesRoute);
 
 // CONNECT MONGO
 mongoose
