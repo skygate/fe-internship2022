@@ -3,6 +3,7 @@ import styles from "./productCard.module.scss";
 import { ProfilePicture } from "..";
 import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
 import Heart from "../../assets/Heart.svg";
+import { useState } from "react";
 
 interface ProductCardProps {
     item: AuctionItem;
@@ -13,6 +14,7 @@ const getHours = (miliseconds: number) => {
 };
 
 export const ProductCard = ({ item }: ProductCardProps) => {
+    const [biders, setBiders] = useState([]);
     const isHotBid = () => {
         const currentDate = Date.now();
         const productStartDate = new Date(item.startDate).getTime();
@@ -55,22 +57,33 @@ export const ProductCard = ({ item }: ProductCardProps) => {
             </div>
             <div className={styles.avatarsAndUnits}>
                 <div className={styles.avatars}>
-                    <div className={styles.avatar}>
-                        <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
-                    </div>
-                    <div className={styles.avatar}>
-                        <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
-                    </div>
-                    <div className={styles.avatar}>
-                        <ProfilePicture url={item.productID.productImageUrl} width={"24px"} />
-                    </div>
+                    {item.bidHistory.slice(-3).map((item) => {
+                        return (
+                            <div className={styles.avatar}>
+                                <ProfilePicture
+                                    url={item.bid.profileID.profilePicture}
+                                    width={"24px"}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
                 <span className={styles.unitsInStock}>{item.amount} in stock</span>
             </div>
             <div className={styles.bidSection}>
-                <span className={styles.highestBid}>
-                    Highest bid <span className={styles.highestBidValue}>{item.price} ETH</span>
-                </span>
+                {item.bidHistory === []
+                    ? null
+                    : item.bidHistory.slice(-1).map((item) => {
+                          return (
+                              <span className={styles.highestBid}>
+                                  Highest bid
+                                  <span className={styles.highestBidValue}>
+                                      {item.bid.offer} ETH
+                                  </span>
+                              </span>
+                          );
+                      })}
+
                 {isHotBid() ? <span className={styles.newBid}>new bid 🔥</span> : null}
             </div>
         </div>

@@ -27,7 +27,7 @@ const product: AuctionItem = {
         productImageUrl: "https://cdn.pixabay.com/photo/2020/05/04/10/18/cat-5128568__340.jpg",
         productCategory: "6273c2700c3805793434ec32",
     },
-    price: 15,
+    price: 1000,
     amount: 1,
     bidHistory: [],
     startDate: "2022-05-09T07:41:35.211Z",

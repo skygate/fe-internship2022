@@ -7,7 +7,7 @@ export interface AuctionItem {
     productID: ProductItem;
     price: number;
     amount: number;
-    bidHistory: Bid | [];
+    bidHistory: Bid[];
     startDate: string;
     endDate: string;
     likes: number;
