@@ -38,7 +38,6 @@ export const LoginView = ({
                     </button>
                 </form>
             </div>
-            <button onClick={logoutUser}>Log out</button>
             <div className={styles.createContainer}>
                 <p className={styles.p}>New to SkyGate?</p>
                 <Link to="/register">
