@@ -14,3 +14,13 @@ export interface ProfileInterface {
     followers: string[];
     joinDate: Date;
 }
+
+export interface ChangeActiveProfilePayload {
+    profiles: ProfileInterface[];
+    isAuto?: boolean;
+}
+
+export interface ActiveProfileState {
+    status: string;
+    activeProfile: ProfileInterface | null;
+}
