@@ -1,7 +1,13 @@
-import { ProfileInterface } from "./ProfileInterface";
+interface Profile {
+    _id: string;
+    profilePicture: string;
+}
+
 export interface Bid {
-    profileID: ProfileInterface["_id"];
-    offer: number;
-    date: Date;
+    bid: {
+        profileID: Profile;
+        offer: number;
+        date: string;
+    };
     _id: string;
 }

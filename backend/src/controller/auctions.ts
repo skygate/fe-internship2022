@@ -18,12 +18,17 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
                 .exec();
             res.status(200).json(auctionsWithInfo);
         } catch (error: any) {
             res.status(404).json({ message: error.message });
         }
     };
+
     const fullInfoAuctionsOfUser = async () => {
         try {
             const auctionsWithInfo = await auctions
@@ -38,6 +43,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
             res.status(404).json({ message: error.message });
         }
     };
+
     const defaultAuction = async () => {
         try {
             const foundAuction = await auctions.findById(req.query.id).exec();
@@ -48,6 +54,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
             res.status(404).json({ message: error.message });
         }
     };
+
     const fullInfoAuction = async () => {
         try {
             const auctionWithInfo = await auctions
@@ -64,6 +71,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
             res.status(404).json({ message: error.message });
         }
     };
+
     req.query.profileID && req.query.full === "true"
         ? fullInfoAuctionsOfUser()
         : req.query.id
@@ -113,17 +121,19 @@ export const addBid = async (req: Request, res: Response) => {
     const isBidsHistoryEmpty = foundAuction.bidHistory.length === 0;
     const isNewOfferHighestThanPrevious = isBidsHistoryEmpty
         ? true
-        : req.body.offer > foundAuction.bidHistory[foundAuction.bidHistory.length - 1].offer;
+        : req.body.offer > foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.offer;
     const isBiddingProfileDifferentThanSeller = req.body.profileID === foundAuction.profileID;
     const isProfileBiddingHimself = isBidsHistoryEmpty
         ? false
-        : req.body.profileID ===
-          foundAuction.bidHistory[foundAuction.bidHistory.length - 1].profileID;
+        : req.body.profileID ==
+          foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.profileID;
 
     const newBid = {
-        profileID,
-        offer,
-        date: new Date(),
+        bid: {
+            profileID,
+            offer,
+            date: new Date(),
+        },
     };
 
     if (

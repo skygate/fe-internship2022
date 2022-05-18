@@ -1,20 +1,36 @@
-import { ListingItem } from "../../interfaces";
+import { AuctionItem } from "../../interfaces";
 import styles from "./productCard.module.scss";
 import { ProfilePicture } from "..";
 import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
 import Heart from "../../assets/Heart.svg";
+import { useState } from "react";
 
 interface ProductCardProps {
-    item: ListingItem;
+    item: AuctionItem;
 }
 
+const getHours = (miliseconds: number) => {
+    return miliseconds / 1000 / 60 / 24;
+};
+
 export const ProductCard = ({ item }: ProductCardProps) => {
+    const [biders, setBiders] = useState([]);
+    const isHotBid = () => {
+        const currentDate = Date.now();
+        const productStartDate = new Date(item.startDate).getTime();
+        const timePassed = currentDate - productStartDate;
+        const hoursPassed = getHours(timePassed);
+
+        if (hoursPassed > 24) return false;
+        return true;
+    };
+
     return (
         <div className={styles.productCardContainer}>
             <div className={styles.nftImageWrapper}>
                 <img
-                    src={item.productImageUrl}
-                    alt={item.productName}
+                    src={item.productID.productImageUrl}
+                    alt={item.productID.productName}
                     className={styles.nftImage}
                 />
                 <div className={styles.imageHoverSection}>
@@ -34,31 +50,41 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                 </div>
             </div>
             <div className={styles.titleAndPrice}>
-                <span className={styles.nftTitle}>{item.productName}</span>
+                <span className={styles.nftTitle}>{item.productID.productName}</span>
                 <span className={styles.nftPrice}>
                     <GreenETHValue ETHValue={item.price} />
                 </span>
             </div>
             <div className={styles.avatarsAndUnits}>
                 <div className={styles.avatars}>
-                    <div className={styles.avatar}>
-                        <ProfilePicture url={item.productImageUrl} width={"24px"} />
-                    </div>
-                    <div className={styles.avatar}>
-                        <ProfilePicture url={item.productImageUrl} width={"24px"} />
-                    </div>
-                    <div className={styles.avatar}>
-                        <ProfilePicture url={item.productImageUrl} width={"24px"} />
-                    </div>
-                    {/* replace it with other prop (for example bidding people?) */}
+                    {item.bidHistory.slice(-3).map((item) => {
+                        return (
+                            <div className={styles.avatar}>
+                                <ProfilePicture
+                                    url={item.bid.profileID.profilePicture}
+                                    width={"24px"}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
                 <span className={styles.unitsInStock}>{item.amount} in stock</span>
             </div>
             <div className={styles.bidSection}>
-                <span className={styles.highestBid}>
-                    Highest bid <span className={styles.highestBidValue}>{item.price} ETH</span>
-                </span>
-                <span className={styles.newBid}>new bid 🔥</span>
+                {item.bidHistory === []
+                    ? null
+                    : item.bidHistory.slice(-1).map((item) => {
+                          return (
+                              <span className={styles.highestBid}>
+                                  Highest bid
+                                  <span className={styles.highestBidValue}>
+                                      {item.bid.offer} ETH
+                                  </span>
+                              </span>
+                          );
+                      })}
+
+                {isHotBid() ? <span className={styles.newBid}>new bid 🔥</span> : null}
             </div>
         </div>
     );
