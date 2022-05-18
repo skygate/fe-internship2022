@@ -3,6 +3,8 @@ import { CategoryButtons } from "components";
 import { SelectFilters } from "components";
 import { ProductCard } from "components";
 import style from "./discover.module.scss";
+import leftArrow from "assets/arrowLeft.svg";
+import rightArrow from "assets/arrowRight.svg";
 
 import { AuctionItem } from "interfaces/index";
 
@@ -11,9 +13,12 @@ interface DiscoverProps {
     priceRangeMin: number;
     priceRangeMax: number;
     priceRangeDefault: number;
-    productsData: [] | undefined;
+    productsData: AuctionItem[] | [];
     onMinPriceRangeChange: (e: React.ChangeEvent) => void;
     onMaxPriceRangeChange: (e: React.ChangeEvent) => void;
+    activePage: number;
+    showNextPage: (e: React.MouseEvent) => void;
+    showPrevPage: (e: React.MouseEvent) => void;
 }
 
 export const DiscoverView = ({
@@ -24,6 +29,9 @@ export const DiscoverView = ({
     onMinPriceRangeChange,
     onMaxPriceRangeChange,
     productsData,
+    activePage,
+    showNextPage,
+    showPrevPage,
 }: DiscoverProps) => {
     return (
         <section>
@@ -74,9 +82,23 @@ export const DiscoverView = ({
                 </div>
             </form>
             <div className={style.itemsContainer}>
-                {productsData
+                {productsData !== []
                     ? productsData.map((item, index) => <ProductCard key={index} item={item} />)
                     : "Nie znaleziono produktów"}
+            </div>
+            <div className={style.selectPage}>
+                <img
+                    src={leftArrow}
+                    alt="arrow left"
+                    className={style.arrow}
+                    onClick={showPrevPage}
+                />
+                <img
+                    src={rightArrow}
+                    alt="arrow right"
+                    className={style.arrow}
+                    onClick={showNextPage}
+                />
             </div>
         </section>
     );

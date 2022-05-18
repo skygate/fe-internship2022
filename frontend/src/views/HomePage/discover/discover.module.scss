@@ -187,6 +187,28 @@ input[type="range"]:active::-webkit-slider-thumb {
 .itemsContainer {
     margin-top: $spacer-32;
     display: flex;
-    justify-content: space-between;
+    column-gap: 30px;
+    justify-content: flex-start;
     flex-wrap: wrap;
+}
+
+.selectPage {
+    margin-top: $spacer-32;
+    display: flex;
+    justify-content: center;
+    column-gap: $spacer-8;
+}
+
+.arrow {
+    box-sizing: content-box;
+    width: 15px;
+    height: 15px;
+    padding: $spacer-8;
+    border: 1px solid transparent;
+    border-radius: 50%;
+}
+
+.arrow:hover {
+    border: 1px solid $c-neutrals-4;
+    cursor: pointer;
 }
