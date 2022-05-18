@@ -12,13 +12,8 @@ export const setActiveProfile = (profile: ProfileInterface) => {
 
 export const setActiveProfileAuto = (profiles: ProfileInterface[]) => {
     const localStorageProfile = localStorage.getItem("activeAccount") || "";
-    if (localStorageProfile !== "") {
-        for (var profile of profiles) {
-            if (profile._id === JSON.parse(localStorageProfile)) {
-                return profile;
-            }
-        }
-    }
-    localStorage.setItem("activeAccount", JSON.stringify(profiles[0]._id));
-    return profiles[0];
+    const profileToSet = localStorageProfile
+        ? profiles.find((p) => p._id === JSON.parse(localStorageProfile)) ?? profiles[0]
+        : profiles[0];
+    return setActiveProfile(profileToSet);
 };

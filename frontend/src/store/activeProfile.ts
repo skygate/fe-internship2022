@@ -2,23 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { setActiveProfileAuto } from "./helpers/profileHelper";
 import { setActiveProfile } from "./helpers/profileHelper";
 import { ProfileInterface } from "../interfaces";
+import { ChangeActiveProfilePayload, ActiveProfileState } from "../interfaces";
 
-const initialState = {
+const initialState: ActiveProfileState = {
     status: "",
-    activeProfile: {} as ProfileInterface,
+    activeProfile: null,
 };
 
 export const changeActiveProfile = createAsyncThunk(
     "activeProfile/changeActiveProfile",
-    (profile: ProfileInterface) => {
-        return setActiveProfile(profile);
-    }
-);
-
-export const autoSetActiveProfile = createAsyncThunk(
-    "activeProfile/setActiveProfile",
-    (profiles: ProfileInterface[]) => {
-        return setActiveProfileAuto(profiles);
+    ({ profiles, isAuto }: ChangeActiveProfilePayload) => {
+        return isAuto ? setActiveProfileAuto(profiles) : setActiveProfile(profiles[0]);
     }
 );
 
@@ -27,16 +21,6 @@ export const activeProfileSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(autoSetActiveProfile.pending, (state, action) => {
-            state.status = "loading";
-        });
-        builder.addCase(autoSetActiveProfile.fulfilled, (state, action) => {
-            state.activeProfile = action.payload;
-            state.status = "success";
-        });
-        builder.addCase(autoSetActiveProfile.rejected, (state, action) => {
-            state.status = "failed";
-        });
         builder.addCase(changeActiveProfile.pending, (state, action) => {
             state.status = "loading";
         });

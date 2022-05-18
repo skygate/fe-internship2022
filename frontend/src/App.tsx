@@ -4,12 +4,12 @@ import Router from "./routes";
 import { setUser } from "store/user";
 import { useAppDispatch, useAppSelector } from "store/store";
 import { getProfilesForLoggedUser } from "store/profile";
-import { autoSetActiveProfile } from "store/activeProfile";
+import { changeActiveProfile } from "store/activeProfile";
 
 function App() {
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.user);
-    const profiles = useAppSelector((state) => state.profiles);
+    const { profiles } = useAppSelector((state) => state.profiles);
 
     useEffect(() => {
         dispatch(setUser());
@@ -20,8 +20,8 @@ function App() {
     }, [user.userID]);
 
     useEffect(() => {
-        dispatch(autoSetActiveProfile(profiles.profiles));
-    }, [profiles.profiles]);
+        dispatch(changeActiveProfile({ profiles: profiles, isAuto: true }));
+    }, [profiles]);
 
     return (
         <div className="App">
