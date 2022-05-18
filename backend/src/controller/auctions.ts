@@ -37,6 +37,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
                 .exec();
             res.status(200).json(auctionsWithInfo);
         } catch (error: any) {
@@ -63,6 +67,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
                 .exec();
             auctionWithInfo !== null
                 ? res.status(200).json(auctionWithInfo)
@@ -72,15 +80,73 @@ export const getAllAuctions = (req: Request, res: Response) => {
         }
     };
 
-    req.query.profileID && req.query.full === "true"
-        ? fullInfoAuctionsOfUser()
-        : req.query.id
-        ? req.query.full === "true"
-            ? fullInfoAuction()
-            : defaultAuction()
-        : req.query.full === "true"
-        ? fullInfoAuctions()
-        : defaultAuctions();
+    const filterAuctions = async (params: any) => {
+        const category = params.category || /.*/g;
+        const time = params.time || /.*/g;
+        try {
+            auctions
+                .find()
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
+                .populate({
+                    path: "productID",
+                    match: {
+                        productCategory: category,
+                    },
+                    select: "ownerID productDescription productName productImageUrl productCategory",
+                })
+                .exec((err, auctions) => {
+                    const filteredAuctions = auctions.filter((item) => {
+                        return item.productID;
+                    });
+                    !filterAuctions
+                        ? res.status(404).json({ message: "error" })
+                        : res.json(filteredAuctions);
+                });
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+
+    const sortAuctions = async (params: any) => {
+        const sortBy = params.sort;
+        const asc = params.asc;
+
+        try {
+            const sorted = await auctions
+                .find()
+                .sort({ [sortBy]: [asc] })
+                // .populate({
+                //     path: "productID",
+                //     select: "ownerID productDescription productName productImageUrl productCategory",
+                // })
+                // .populate({
+                //     path: "bidHistory.bid.profileID",
+                //     select: "profilePicture profileName",
+                // })
+                .exec();
+            sorted !== null
+                ? res.status(200).json(sorted)
+                : res.status(404).json({ message: "error" });
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+
+    // req.query.profileID && req.query.full === "true"
+    //     ? fullInfoAuctionsOfUser()
+    //     : req.query.id
+    //     ? req.query.full === "true"
+    //         ? fullInfoAuction()
+    //         : defaultAuction()
+    //     : req.query.full === "true"
+    //     ? fullInfoAuctions()
+    //     : defaultAuctions();
+
+    req.query.filter === "true" ? filterAuctions(req.query) : null;
+    // req.query.sort ? sortAuctions(req.query) : null;
 };
 
 export const addAuction = async (req: Request, res: Response) => {
