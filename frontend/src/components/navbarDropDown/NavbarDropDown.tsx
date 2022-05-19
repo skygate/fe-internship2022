@@ -8,6 +8,9 @@ import { setUser } from "store/user";
 import { changeActiveProfile } from "store/activeProfile";
 import { ProfilePicture } from "components";
 import ArrowDownSign from "../../assets/ArrowDownSign.svg";
+import profileIcon from "../../assets/profileIcon.svg";
+import plusIcon from "../../assets/plusIcon.svg";
+import { Link } from "react-router-dom";
 
 export function NavbarDropDown() {
     const dispatch = useAppDispatch();
@@ -39,7 +42,17 @@ export function NavbarDropDown() {
                     activeDropdownButton ? styles.showDropdownContent : styles.dropdownContent
                 }
             >
-                <h1>essa</h1>
+                <span className={styles.profileName}>
+                    {activeAccount.activeProfile?.profileName}
+                </span>
+                <Link
+                    to={`profile/${activeAccount.activeProfile?._id}`}
+                    className={styles.dropdownListButton}
+                >
+                    {" "}
+                    <img src={profileIcon} alt="profile" className={styles.dropdownListIcon} />
+                    My profile
+                </Link>
                 <button
                     onClick={() => setActiveProfileSwitchButton(!activeProfileSwitchButton)}
                     type="button"
@@ -74,6 +87,10 @@ export function NavbarDropDown() {
                             )}
                         </button>
                     ))}
+                    <button type="button" className={styles.profilesListItem}>
+                        <img src={plusIcon} alt="plus" className={styles.dropdownListIcon} />
+                        Create new profile
+                    </button>
                 </div>
                 <button
                     onClick={async () => {
