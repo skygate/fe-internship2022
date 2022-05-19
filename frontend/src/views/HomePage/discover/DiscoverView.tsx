@@ -8,12 +8,17 @@ import rightArrow from "assets/arrowRight.svg";
 
 import { AuctionItem } from "interfaces/index";
 
-interface DiscoverProps {
-    priceRangeStyle: { background: string };
+interface PriceState {
     priceRangeMin: number;
     priceRangeMax: number;
-    priceRangeDefault: number;
-    productsData: AuctionItem[] | [];
+    priceRangeStyle: { background: string };
+}
+
+interface DiscoverProps {
+    priceRangeStyle: { background: string };
+    priceState: PriceState;
+    priceStateDefault: PriceState;
+    productsData: AuctionItem[];
     onMinPriceRangeChange: (e: React.ChangeEvent) => void;
     onMaxPriceRangeChange: (e: React.ChangeEvent) => void;
     activePage: number;
@@ -22,10 +27,9 @@ interface DiscoverProps {
 }
 
 export const DiscoverView = ({
+    priceState,
+    priceStateDefault,
     priceRangeStyle,
-    priceRangeMin,
-    priceRangeMax,
-    priceRangeDefault,
     onMinPriceRangeChange,
     onMaxPriceRangeChange,
     productsData,
@@ -60,23 +64,23 @@ export const DiscoverView = ({
                             <input
                                 type="range"
                                 min="0"
-                                max={priceRangeDefault}
+                                max={priceStateDefault.priceRangeMax}
                                 step="1"
-                                value={priceRangeMin}
+                                value={priceState.priceRangeMin}
                                 onChange={(e) => onMinPriceRangeChange(e)}
                             />
                             <input
                                 type="range"
                                 min="0"
-                                max={priceRangeDefault}
+                                max={priceStateDefault.priceRangeMax}
                                 step="1"
-                                value={priceRangeMax}
+                                value={priceState.priceRangeMax}
                                 onChange={(e) => onMaxPriceRangeChange(e)}
                             />
                         </div>
                         <div className={style.values}>
-                            <p>{priceRangeMin} ETH</p>
-                            <p>{priceRangeMax} ETH</p>
+                            <p>{priceState.priceRangeMin} ETH</p>
+                            <p>{priceState.priceRangeMax} ETH</p>
                         </div>
                     </div>
                 </div>

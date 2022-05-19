@@ -1,14 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AuctionItem } from "interfaces";
+import { AuctionState } from "interfaces";
 import { fetchAuctions } from "./helpers/auctionsHelper";
 
-const initialState = {
+const initialState: AuctionState = {
     status: "",
-    auctions: [] as AuctionItem[],
+    auctions: [],
 };
 
 export const getAuctions = createAsyncThunk("auctions/setAuctions", () => {
-    return fetchAuctions().then((data) => data.data);
+    return fetchAuctions().then((auctionsResponse) => auctionsResponse.data);
 });
 
 export const auctionsSlice = createSlice({

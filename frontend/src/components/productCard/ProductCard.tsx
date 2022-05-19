@@ -23,10 +23,7 @@ export const ProductCard = ({ item }: ProductCardProps) => {
         return true;
     };
 
-    const checkIsBidHistory = () => {
-        if (item.bidHistory.length === 0) return false;
-        return true;
-    };
+    const highestBid = item.bidHistory.slice(-1)[0]?.bid;
 
     return (
         <div className={styles.productCardContainer}>
@@ -60,30 +57,27 @@ export const ProductCard = ({ item }: ProductCardProps) => {
             </div>
             <div className={styles.avatarsAndUnits}>
                 <div className={styles.avatars}>
-                    {checkIsBidHistory() &&
-                        item.bidHistory.slice(-3).map((item, index) => {
-                            return (
-                                <div className={styles.avatar} key={index}>
-                                    <ProfilePicture
-                                        url={item.bid.profileID.profilePicture}
-                                        width={"24px"}
-                                    />
-                                </div>
-                            );
-                        })}
+                    {item.bidHistory.slice(-3).map((item, index) => {
+                        return (
+                            <div className={styles.avatar} key={index}>
+                                <ProfilePicture
+                                    url={item.bid.profileID.profilePicture}
+                                    width={"24px"}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
                 <span className={styles.unitsInStock}>{item.amount} in stock</span>
             </div>
             <div className={styles.bidSection}>
-                {checkIsBidHistory() &&
-                    item.bidHistory.slice(-1).map((item) => {
-                        return (
-                            <span className={styles.highestBid}>
-                                Highest bid
-                                <span className={styles.highestBidValue}>{item.bid.offer} ETH</span>
-                            </span>
-                        );
-                    })}
+                {highestBid ? (
+                    <span className={styles.highestBid}>
+                        Highest bid
+                        <span className={styles.highestBidValue}>{highestBid?.offer} ETH</span>
+                    </span>
+                ) : null}
+
                 {isHotBid() ? <span className={styles.newBid}>new bid 🔥</span> : null}
             </div>
         </div>

@@ -7,3 +7,4 @@ export * from "./Bid";
 export * from "./productItem";
 export * from "./ProfileInterface";
 export * from "./AuctionWithProductInfo";
+export * from "./auctionState";
