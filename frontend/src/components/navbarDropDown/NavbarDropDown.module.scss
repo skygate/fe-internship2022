@@ -1,0 +1,100 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.dropdownMenu {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdownButton {
+    background-color: $c-neutrals-8;
+    font-family: $font-family-dm-sans;
+    line-height: $line-height-button-2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $c-neutrals-2;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 90px;
+    padding: 3px 2px;
+    font-weight: $font-weight-700;
+    font-size: $font-size-button-2;
+    margin: 0;
+}
+
+.dropdownContent {
+    display: none;
+}
+
+.showDropdownContent {
+    padding: $spacer-32 $spacer-16;
+    margin-top: $spacer-16;
+    display: flex;
+    position: absolute;
+    background-color: #f9f9f9;
+    right: 0;
+    width: 256px;
+    border-radius: 16px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dropdownListIcon {
+    margin-right: $spacer-8;
+    width: 20px;
+}
+
+.dropdownListButton {
+    font-family: $font-family-dm-sans;
+    width: 100%;
+    padding: $spacer-16 0 $spacer-12 0;
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    color: $c-neutrals-4;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-bottom: 1px solid $c-neutrals-6;
+}
+:link {
+    text-decoration: none;
+}
+
+.showDropdownContent :last-child {
+    border: none;
+    padding-bottom: 0;
+}
+
+.showProfiles {
+    position: relative;
+}
+
+.profilesListItem {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    margin: 0;
+    padding: $spacer-8 $spacer-8;
+}
+
+.activeProfileText {
+    font-family: $font-family-dm-sans;
+    font-size: $font-size-caption-2;
+    line-height: $line-height-caption-2;
+    font-weight: $font-weight-400;
+    color: $c-primary-4;
+}
+
+.profileName {
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-2-bold;
+    font-size: $font-size-body-2-bold;
+    color: $c-neutrals-2;
+}

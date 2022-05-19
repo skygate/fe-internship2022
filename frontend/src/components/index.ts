@@ -19,3 +19,4 @@ export { RowTextInputs } from "./rowTextInputs/RowTextInputs";
 export { ProductCard } from "./productCard/ProductCard";
 export { ProfileInfoPanel } from "./profileInfoPanel/ProfileInfoPanel";
 export { RenderInput } from "./renderInput/RenderInput";
+export { NavbarDropDown } from "./navbarDropDown/NavbarDropDown";

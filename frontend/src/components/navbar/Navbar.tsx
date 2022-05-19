@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import style from "./navbar.module.scss";
 import logo from "assets/logo.svg";
+import { NavbarDropDown } from "components";
 import magnifierIcon from "assets/magnifier.svg";
 import { RootState } from "store/store";
 import { useAppSelector } from "store/store";
@@ -41,10 +42,13 @@ export const Navbar = () => {
             <Link to="/create" style={{ textDecoration: "none" }}>
                 <button className={style.btnCreate}>Create</button>
             </Link>
-            <Link to="/login">
-                <button className={style.btnWallet}>Log in</button>
-            </Link>
-            <p>{user.userID}</p>
+            {user.userID === "" ? (
+                <Link to="/login">
+                    <button className={style.btnWallet}>Log in</button>
+                </Link>
+            ) : (
+                <NavbarDropDown />
+            )}
         </header>
     );
 };

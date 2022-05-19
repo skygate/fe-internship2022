@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Footer, Navbar } from "components";
-import { LoginPage, HomePage, CreateSingleCollectible, Profile, Login, Register } from "views";
+import { HomePage, CreateSingleCollectible, Profile, Login, Register } from "views";
 
 function Router() {
     return (
