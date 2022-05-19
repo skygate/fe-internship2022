@@ -3,12 +3,14 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import userReducer from "./user";
 import profilesReducer from "./profile";
 import auctionsReducer from "./auctions";
+import activeProfileReducer from "./activeProfile";
 
 export const store = configureStore({
     reducer: {
         user: userReducer,
         profiles: profilesReducer,
         auctions: auctionsReducer,
+        activeProfile: activeProfileReducer,
     },
 });
 
