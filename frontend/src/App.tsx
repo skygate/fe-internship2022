@@ -4,6 +4,7 @@ import Router from "./routes";
 import { setUser } from "store/user";
 import { useAppDispatch, useAppSelector } from "store/store";
 import { getProfilesForLoggedUser } from "store/profile";
+import { getAuctions } from "store/auctions";
 import { changeActiveProfile } from "store/activeProfile";
 
 function App() {
@@ -18,6 +19,10 @@ function App() {
     useEffect(() => {
         dispatch(getProfilesForLoggedUser(user.userID));
     }, [user.userID]);
+
+    useEffect(() => {
+        dispatch(getAuctions());
+    }, []);
 
     useEffect(() => {
         dispatch(changeActiveProfile({ profiles: profiles, isAuto: true }));
