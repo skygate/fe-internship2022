@@ -1,9 +1,8 @@
-import { AuctionItem } from "../../interfaces";
+import { AuctionItem } from "interfaces";
 import styles from "./productCard.module.scss";
-import { ProfilePicture } from "..";
 import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
-import Heart from "../../assets/Heart.svg";
-import { useState } from "react";
+import { ProfilePicture } from "..";
+import Heart from "assets/Heart.svg";
 
 interface ProductCardProps {
     item: AuctionItem;
@@ -14,7 +13,6 @@ const getHours = (miliseconds: number) => {
 };
 
 export const ProductCard = ({ item }: ProductCardProps) => {
-    const [biders, setBiders] = useState([]);
     const isHotBid = () => {
         const currentDate = Date.now();
         const productStartDate = new Date(item.startDate).getTime();
@@ -24,6 +22,8 @@ export const ProductCard = ({ item }: ProductCardProps) => {
         if (hoursPassed > 24) return false;
         return true;
     };
+
+    const highestBid = item.bidHistory.slice(-1)[0]?.bid;
 
     return (
         <div className={styles.productCardContainer}>
@@ -57,9 +57,9 @@ export const ProductCard = ({ item }: ProductCardProps) => {
             </div>
             <div className={styles.avatarsAndUnits}>
                 <div className={styles.avatars}>
-                    {item.bidHistory.slice(-3).map((item) => {
+                    {item.bidHistory.slice(-3).map((item, index) => {
                         return (
-                            <div className={styles.avatar}>
+                            <div className={styles.avatar} key={index}>
                                 <ProfilePicture
                                     url={item.bid.profileID.profilePicture}
                                     width={"24px"}
@@ -71,18 +71,12 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                 <span className={styles.unitsInStock}>{item.amount} in stock</span>
             </div>
             <div className={styles.bidSection}>
-                {item.bidHistory === []
-                    ? null
-                    : item.bidHistory.slice(-1).map((item) => {
-                          return (
-                              <span className={styles.highestBid}>
-                                  Highest bid
-                                  <span className={styles.highestBidValue}>
-                                      {item.bid.offer} ETH
-                                  </span>
-                              </span>
-                          );
-                      })}
+                {highestBid ? (
+                    <span className={styles.highestBid}>
+                        Highest bid
+                        <span className={styles.highestBidValue}>{highestBid?.offer} ETH</span>
+                    </span>
+                ) : null}
 
                 {isHotBid() ? <span className={styles.newBid}>new bid 🔥</span> : null}
             </div>

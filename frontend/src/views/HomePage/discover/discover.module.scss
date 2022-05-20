@@ -19,23 +19,12 @@ h3 {
 }
 
 .topFilters {
+    // width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
+    // align-items: center;
     padding-bottom: $spacer-32;
     border-bottom: 1px solid $c-neutrals-6;
-}
-
-.timeFilter {
-    font-family: $font-family-poppins;
-    font-size: $font-size-caption-bold;
-    font-weight: $font-weight-500;
-    line-height: $line-height-caption-bold;
-    color: $c-neutrals-2;
-    padding: $spacer-8 $spacer-8 $spacer-8 $spacer-8;
-    border: 2px solid $c-neutrals-6;
-    border-radius: 10px;
-    outline: none;
 }
 
 .clearFilters {
@@ -47,6 +36,8 @@ h3 {
     font-weight: $font-weight-700;
     line-height: $line-height-button-1;
     color: $c-neutrals-8;
+    align-self: flex-end;
+    justify-self: flex-end;
 }
 
 .bottomFilters {
@@ -54,6 +45,11 @@ h3 {
     justify-content: space-between;
     align-items: flex-start;
     margin-top: $spacer-32;
+}
+
+.selectFilters {
+    display: flex;
+    justify-content: space-between;
 }
 
 .priceRange {
@@ -187,6 +183,28 @@ input[type="range"]:active::-webkit-slider-thumb {
 .itemsContainer {
     margin-top: $spacer-32;
     display: flex;
-    justify-content: space-between;
+    column-gap: 30px;
+    justify-content: flex-start;
     flex-wrap: wrap;
+}
+
+.selectPage {
+    margin-top: $spacer-32;
+    display: flex;
+    justify-content: center;
+    column-gap: $spacer-8;
+}
+
+.arrow {
+    box-sizing: content-box;
+    width: 15px;
+    height: 15px;
+    padding: $spacer-8;
+    border: 1px solid transparent;
+    border-radius: 50%;
+}
+
+.arrow:hover {
+    border: 1px solid $c-neutrals-4;
+    cursor: pointer;
 }

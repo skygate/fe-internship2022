@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import style from "./categoryButtons.module.scss";
 
-export const CategoryButtons = () => {
+interface CategoryButtonsProps {
+    onCategorySelect: (e: React.MouseEvent) => void;
+}
+
+export const CategoryButtons = ({ onCategorySelect }: CategoryButtonsProps) => {
     enum FilterCategoryType {
         AllItems,
         Art,
@@ -14,15 +18,16 @@ export const CategoryButtons = () => {
     interface FilterCategory {
         name: FilterCategoryType;
         label: string;
+        id?: string;
     }
 
     const filterCategories: FilterCategory[] = [
-        { name: FilterCategoryType.AllItems, label: "All items" },
-        { name: FilterCategoryType.Art, label: "Art" },
-        { name: FilterCategoryType.Game, label: "Game" },
-        { name: FilterCategoryType.Photography, label: "Photography" },
-        { name: FilterCategoryType.Music, label: "Music" },
-        { name: FilterCategoryType.Video, label: "Video" },
+        { name: FilterCategoryType.AllItems, label: "All items", id: "all" },
+        { name: FilterCategoryType.Art, label: "Art", id: "art" },
+        { name: FilterCategoryType.Game, label: "Game", id: "game" },
+        { name: FilterCategoryType.Photography, label: "Photography", id: "photography" },
+        { name: FilterCategoryType.Music, label: "Music", id: "music" },
+        { name: FilterCategoryType.Video, label: "Video", id: "video" },
     ];
 
     const [activeElement, setActiveElement] = useState(filterCategories[0].label);
@@ -34,6 +39,7 @@ export const CategoryButtons = () => {
     const onClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLButtonElement;
         setActiveElement(target.value);
+        onCategorySelect(e);
     };
 
     const renderCategoryButtons = (): JSX.Element => {
@@ -47,6 +53,7 @@ export const CategoryButtons = () => {
                             onClick={onClick}
                             value={item.label}
                             key={item.label}
+                            id={item.id}
                         >
                             {item.label}
                         </button>

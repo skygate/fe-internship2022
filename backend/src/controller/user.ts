@@ -70,10 +70,19 @@ module.exports.registerUser = async (req: Request, res: Response) => {
         const { _id } = await user.findOne({ email: email });
         const newProfile = new profile({
             userID: _id,
-            about: "",
+            profileName: `${Math.random() * 99999999999}`,
+            about: "Default about",
+            profilePicture:
+                "https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg",
+            coverPicture:
+                "https://galaktyczny.pl/wp-content/uploads/2021/08/windows-xp-wallpaper-tapeta.jpg",
             websiteUrl: "",
-            profilePicture: "",
-            coverPicture: "",
+            instagramUrl: "",
+            twitterUrl: "",
+            facebookUrl: "",
+            following: [],
+            followers: [],
+            joinDate: new Date(),
         });
         newProfile.save();
         res.status(201).json({ message: "User added succesfully" });
