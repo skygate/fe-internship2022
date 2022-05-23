@@ -25,6 +25,12 @@ export interface ActiveProfileState {
     activeProfile: ProfileInterface | null;
 }
 
+export interface ProfileModalProps {
+    userID: string;
+    isNew: boolean;
+    activeProfile?: ProfileInterface | null;
+}
+
 export enum ProfileInputType {
     About = "about",
     ProfileName = "profileName",
@@ -36,7 +42,7 @@ export enum ProfileInputType {
     CoverPicture = "coverPicture",
 }
 
-export interface ProfileInputs {
+export interface ProfileInput {
     name: ProfileInputType;
     id: string;
     label: string;

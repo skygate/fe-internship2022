@@ -3,15 +3,10 @@ import style from "./navbar.module.scss";
 import logo from "assets/logo.svg";
 import { NavbarDropDown } from "components";
 import magnifierIcon from "assets/magnifier.svg";
-import { useAppSelector, useAppDispatch } from "store/store";
-import Modal from "components/Modal/Modal";
-import { changeAddProfileVisibility } from "store/addProfileModal";
-import { ProfileModal } from "components";
+import { useAppSelector } from "store/store";
 
 export const Navbar = () => {
     const user = useAppSelector((state) => state.user);
-    const dispatch = useAppDispatch();
-    const isModalVisible = useAppSelector((state) => state.addProfileModalVisibility.visibility);
 
     return (
         <header>
@@ -52,17 +47,6 @@ export const Navbar = () => {
                 </Link>
             ) : (
                 <NavbarDropDown />
-            )}
-            {isModalVisible && (
-                <Modal
-                    visible={isModalVisible}
-                    onClose={() => {
-                        dispatch(changeAddProfileVisibility(false));
-                    }}
-                    title="Create new profile"
-                >
-                    <ProfileModal isNew={true} userID={user.userID} />
-                </Modal>
             )}
         </header>
     );

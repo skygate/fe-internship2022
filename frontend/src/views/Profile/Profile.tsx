@@ -9,7 +9,6 @@ import editIcon from "../../assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
 import Modal from "components/Modal/Modal";
 import { ProfileModal } from "../../components";
-import { changeEditProfileVisibility } from "store/editProfileModal";
 
 const profileDisplayOptions = [
     { value: "onsale", label: "On Sale" },
@@ -56,7 +55,7 @@ export function Profile() {
     const [profile, setProfile] = useState<ProfileInterface | null>(null);
     const [auctions, setAuctions] = useState<AuctionWithProductInfo[] | null>(null);
     const [selectedProfileDisplay, setSelectedProfileDisplay] = useState<string>("onsale");
-    const isModalVisible = useAppSelector((state) => state.editProfileModalVisibility.visibility);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const user = useAppSelector((state) => state.user);
     const activeProfile = useAppSelector((state) => state.activeProfile);
 
@@ -83,6 +82,7 @@ export function Profile() {
                                 <img
                                     className={styles.buttonIcon}
                                     src={imageIcon}
+                                    aria-hidden="true"
                                     alt="editCoverPhoto"
                                 />
                             </button>
@@ -90,13 +90,14 @@ export function Profile() {
                                 type="button"
                                 className={styles.buttonOnCoverPhoto}
                                 onClick={() => {
-                                    dispatch(changeEditProfileVisibility(true));
+                                    setIsModalVisible(true);
                                 }}
                             >
                                 Edit profile
                                 <img
                                     className={styles.buttonIcon}
                                     src={editIcon}
+                                    aria-hidden="true"
                                     alt="editProfile"
                                 />
                             </button>
@@ -131,7 +132,7 @@ export function Profile() {
                 <Modal
                     visible={isModalVisible}
                     onClose={() => {
-                        dispatch(changeEditProfileVisibility(false));
+                        setIsModalVisible(false);
                     }}
                     title="Edit profile"
                 >

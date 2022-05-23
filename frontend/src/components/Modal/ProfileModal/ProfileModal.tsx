@@ -1,6 +1,4 @@
 import styles from "./ProfileModal.module.scss";
-import { ProfileInputs, ProfileInterface } from "interfaces";
-import { ProfileInputType } from "interfaces";
 import { RenderInput } from "components";
 import { useState } from "react";
 import { FormikValues, useFormik } from "formik";
@@ -9,15 +7,18 @@ import { addProfile } from "API/UserService/addProfile";
 import { editProfile } from "API/UserService/editProfile";
 import { useAppDispatch } from "store/store";
 import { getProfilesForLoggedUser } from "store/profile";
-
-export interface ProfileModalProps {
-    userID: string;
-    isNew: boolean;
-    activeProfile?: ProfileInterface | null;
-}
+import { inputsArray } from "./InputsArray";
+import { ProfileModalProps } from "interfaces";
+import { AxiosResponse } from "axios";
 
 export const ProfileModal = ({ userID, isNew, activeProfile }: ProfileModalProps) => {
     const dispatch = useAppDispatch();
+
+    const handleResponse = (data: AxiosResponse, errorText: string) => {
+        setResponse(data.statusText);
+        dispatch(getProfilesForLoggedUser(userID));
+        if (data.statusText !== errorText) formik.resetForm();
+    };
 
     const validationSchema = Yup.object().shape({
         profileName: Yup.string()
@@ -32,64 +33,6 @@ export const ProfileModal = ({ userID, isNew, activeProfile }: ProfileModalProps
         instagramUrl: Yup.string().max(255, "You can use max 255 characters"),
         twitterUrl: Yup.string().max(255, "You can use max 255 characters"),
     });
-    const inputsArray: ProfileInputs[] = [
-        {
-            name: ProfileInputType.ProfileName,
-            id: "profileName",
-            label: "Profile name",
-            placeholder: "Profile name",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.ProfilePicture,
-            id: "profilePicture",
-            label: "Profile picture",
-            placeholder: "Profile picture URL",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.CoverPicture,
-            id: "coverPicture",
-            label: "Cover picture",
-            placeholder: "Cover picture URL",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.About,
-            id: "about",
-            label: "About",
-            placeholder: "Tell something about you",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.WebsiteUrl,
-            id: "websiteUrl",
-            label: "Website address",
-            placeholder: "Website URL",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.FacebookUrl,
-            id: "facebookUrl",
-            label: "Facebook profile",
-            placeholder: "Facebook profile URL",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.InstagramUrl,
-            id: "instagramUrl",
-            label: "Instagram profile",
-            placeholder: "Instagram profile URL",
-            type: "text",
-        },
-        {
-            name: ProfileInputType.TwitterUrl,
-            id: "twitterUrl",
-            label: "Twitter profile",
-            placeholder: "Twitter profile URL",
-            type: "text",
-        },
-    ];
 
     const [response, setResponse] = useState<string | null>(null);
 
@@ -127,14 +70,10 @@ export const ProfileModal = ({ userID, isNew, activeProfile }: ProfileModalProps
             setResponse(null);
             isNew
                 ? await addProfile(values, userID).then((data) => {
-                      setResponse(data.statusText);
-                      dispatch(getProfilesForLoggedUser(userID));
-                      if (data.statusText !== "Failed") formik.resetForm();
+                      handleResponse(data, "Adding new profile failed!");
                   })
                 : await editProfile(values, activeProfile?._id).then((data) => {
-                      setResponse(data.statusText);
-                      dispatch(getProfilesForLoggedUser(userID));
-                      if (data.statusText !== "Failed") formik.resetForm();
+                      handleResponse(data, "Editing profile failed!");
                   });
             hideMessage();
         },

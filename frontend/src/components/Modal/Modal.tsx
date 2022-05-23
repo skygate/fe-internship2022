@@ -16,7 +16,7 @@ export interface ModalProps {
 const Modal = ({ title, visible, onClose, children, description = "" }: ModalProps) => {
     const escFunction = useCallback(
         (e) => {
-            if (e.keyCode === 27) {
+            if (e.key === "Escape") {
                 onClose();
             }
         },

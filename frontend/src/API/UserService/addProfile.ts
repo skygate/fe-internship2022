@@ -5,6 +5,6 @@ export const addProfile = async (data: {}, userID: string) => {
         const response = axiosInstance.post(`/profiles/${userID}`, JSON.stringify(data));
         return response;
     } catch (error) {
-        throw new Error("Failed");
+        throw new Error("Adding new profile failed!");
     }
 };
