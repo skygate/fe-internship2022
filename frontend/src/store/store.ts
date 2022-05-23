@@ -4,6 +4,8 @@ import userReducer from "./user";
 import profilesReducer from "./profile";
 import auctionsReducer from "./auctions";
 import activeProfileReducer from "./activeProfile";
+import addProfileModalVisibilityReducer from "./addProfileModal";
+import editProfileModalVisibilityReducer from "./editProfileModal";
 
 export const store = configureStore({
     reducer: {
@@ -11,6 +13,8 @@ export const store = configureStore({
         profiles: profilesReducer,
         auctions: auctionsReducer,
         activeProfile: activeProfileReducer,
+        addProfileModalVisibility: addProfileModalVisibilityReducer,
+        editProfileModalVisibility: editProfileModalVisibilityReducer,
     },
 });
 

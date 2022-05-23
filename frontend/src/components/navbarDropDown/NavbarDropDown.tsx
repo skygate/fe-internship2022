@@ -11,6 +11,7 @@ import ArrowDownSign from "../../assets/ArrowDownSign.svg";
 import profileIcon from "../../assets/profileIcon.svg";
 import plusIcon from "../../assets/plusIcon.svg";
 import { Link } from "react-router-dom";
+import { changeAddProfileVisibility } from "store/addProfileModal";
 
 export function NavbarDropDown() {
     const dispatch = useAppDispatch();
@@ -87,7 +88,11 @@ export function NavbarDropDown() {
                             )}
                         </button>
                     ))}
-                    <button type="button" className={styles.profilesListItem}>
+                    <button
+                        type="button"
+                        className={styles.profilesListItem}
+                        onClick={() => dispatch(changeAddProfileVisibility(true))}
+                    >
                         <img src={plusIcon} alt="plus" className={styles.dropdownListIcon} />
                         Create new profile
                     </button>
