@@ -7,7 +7,7 @@ const initialState: AuctionState = {
     auctions: [],
 };
 
-export const getAuctions = createAsyncThunk("auctions/setAuctions", (params: {}) => {
+export const getAuctions = createAsyncThunk("auctions/setAuctions", (params: boolean) => {
     if (params)
         return fetchFilteredAndSortedAuctions(params).then(
             (auctionsResponse) => auctionsResponse.data

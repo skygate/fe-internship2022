@@ -41,7 +41,7 @@ export const DiscoverView = ({
     onCategorySelect,
 }: DiscoverProps) => {
     return (
-        <section>
+        <section id="discover">
             <h3>Discover</h3>
             <form className={style.filters}>
                 <div className={style.topFilters}>

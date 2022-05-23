@@ -3,6 +3,7 @@ import { DiscoverView } from "./DiscoverView";
 import { useAppDispatch, useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
 import { getAuctions } from "store/auctions";
+import { useSearchParams } from "react-router-dom";
 
 const PRICE_GAP = 20;
 const AUCTIONS_PER_PAGE = 8;
@@ -40,6 +41,14 @@ export const Discover = () => {
 
     const dispatch = useAppDispatch();
 
+    const [searchParams, setSearchParams] = useSearchParams();
+    // const category = searchParams.get("category");
+    // const time = searchParams.get("time");
+    // const priceMin = searchParams.get("priceMin");
+    // const priceMax = searchParams.get("priceMax");
+    // const sortBy = searchParams.get("sortBy");
+    // const ascending = searchParams.get("ascending");
+
     const defaultState: FormState = {
         sort: {
             sortBy: null,
@@ -54,13 +63,22 @@ export const Discover = () => {
     };
 
     const [formState, setFormState] = useState(defaultState);
+
+    useEffect(() => {
+        const { category, time, priceMin, priceMax } = formState.filter;
+        const { sortBy, ascending } = formState.sort;
+        // setUrl(
+        //     `${BASE_URL}?filter=true&time=${time}&category=${category}&priceMin=${priceMin}&priceMax=${priceMax}&sort=${sortBy}&asc=${ascending}`
+        // );
+    }, [formState]);
+
     useEffect(() => {
         const firstPageAuctions = auctions.slice(0, AUCTIONS_PER_PAGE);
         setActiveAuctions(firstPageAuctions);
     }, [auctions]);
 
     useEffect(() => {
-        dispatch(getAuctions(formState));
+        dispatch(getAuctions(true));
     }, [formState]);
 
     const setPriceRangeBackground = (percent1: number, percent2: number) => {
@@ -74,12 +92,19 @@ export const Discover = () => {
         const target = e.target as HTMLSelectElement;
 
         if (target.id === "sort") {
-            const ascending = target.selectedOptions[0].getAttribute("data-ascending");
-            const filterBy = target.selectedOptions[0].getAttribute("data-filterby");
+            const ascending = target.selectedOptions[0].getAttribute("data-ascending") || "";
+            const filterBy = target.selectedOptions[0].getAttribute("data-filterby") || "";
             setFormState({ ...formState, sort: { sortBy: filterBy, ascending: ascending } });
+
+            searchParams.set("sortBy", filterBy);
+            searchParams.set("ascending", ascending);
+            setSearchParams(searchParams);
         }
         if (target.id === "timeFilter") {
             setFormState({ ...formState, filter: { ...formState.filter, time: target.value } });
+
+            searchParams.set("time", target.value);
+            setSearchParams(searchParams);
         }
         // if (target.id === "categoryFilter") {
         //     setFormState({ ...formState, filter: { ...formState.filter, category: target.value } });
@@ -89,6 +114,8 @@ export const Discover = () => {
     const onCategorySelect = (e: React.MouseEvent) => {
         const target = e.target as HTMLButtonElement;
         setFormState({ ...formState, filter: { ...formState.filter, category: target.id } });
+        searchParams.set("category", target.id);
+        setSearchParams(searchParams);
     };
 
     const fillColor = () => {
@@ -114,6 +141,12 @@ export const Discover = () => {
         fillColor();
 
         checkGap(priceState.priceRangeMin, priceState.priceRangeMax, PRICE_GAP)
+            ? searchParams.set("priceMin", target.value)
+            : searchParams.set("priceMin", (formState.filter.priceMax - PRICE_GAP).toString());
+
+        setSearchParams(searchParams);
+
+        checkGap(priceState.priceRangeMin, priceState.priceRangeMax, PRICE_GAP)
             ? setFormState({
                   ...formState,
                   filter: { ...formState.filter, priceMin: Number(target.value) },
@@ -122,6 +155,8 @@ export const Discover = () => {
                   ...formState,
                   filter: { ...formState.filter, priceMin: formState.filter.priceMax - PRICE_GAP },
               });
+
+        setSearchParams(searchParams);
     };
 
     const onMaxPriceRangeChange = (e: React.ChangeEvent) => {
@@ -142,6 +177,12 @@ export const Discover = () => {
                   ...formState,
                   filter: { ...formState.filter, priceMax: formState.filter.priceMin + PRICE_GAP },
               });
+
+        checkGap(priceState.priceRangeMin, priceState.priceRangeMax, PRICE_GAP)
+            ? searchParams.set("priceMax", target.value)
+            : searchParams.set("priceMax", (formState.filter.priceMin + PRICE_GAP).toString());
+
+        setSearchParams(searchParams);
     };
 
     const showNextPage = () => {
