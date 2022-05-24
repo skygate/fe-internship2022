@@ -22,7 +22,7 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
             <div className={styles.profileAvatar}>
                 <ProfilePicture width={"160px"} url={profile.profilePicture} />
             </div>
-            <span className={styles.usernameText}>{profile.profileName}</span>
+            <span className={styles.usernameText}>{profile.profileName.slice(0, 16)}</span>
             <div className={isExpanded ? styles.aboutExpanded : styles.aboutWrapper}>
                 <span className={styles.aboutText} onClick={() => setIsExpanded(!isExpanded)}>
                     {profile.about}

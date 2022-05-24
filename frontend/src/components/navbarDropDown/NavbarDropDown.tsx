@@ -11,6 +11,8 @@ import ArrowDownSign from "../../assets/ArrowDownSign.svg";
 import profileIcon from "../../assets/profileIcon.svg";
 import plusIcon from "../../assets/plusIcon.svg";
 import { Link } from "react-router-dom";
+import Modal from "components/Modal/Modal";
+import { ProfileModal } from "components/Modal/ProfileModal/ProfileModal";
 
 export function NavbarDropDown() {
     const dispatch = useAppDispatch();
@@ -19,6 +21,7 @@ export function NavbarDropDown() {
     const activeAccount = useAppSelector((state) => state.activeProfile);
     const [activeDropdownButton, setActiveDropdownButton] = useState(false);
     const [activeProfileSwitchButton, setActiveProfileSwitchButton] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     return (
         <div className={styles.dropdownMenu}>
@@ -87,7 +90,11 @@ export function NavbarDropDown() {
                             )}
                         </button>
                     ))}
-                    <button type="button" className={styles.profilesListItem}>
+                    <button
+                        type="button"
+                        className={styles.profilesListItem}
+                        onClick={() => setIsModalVisible(true)}
+                    >
                         <img src={plusIcon} alt="plus" className={styles.dropdownListIcon} />
                         Create new profile
                     </button>
@@ -104,6 +111,17 @@ export function NavbarDropDown() {
                     Disconnect
                 </button>
             </div>
+            {isModalVisible && (
+                <Modal
+                    visible={isModalVisible}
+                    onClose={() => {
+                        setIsModalVisible(false);
+                    }}
+                    title="Create new profile"
+                >
+                    <ProfileModal isNew={true} userID={user.userID} />
+                </Modal>
+            )}
         </div>
     );
 }

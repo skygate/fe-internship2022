@@ -3,11 +3,10 @@ import style from "./navbar.module.scss";
 import logo from "assets/logo.svg";
 import { NavbarDropDown } from "components";
 import magnifierIcon from "assets/magnifier.svg";
-import { RootState } from "store/store";
 import { useAppSelector } from "store/store";
 
 export const Navbar = () => {
-    const user = useAppSelector((state: RootState) => state.user);
+    const user = useAppSelector((state) => state.user);
 
     return (
         <header>

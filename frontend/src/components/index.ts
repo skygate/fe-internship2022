@@ -20,3 +20,4 @@ export { ProductCard } from "./productCard/ProductCard";
 export { ProfileInfoPanel } from "./profileInfoPanel/ProfileInfoPanel";
 export { RenderInput } from "./renderInput/RenderInput";
 export { NavbarDropDown } from "./navbarDropDown/NavbarDropDown";
+export { ProfileModal } from "./Modal/ProfileModal/ProfileModal";
