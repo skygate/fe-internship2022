@@ -5,16 +5,25 @@ export const fetchAuctions = () => {
 };
 
 export const fetchFilteredAndSortedAuctions = (params: any) => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
+    const urlParams = new URLSearchParams(window.location.search);
 
-    const timeFilter = urlParams.get("time") || "ever";
-    const sortBy = urlParams.get("sortBy") || "startDate";
-    const ascending = urlParams.get("ascending") || "1";
-    const category = urlParams.get("category") || "all";
-    const priceMin = urlParams.get("priceMin") || 0;
-    const priceMax = urlParams.get("priceMax") || 2000;
+    const defaultParams = {
+        time: "ever",
+        sort: "startDate",
+        ascending: "1",
+        category: "all",
+        priceMin: "0",
+        priceMax: "2000",
+    };
 
-    const url = `/auctions?filter=true&time=${timeFilter}&category=${category}&priceMin=${priceMin}&priceMax=${priceMax}&sort=${sortBy}&asc=${ascending}`;
+    const searchParams = new URLSearchParams(defaultParams);
+
+    for (const [name, value] of urlParams) {
+        if (Object.keys(defaultParams).includes(name)) {
+            searchParams.set(name, value);
+        }
+    }
+
+    const url = `/auctions?filter=true&${searchParams}`;
     return axiosInstance.get(url);
 };

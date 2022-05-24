@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from "react";
 import style from "./selectFilters.module.scss";
-
-interface FormState {
-    category: string;
-    time: string;
-    sortBy: string;
-    ascending: string;
-}
+import { DiscoverFormState } from "interfaces";
 
 interface SelectFiltersProps {
     onFieldSelect: (e: React.ChangeEvent) => void;
-    formState: FormState;
+    formState: DiscoverFormState;
 }
 
 export const SelectFilters = ({ onFieldSelect, formState }: SelectFiltersProps) => {
     useEffect(() => {
-        setSelectedSorting(formState.sortBy);
+        setSelectedSorting(formState.sort);
         setSelectedTime(formState.time);
         setSelectedAscending(formState.ascending);
     });
@@ -25,7 +19,7 @@ export const SelectFilters = ({ onFieldSelect, formState }: SelectFiltersProps) 
     });
 
     const [selectedTime, setSelectedTime] = useState(formState.time);
-    const [selectedSorting, setSelectedSorting] = useState(formState.sortBy);
+    const [selectedSorting, setSelectedSorting] = useState(formState.sort);
     const [selectedAscending, setSelectedAscending] = useState(formState.ascending);
     const [defaultSortValue, setDefaultSortValue] = useState("dateAscending");
 

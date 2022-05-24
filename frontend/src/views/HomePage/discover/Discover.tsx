@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
 import { getAuctions } from "store/auctions";
 import { useSearchParams } from "react-router-dom";
-import { discoverFormState } from "interfaces";
+import { DiscoverFormState } from "interfaces";
 
 const PRICE_GAP = 20;
 const AUCTIONS_PER_PAGE = 8;
@@ -12,10 +12,10 @@ const INITIAL_STYLE = {
     background: `linear-gradient(to right, #E6E8EC 0% , #3772ff 0% , #3772ff 100%, #E6E8EC 100%)`,
 };
 
-const FORM_STATE_DEFAULT: discoverFormState = {
+const FORM_STATE_DEFAULT: DiscoverFormState = {
     category: "all",
     time: "ever",
-    sortBy: "startDate",
+    sort: "startDate",
     ascending: "-1",
     priceMin: 0,
     priceMax: 1000,
@@ -40,7 +40,7 @@ export const Discover = () => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const time = urlParams.get("time") || FORM_STATE_DEFAULT.time;
-        const sortBy = urlParams.get("sortBy") || FORM_STATE_DEFAULT.sortBy;
+        const sortBy = urlParams.get("sortBy") || FORM_STATE_DEFAULT.sort;
         const ascending = urlParams.get("ascending") || FORM_STATE_DEFAULT.ascending;
         const category = urlParams.get("category") || FORM_STATE_DEFAULT.category;
         const priceMin = Number(urlParams.get("priceMin"));
@@ -49,7 +49,7 @@ export const Discover = () => {
             ...formState,
             category: category,
             time: time,
-            sortBy: sortBy,
+            sort: sortBy,
             ascending: ascending,
             priceMin: Number(priceMin),
             priceMax: Number(priceMax),
@@ -58,7 +58,7 @@ export const Discover = () => {
 
     useEffect(() => {
         searchParams.set("time", formState.time);
-        searchParams.set("sortBy", formState.sortBy);
+        searchParams.set("sort", formState.sort);
         searchParams.set("ascending", formState.ascending);
         searchParams.set("category", formState.category);
         searchParams.set("priceMin", formState.priceMin.toString());
@@ -89,11 +89,10 @@ export const Discover = () => {
                 target.selectedOptions[0].getAttribute("data-ascending") ||
                 FORM_STATE_DEFAULT.ascending;
             const filterBy =
-                target.selectedOptions[0].getAttribute("data-filterby") ||
-                FORM_STATE_DEFAULT.sortBy;
+                target.selectedOptions[0].getAttribute("data-filterby") || FORM_STATE_DEFAULT.sort;
             setFormState({
                 ...formState,
-                sortBy: filterBy,
+                sort: filterBy,
                 ascending: ascending,
             });
         }

@@ -1,7 +1,7 @@
-export interface discoverFormState {
+export interface DiscoverFormState {
     category: string;
     time: string;
-    sortBy: string;
+    sort: string;
     ascending: string;
     priceMin: number;
     priceMax: number;

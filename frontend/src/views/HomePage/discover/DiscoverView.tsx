@@ -6,7 +6,7 @@ import style from "./discover.module.scss";
 import leftArrow from "assets/arrowLeft.svg";
 import rightArrow from "assets/arrowRight.svg";
 import { AuctionItem } from "interfaces/index";
-import { discoverFormState } from "interfaces";
+import { DiscoverFormState } from "interfaces";
 
 interface DiscoverProps {
     priceInputBackground: {};
@@ -16,7 +16,7 @@ interface DiscoverProps {
     onCategorySelect: (e: React.MouseEvent) => void;
     onPageChange: (e: React.MouseEvent) => void;
     clearFilters: (e: React.MouseEvent) => void;
-    formState: discoverFormState;
+    formState: DiscoverFormState;
 }
 
 export const DiscoverView = ({

@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import style from "./categoryButtons.module.scss";
-
-interface FormState {
-    category: string;
-    time: string;
-    sortBy: string;
-}
+import { DiscoverFormState } from "interfaces";
 
 interface CategoryButtonsProps {
     onCategorySelect: (e: React.MouseEvent) => void;
-    formState: FormState;
+    formState: DiscoverFormState;
 }
 
 export const CategoryButtons = ({ onCategorySelect, formState }: CategoryButtonsProps) => {
