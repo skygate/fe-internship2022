@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { DiscoverView } from "./DiscoverView";
-import { useAppSelector } from "store/store";
+import { useAppDispatch, useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
+import { getAuctions } from "store/auctions";
+import { useSearchParams } from "react-router-dom";
+import { DiscoverFormState } from "interfaces";
 
 const PRICE_GAP = 20;
 const AUCTIONS_PER_PAGE = 8;
@@ -9,10 +12,15 @@ const INITIAL_STYLE = {
     background: `linear-gradient(to right, #E6E8EC 0% , #3772ff 0% , #3772ff 100%, #E6E8EC 100%)`,
 };
 
-const PRICE_STATE_DEFAULT = {
+const FORM_STATE_DEFAULT: DiscoverFormState = {
+    category: "all",
+    time: "ever",
+    sort: "startDate",
+    ascending: "-1",
+    priceMin: 0,
+    priceMax: 1000,
     priceRangeMin: 0,
-    priceRangeMax: 400,
-    priceRangeStyle: INITIAL_STYLE,
+    priceRangeMax: 1000,
 };
 
 const calculatePercentage = (nominator: number, denominator: number) =>
@@ -20,89 +28,144 @@ const calculatePercentage = (nominator: number, denominator: number) =>
 
 export const Discover = () => {
     const auctions = useAppSelector((state) => state.auctions.auctions);
-    const [priceState, setPriceState] = useState(PRICE_STATE_DEFAULT);
-    const [priceRangeStyle, setPriceRangeStyle] = useState(INITIAL_STYLE);
     const [activeAuctions, setActiveAuctions] = useState<AuctionItem[]>([]);
     const [activePage, setActivePage] = useState(0);
+    const [formState, setFormState] = useState(FORM_STATE_DEFAULT);
+    const [priceInputBackground, setPriceInputBackground] = useState(INITIAL_STYLE);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const time = urlParams.get("time") || FORM_STATE_DEFAULT.time;
+        const sortBy = urlParams.get("sortBy") || FORM_STATE_DEFAULT.sort;
+        const ascending = urlParams.get("ascending") || FORM_STATE_DEFAULT.ascending;
+        const category = urlParams.get("category") || FORM_STATE_DEFAULT.category;
+        const priceMin = Number(urlParams.get("priceMin"));
+        const priceMax = Number(urlParams.get("priceMax"));
+        setFormState({
+            ...formState,
+            category: category,
+            time: time,
+            sort: sortBy,
+            ascending: ascending,
+            priceMin: Number(priceMin),
+            priceMax: Number(priceMax),
+        });
+    }, []);
+
+    useEffect(() => {
+        searchParams.set("time", formState.time);
+        searchParams.set("sort", formState.sort);
+        searchParams.set("ascending", formState.ascending);
+        searchParams.set("category", formState.category);
+        searchParams.set("priceMin", formState.priceMin.toString());
+        searchParams.set("priceMax", formState.priceMax.toString());
+        setSearchParams(searchParams);
+        fillColor();
+    }, [formState]);
 
     useEffect(() => {
         const firstPageAuctions = auctions.slice(0, AUCTIONS_PER_PAGE);
         setActiveAuctions(firstPageAuctions);
     }, [auctions]);
 
-    const setPriceRangeBackground = (percent1: number, percent2: number) => {
-        setPriceRangeStyle({
-            background: `linear-gradient(to right, #E6E8EC ${percent1}% , #3772ff ${percent1}% , #3772ff ${percent2}%, #E6E8EC ${percent2}%)`,
-        });
+    useEffect(() => {
+        dispatch(getAuctions(true));
+    }, [searchParams]);
+
+    useEffect(() => {
+        changeVisibleAuctions(activePage);
+    }, [activePage]);
+
+    const onFilterSelect = (e: React.ChangeEvent) => {
+        e.preventDefault();
+        const target = e.target as HTMLSelectElement;
+
+        if (target.id === "sort") {
+            const ascending =
+                target.selectedOptions[0].getAttribute("data-ascending") ||
+                FORM_STATE_DEFAULT.ascending;
+            const filterBy =
+                target.selectedOptions[0].getAttribute("data-filterby") || FORM_STATE_DEFAULT.sort;
+            setFormState({
+                ...formState,
+                sort: filterBy,
+                ascending: ascending,
+            });
+        }
+        if (target.id === "timeFilter") {
+            setFormState({ ...formState, time: target.value });
+        }
     };
 
-    const fillColor = () => {
-        const percent1 = calculatePercentage(
-            priceState.priceRangeMin,
-            PRICE_STATE_DEFAULT.priceRangeMax
-        );
-        const percent2 = calculatePercentage(
-            priceState.priceRangeMax,
-            PRICE_STATE_DEFAULT.priceRangeMax
-        );
-        setPriceRangeBackground(percent1, percent2);
+    const onCategorySelect = (e: React.MouseEvent) => {
+        const target = e.target as HTMLButtonElement;
+        setFormState({ ...formState, category: target.id });
     };
 
     const checkGap = (priceMin: number, priceMax: number, gap: number) =>
         priceMax - priceMin >= gap ? true : false;
 
-    const onMinPriceRangeChange = (e: React.ChangeEvent) => {
+    const onPriceChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
-        checkGap(priceState.priceRangeMin, priceState.priceRangeMax, PRICE_GAP)
-            ? setPriceState({ ...priceState, priceRangeMin: Number(target.value) })
-            : setPriceState({ ...priceState, priceRangeMin: priceState.priceRangeMax - PRICE_GAP });
-        fillColor();
+        const check = checkGap(formState.priceMin, formState.priceMax, PRICE_GAP);
+
+        return check
+            ? setFormState({ ...formState, [target.id]: Number(target.value) })
+            : target.id === "priceMin"
+            ? setFormState({ ...formState, priceMin: formState.priceMax - PRICE_GAP })
+            : target.id === "priceMax"
+            ? setFormState({ ...formState, priceMax: formState.priceMin + PRICE_GAP })
+            : null;
     };
 
-    const onMaxPriceRangeChange = (e: React.ChangeEvent) => {
-        const target = e.target as HTMLInputElement;
+    const fillColor = () => {
+        const percent1 = calculatePercentage(formState.priceMin, formState.priceRangeMax);
+        const percent2 = calculatePercentage(formState.priceMax, formState.priceRangeMax);
 
-        checkGap(priceState.priceRangeMin, priceState.priceRangeMax, PRICE_GAP)
-            ? setPriceState({ ...priceState, priceRangeMax: Number(target.value) })
-            : setPriceState({ ...priceState, priceRangeMax: priceState.priceRangeMin + PRICE_GAP });
-
-        fillColor();
+        setPriceInputBackground({
+            background: `linear-gradient(to right, #E6E8EC ${percent1}% , #3772ff ${percent1}% , #3772ff ${percent2}%, #E6E8EC ${percent2}%)`,
+        });
     };
 
-    const showNextPage = () => {
-        const lastPage = Math.ceil(auctions.length / AUCTIONS_PER_PAGE);
-        const nextPage = activePage + 1;
-        if (nextPage >= lastPage) return;
-        setActivePage(activePage + 1);
+    const onPageChange = (e: React.MouseEvent) => {
+        const target = e.target as HTMLImageElement;
+        if (target.id === "nextPage") {
+            const lastPageIndex = Math.ceil(auctions.length / AUCTIONS_PER_PAGE);
+            if (activePage + 1 >= lastPageIndex) return;
+            setActivePage(activePage + 1);
+        }
+
+        if (target.id === "prevPage") {
+            if (activePage === 0) return;
+            setActivePage(activePage - 1);
+        }
     };
 
-    const showPrevPage = () => {
-        if (activePage === 0) return;
-        setActivePage(activePage - 1);
+    const changeVisibleAuctions = (activePage: number) => {
+        const firstAuction = AUCTIONS_PER_PAGE * activePage;
+        const lastAuction = AUCTIONS_PER_PAGE * activePage + AUCTIONS_PER_PAGE;
+        const visibleAuctionsArray = auctions.slice(firstAuction, lastAuction);
+        setActiveAuctions(visibleAuctionsArray);
     };
 
-    const changeActiveAuctions = (activePage: number) => {
-        const firstEl = AUCTIONS_PER_PAGE * activePage;
-        const lastEl = AUCTIONS_PER_PAGE * activePage + AUCTIONS_PER_PAGE;
-        const arr = auctions.slice(firstEl, lastEl);
-        setActiveAuctions(arr);
+    const clearFilters = (e: React.MouseEvent) => {
+        setFormState(FORM_STATE_DEFAULT);
     };
-
-    useEffect(() => {
-        changeActiveAuctions(activePage);
-    }, [activePage]);
 
     return (
         <DiscoverView
-            onMinPriceRangeChange={onMinPriceRangeChange}
-            onMaxPriceRangeChange={onMaxPriceRangeChange}
-            priceState={priceState}
-            priceStateDefault={PRICE_STATE_DEFAULT}
-            priceRangeStyle={priceRangeStyle}
+            formState={formState}
+            onPriceChange={onPriceChange}
+            priceInputBackground={priceInputBackground}
             productsData={activeAuctions}
-            activePage={activePage}
-            showNextPage={showNextPage}
-            showPrevPage={showPrevPage}
+            onFilterSelect={onFilterSelect}
+            onCategorySelect={onCategorySelect}
+            onPageChange={onPageChange}
+            clearFilters={clearFilters}
         />
     );
 };

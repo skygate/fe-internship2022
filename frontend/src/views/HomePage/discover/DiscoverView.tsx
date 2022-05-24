@@ -1,86 +1,82 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CategoryButtons } from "components";
 import { SelectFilters } from "components";
 import { ProductCard } from "components";
 import style from "./discover.module.scss";
 import leftArrow from "assets/arrowLeft.svg";
 import rightArrow from "assets/arrowRight.svg";
-
 import { AuctionItem } from "interfaces/index";
-
-interface PriceState {
-    priceRangeMin: number;
-    priceRangeMax: number;
-    priceRangeStyle: { background: string };
-}
+import { DiscoverFormState } from "interfaces";
 
 interface DiscoverProps {
-    priceRangeStyle: { background: string };
-    priceState: PriceState;
-    priceStateDefault: PriceState;
+    priceInputBackground: {};
     productsData: AuctionItem[];
-    onMinPriceRangeChange: (e: React.ChangeEvent) => void;
-    onMaxPriceRangeChange: (e: React.ChangeEvent) => void;
-    activePage: number;
-    showNextPage: (e: React.MouseEvent) => void;
-    showPrevPage: (e: React.MouseEvent) => void;
+    onPriceChange: (e: React.ChangeEvent) => void;
+    onFilterSelect: (e: React.ChangeEvent) => void;
+    onCategorySelect: (e: React.MouseEvent) => void;
+    onPageChange: (e: React.MouseEvent) => void;
+    clearFilters: (e: React.MouseEvent) => void;
+    formState: DiscoverFormState;
 }
 
 export const DiscoverView = ({
-    priceState,
-    priceStateDefault,
-    priceRangeStyle,
-    onMinPriceRangeChange,
-    onMaxPriceRangeChange,
+    priceInputBackground,
+    onPriceChange,
     productsData,
-    activePage,
-    showNextPage,
-    showPrevPage,
+    onFilterSelect,
+    onCategorySelect,
+    onPageChange,
+    clearFilters,
+    formState,
 }: DiscoverProps) => {
     return (
-        <section>
+        <section id="discover">
             <h3>Discover</h3>
             <form className={style.filters}>
                 <div className={style.topFilters}>
-                    <select name="timeFilter" id="timeFilter" className={style.timeFilter}>
-                        <option value="recentlyAdded">Recently added</option>
-                        <option value="month">Monthly</option>
-                        <option value="week">Weekly</option>
-                        <option value="ever">Ever</option>
-                    </select>
                     <div className={style.buttons}>
-                        <CategoryButtons />
+                        <CategoryButtons
+                            onCategorySelect={onCategorySelect}
+                            formState={formState}
+                        />
                     </div>
-                    <button type="button" className={style.clearFilters}>
-                        Filter x
-                    </button>
                 </div>
                 <div className={style.bottomFilters}>
-                    <SelectFilters />
-                    <div className={style.priceRange}>
-                        <label htmlFor="priceRange">PRICE RANGE</label>
-                        <div className={style.priceRangeContainer}>
-                            <div className={style.sliderTrack} style={priceRangeStyle}></div>
-                            <input
-                                type="range"
-                                min="0"
-                                max={priceStateDefault.priceRangeMax}
-                                step="1"
-                                value={priceState.priceRangeMin}
-                                onChange={(e) => onMinPriceRangeChange(e)}
-                            />
-                            <input
-                                type="range"
-                                min="0"
-                                max={priceStateDefault.priceRangeMax}
-                                step="1"
-                                value={priceState.priceRangeMax}
-                                onChange={(e) => onMaxPriceRangeChange(e)}
-                            />
-                        </div>
-                        <div className={style.values}>
-                            <p>{priceState.priceRangeMin} ETH</p>
-                            <p>{priceState.priceRangeMax} ETH</p>
+                    <button type="button" className={style.clearFilters} onClick={clearFilters}>
+                        Filter x
+                    </button>
+                    <div className={style.selectFilters}>
+                        <SelectFilters onFieldSelect={onFilterSelect} formState={formState} />
+                        <div className={style.priceRange}>
+                            <label htmlFor="priceRange">PRICE RANGE</label>
+                            <div className={style.priceRangeContainer}>
+                                <div
+                                    className={style.sliderTrack}
+                                    style={priceInputBackground}
+                                ></div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max={formState.priceRangeMax}
+                                    step="1"
+                                    value={formState.priceMin}
+                                    id="priceMin"
+                                    onChange={(e) => onPriceChange(e)}
+                                />
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max={formState.priceRangeMax}
+                                    step="1"
+                                    value={formState.priceMax}
+                                    id="priceMax"
+                                    onChange={(e) => onPriceChange(e)}
+                                />
+                            </div>
+                            <div className={style.values}>
+                                <p>{formState.priceMin} ETH</p>
+                                <p>{formState.priceMax} ETH</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,13 +91,15 @@ export const DiscoverView = ({
                     src={leftArrow}
                     alt="arrow left"
                     className={style.arrow}
-                    onClick={showPrevPage}
+                    id="prevPage"
+                    onClick={(e) => onPageChange(e)}
                 />
                 <img
                     src={rightArrow}
                     alt="arrow right"
                     className={style.arrow}
-                    onClick={showNextPage}
+                    id="nextPage"
+                    onClick={(e) => onPageChange(e)}
                 />
             </div>
         </section>

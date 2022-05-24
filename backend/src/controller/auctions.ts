@@ -10,6 +10,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
             res.status(404).json({ message: error.message });
         }
     };
+
     const fullInfoAuctions = async () => {
         try {
             const auctionsWithInfo = await auctions
@@ -37,6 +38,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
                 .exec();
             res.status(200).json(auctionsWithInfo);
         } catch (error: any) {
@@ -63,6 +68,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
                 .exec();
             auctionWithInfo !== null
                 ? res.status(200).json(auctionWithInfo)
@@ -72,7 +81,55 @@ export const getAllAuctions = (req: Request, res: Response) => {
         }
     };
 
-    req.query.profileID && req.query.full === "true"
+    const filterAndSortAuctions = async (params: any) => {
+        const sortBy = params.sort ?? "startDate";
+        const asc = params.asc ?? "-1";
+        const category = !params.category || params.category === "all" ? /.*/g : params.category;
+        const time = params.time;
+        const date = new Date();
+        const priceMin = params.priceMin || 0;
+        const priceMax = params.priceMax || 1000;
+
+        const minDate =
+            time === "week"
+                ? date.getTime() - 7 * 24 * 60 * 60 * 1000
+                : time === "month"
+                ? date.getTime() - 31 * 24 * 60 * 60 * 1000
+                : 0;
+
+        try {
+            auctions
+                .find({ startDate: { $gt: minDate } })
+                .find({ price: { $gt: priceMin } })
+                .find({ price: { $lt: priceMax } })
+                .sort({ [sortBy]: [asc] })
+                .populate({
+                    path: "bidHistory.bid.profileID",
+                    select: "profilePicture profileName",
+                })
+                .populate({
+                    path: "productID",
+                    match: {
+                        productCategory: category,
+                    },
+                    select: "ownerID productDescription productName productImageUrl productCategory",
+                })
+                .exec((err, auctions) => {
+                    const filteredAuctions = auctions.filter((item) => {
+                        return item.productID;
+                    });
+                    !filteredAuctions
+                        ? res.status(404).json({ message: "error" })
+                        : res.json(filteredAuctions);
+                });
+        } catch (error: any) {
+            res.status(404).json({ message: error.message });
+        }
+    };
+
+    req.query.filter || req.query.sort
+        ? filterAndSortAuctions(req.query)
+        : req.query.profileID && req.query.full === "true"
         ? fullInfoAuctionsOfUser()
         : req.query.id
         ? req.query.full === "true"
