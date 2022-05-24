@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import style from "./categoryButtons.module.scss";
+
+interface FormState {
+    category: string;
+    time: string;
+    sortBy: string;
+}
 
 interface CategoryButtonsProps {
     onCategorySelect: (e: React.MouseEvent) => void;
+    formState: FormState;
 }
 
-export const CategoryButtons = ({ onCategorySelect }: CategoryButtonsProps) => {
+export const CategoryButtons = ({ onCategorySelect, formState }: CategoryButtonsProps) => {
+    useEffect(() => {
+        setActiveElement(formState.category);
+    }, [formState]);
     enum FilterCategoryType {
         AllItems,
         Art,
@@ -18,7 +28,7 @@ export const CategoryButtons = ({ onCategorySelect }: CategoryButtonsProps) => {
     interface FilterCategory {
         name: FilterCategoryType;
         label: string;
-        id?: string;
+        id: string;
     }
 
     const filterCategories: FilterCategory[] = [
@@ -30,15 +40,15 @@ export const CategoryButtons = ({ onCategorySelect }: CategoryButtonsProps) => {
         { name: FilterCategoryType.Video, label: "Video", id: "video" },
     ];
 
-    const [activeElement, setActiveElement] = useState(filterCategories[0].label);
+    const [activeElement, setActiveElement] = useState(formState.category);
 
-    const getButtonClassName = (label: any) => {
-        return label === activeElement ? style.buttonSelect : "";
+    const getButtonClassName = (id: string) => {
+        return id === activeElement ? style.buttonSelect : "";
     };
 
     const onClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLButtonElement;
-        setActiveElement(target.value);
+        setActiveElement(target.id);
         onCategorySelect(e);
     };
 
@@ -49,7 +59,7 @@ export const CategoryButtons = ({ onCategorySelect }: CategoryButtonsProps) => {
                     return (
                         <button
                             type="button"
-                            className={getButtonClassName(item.label)}
+                            className={getButtonClassName(item.id)}
                             onClick={onClick}
                             value={item.label}
                             key={item.label}

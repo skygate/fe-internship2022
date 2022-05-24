@@ -8,3 +8,4 @@ export * from "./productItem";
 export * from "./ProfileInterface";
 export * from "./AuctionWithProductInfo";
 export * from "./auctionState";
+export * from "./discoverFormState";

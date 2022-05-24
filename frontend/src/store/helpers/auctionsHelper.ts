@@ -5,8 +5,6 @@ export const fetchAuctions = () => {
 };
 
 export const fetchFilteredAndSortedAuctions = (params: any) => {
-    const data = params;
-
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
