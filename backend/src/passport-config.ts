@@ -4,16 +4,6 @@ import bcrypt from "bcryptjs";
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
-declare global {
-    namespace Express {
-        export interface User {
-            _id: string;
-            username: string;
-            email: string;
-        }
-    }
-}
-
 const authenticateUser: VerifyFunction = async (email: string, password: string, done) => {
     const user = await users.findOne({ email: email });
     if (user == null) return done(null, false);
