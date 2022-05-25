@@ -1,6 +1,6 @@
 import { AuctionItem } from "./auctionItem";
 
-export interface AuctionState {
+export interface AuctionsState {
     status: string;
     auctions: AuctionItem[];
 }
