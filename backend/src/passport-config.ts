@@ -1,6 +1,6 @@
 import { VerifyFunction } from "passport-local/index";
 import users from "./models/users";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
@@ -21,7 +21,6 @@ const authenticateUser: VerifyFunction = async (email: string, password: string,
 
 const strategy = new LocalStrategy({ usernameField: "email" }, authenticateUser);
 passport.use(strategy);
-
 
 passport.serializeUser((user: Express.User, done: (err: null, id: string) => void) => {
     done(null, user._id);
