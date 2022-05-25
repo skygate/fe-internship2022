@@ -1,8 +1,18 @@
 import { VerifyFunction } from "passport-local/index";
 import users from "./models/users";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+
+declare global {
+    namespace Express {
+        export interface User {
+            _id: string;
+            username: string;
+            email: string;
+        }
+    }
+}
 
 const authenticateUser: VerifyFunction = async (email: string, password: string, done) => {
     const user = await users.findOne({ email: email });
@@ -21,7 +31,6 @@ const authenticateUser: VerifyFunction = async (email: string, password: string,
 
 const strategy = new LocalStrategy({ usernameField: "email" }, authenticateUser);
 passport.use(strategy);
-
 
 passport.serializeUser((user: Express.User, done: (err: null, id: string) => void) => {
     done(null, user._id);
