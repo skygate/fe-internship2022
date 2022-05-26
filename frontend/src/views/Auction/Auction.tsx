@@ -3,25 +3,29 @@ import { useAppDispatch, useAppSelector } from "store/store";
 import { getAuction } from "store/auction";
 import { useEffect, useState } from "react";
 import { AuctionItem } from "interfaces";
+import { useParams } from "react-router-dom";
 
 export const Auction = () => {
     const dispatch = useAppDispatch();
     const data = useAppSelector((state) => state.auction.auction);
 
     const [auctionData, setAuctionData] = useState<AuctionItem>();
-
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const id = urlParams.get("id") || "6284a1cd7d6f7f57abede036";
+    const id = useParams().auctionID;
 
     useEffect(() => {
-        dispatch(getAuction(id));
+        if (id) {
+            dispatch(getAuction(id));
+        }
     }, []);
 
     useEffect(() => {
         setAuctionData(data);
     }, [data]);
 
-    return <AuctionView auctionData={auctionData} />;
-    // return <AuctionView />;
+    const ethDolarExchange = (eth: number) => {
+        const exchangeRate = 1800; //1800 $ / eth
+        return eth * exchangeRate;
+    };
+
+    return <AuctionView auctionData={auctionData} ethDolarExchange={ethDolarExchange} />;
 };

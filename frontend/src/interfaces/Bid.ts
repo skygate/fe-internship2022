@@ -1,11 +1,8 @@
-interface Profile {
-    _id: string;
-    profilePicture: string;
-}
+import { ProfileInterface } from "interfaces";
 
 export interface Bid {
     bid: {
-        profileID: Profile;
+        profileID: ProfileInterface;
         offer: number;
         date: string;
     };

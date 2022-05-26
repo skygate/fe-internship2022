@@ -58,7 +58,8 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
                 </a>
             </div>
             <span className={styles.memberSince}>
-                Member since {format(new Date(profile.joinDate), "MMM d, yyyy")}
+                Member since
+                {profile.joinDate ? format(new Date(profile.joinDate), "MMM d, yyyy") : null}
             </span>
         </div>
     );

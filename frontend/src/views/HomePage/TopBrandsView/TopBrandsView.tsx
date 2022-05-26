@@ -18,9 +18,9 @@ export function TopBrandsView() {
                 </div>
                 <div className={styles.creatorList}>
                     <span className={styles.latestUploadText}>Latest upload from creators🔥</span>
-                    {ExampleNFTList.slice(0, 4).map((author) => (
+                    {/* {ExampleNFTList.slice(0, 4).map((author) => (
                         <CreatorsListItem key={author.authorName} nft={author} />
-                    ))}
+                    ))} */}
                     <button className={styles.discoverButton}>
                         <span className={styles.discoverButtonText}>Discover more</span>
                         <img className={styles.arrowRight} src={arrowRightdark} alt="arrow right" />

@@ -2,12 +2,22 @@
 @import "theme/spacers.scss";
 @import "theme/typography.scss";
 
+.auctionNotFound {
+    margin: auto;
+    margin-top: 180px;
+}
+
+.noBids {
+    text-align: left;
+    margin-top: $spacer-24;
+}
+
 .sectionContainer {
-    width: 1440px;
-    margin-top: 200px;
-    margin-left: $spacer-160;
-    margin-right: $spacer-64;
+    width: 1220px;
     display: flex;
+    margin: auto;
+    margin-top: 180px;
+    position: relative;
 }
 
 .productImage {
@@ -71,6 +81,100 @@
     color: $c-neutrals-4;
 }
 
-.profilePicture {
-    width: 30px;
+.highestBidContainer {
+    background-color: $c-neutrals-8;
+    border: 1px solid $c-neutrals-6;
+    box-shadow: 0px 50px 64px rgba(31, 47, 70, 0.12);
+    border-radius: $spacer-16;
+    padding: $spacer-24;
+    margin-top: $spacer-64;
+}
+
+.bidInfo {
+    display: flex;
+    justify-content: center;
+    column-gap: $spacer-16;
+    margin-bottom: $spacer-32;
+}
+
+.highestBid {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2;
+    color: $c-neutrals-4;
+    text-align: left;
+}
+
+.highestBidName {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2-bold;
+    color: $c-neutrals-2;
+    padding-left: $spacer-12;
+}
+
+.cashValues {
+    display: flex;
+    column-gap: $spacer-24;
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+}
+
+.bidEthValue {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-2;
+}
+
+.bidDolarValue {
+    color: $c-neutrals-4;
+}
+
+.purchaseNow {
+    background-color: $c-primary-1;
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    color: $c-neutrals-8;
+    border: 2px solid $c-primary-1;
+    border-radius: 90px;
+    padding: $spacer-16 $spacer-32;
+}
+
+.placeBid {
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 90px;
+    padding: $spacer-16 $spacer-32;
+}
+
+.roundButtons {
+    display: flex;
+    flex-direction: column;
+    row-gap: $spacer-16;
+    position: absolute;
+    right: -56px;
+}
+
+.roundBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $spacer-48;
+    height: $spacer-48;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 50%;
+}
+
+.roundBtn:nth-child(1) {
+    background-color: $c-neutrals-2;
+    border: 2px solid $c-neutrals-2;
 }
