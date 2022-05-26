@@ -10,12 +10,10 @@ export const Auction = () => {
     const data = useAppSelector((state) => state.auction.auction);
 
     const [auctionData, setAuctionData] = useState<AuctionItem>();
-    const id = useParams().auctionID;
+    const id = useParams().auctionID || "";
 
     useEffect(() => {
-        if (id) {
-            dispatch(getAuction(id));
-        }
+        dispatch(getAuction(id));
     }, []);
 
     useEffect(() => {
@@ -23,7 +21,7 @@ export const Auction = () => {
     }, [data]);
 
     const ethDolarExchange = (eth: number) => {
-        const exchangeRate = 1800; //1800 $ / eth
+        const exchangeRate = 1800; //   1800 $ / eth
         return eth * exchangeRate;
     };
 

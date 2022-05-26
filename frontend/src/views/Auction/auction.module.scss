@@ -104,6 +104,7 @@
     line-height: $line-height-body-2;
     color: $c-neutrals-4;
     text-align: left;
+    padding-bottom: $spacer-4;
 }
 
 .highestBidName {
@@ -112,7 +113,7 @@
     font-weight: $font-weight-500;
     line-height: $line-height-body-2-bold;
     color: $c-neutrals-2;
-    padding-left: $spacer-12;
+    padding-left: $spacer-8;
 }
 
 .cashValues {
@@ -136,45 +137,10 @@
     color: $c-neutrals-4;
 }
 
-.purchaseNow {
-    background-color: $c-primary-1;
-    font-size: $font-size-button-1;
-    font-weight: $font-weight-700;
-    line-height: $line-height-button-1;
-    color: $c-neutrals-8;
-    border: 2px solid $c-primary-1;
-    border-radius: 90px;
-    padding: $spacer-16 $spacer-32;
-}
-
-.placeBid {
-    font-size: $font-size-button-1;
-    font-weight: $font-weight-700;
-    line-height: $line-height-button-1;
-    border: 2px solid $c-neutrals-6;
-    border-radius: 90px;
-    padding: $spacer-16 $spacer-32;
-}
-
 .roundButtons {
     display: flex;
     flex-direction: column;
     row-gap: $spacer-16;
     position: absolute;
     right: -56px;
-}
-
-.roundBtn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: $spacer-48;
-    height: $spacer-48;
-    border: 2px solid $c-neutrals-6;
-    border-radius: 50%;
-}
-
-.roundBtn:nth-child(1) {
-    background-color: $c-neutrals-2;
-    border: 2px solid $c-neutrals-2;
 }
