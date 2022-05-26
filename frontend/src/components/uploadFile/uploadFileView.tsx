@@ -1,15 +1,6 @@
-import React from "react";
 import style from "./uploadFile.module.scss";
 import icon from "assets/uploadIcon.svg";
-
-interface UploadFileViewProps {
-    active: boolean;
-    onDrop: (e: React.DragEvent) => void;
-    onDragEnter: (e: React.DragEvent) => void;
-    onDragOver: (e: React.DragEvent) => void;
-    onDragLeave: (e: React.DragEvent) => void;
-    onFileInputChange: (e: React.ChangeEvent) => void;
-}
+import { UploadFileViewProps } from "interfaces/file";
 
 export const UploadFileView = ({
     active,
@@ -35,12 +26,12 @@ export const UploadFileView = ({
                     type="file"
                     className={style.fileInput}
                     id="fileInput"
-                    accept=".png, .webp, .gif, .mp3, .mp4"
+                    accept=".png, .webp, .gif, .mp3, .mp4, .jpg, .jpeg"
                     onChange={onFileInputChange}
                 />
 
                 <img src={icon} alt="upload icon" />
-                <p>PNG, GIF, WEBP, MP4 or MP3. Max 1 Gb.</p>
+                <p>PNG, JPG, JPEG, GIF, WEBP, MP4 or MP3. Max 1 Gb.</p>
             </label>
         </div>
     );

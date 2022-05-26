@@ -1,10 +1,13 @@
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import { CreateSingleCollectibleView } from "./CreateSingleCollectibleView";
 import { Product } from "interfaces/product";
 import { createFormState } from "interfaces/createFormState";
+import { uploadFile } from "API/UserService/uploadFile";
+import { InputFileChange } from "interfaces/file";
+import { useAppSelector } from "store/store";
 
 const defaultItem: Product = {
-    productId: null,
+    ownerID: "",
     productName: "Example Name",
     productDescription: "Example description",
     productImageUrl: "https://picsum.photos/id/99/200",
@@ -12,11 +15,12 @@ const defaultItem: Product = {
 };
 
 const defaultFormState: createFormState = {
-    productId: null,
+    ownerID: "",
     productName: "",
     productDescription: "",
     productImageUrl: "",
-    productCategory: "",
+    productFormData: new FormData(),
+    productCategory: "PNG",
     productSize: "",
     productProperties: "",
     putOnSale: false,
@@ -24,21 +28,35 @@ const defaultFormState: createFormState = {
     unlockOncePurchased: false,
 };
 
-const SEND_FORM_URL = "http://localhost:8000/products";
 export const FormContext = createContext(defaultFormState);
 
 export const CreateSingleCollectible = () => {
     const [formState, setFormState] = useState(defaultFormState);
     const [item, setItem] = useState<Product>(defaultItem);
+    const [file, setFile] = useState<FormData>(new FormData());
+    const activeProfile = useAppSelector((state) => state.activeProfile);
+    useEffect(() => {
+        if (activeProfile.activeProfile?._id) {
+            setItem({ ...item, ownerID: activeProfile.activeProfile?._id });
+            setFormState({ ...formState, ownerID: activeProfile.activeProfile?._id });
+        }
+    }, [activeProfile]);
 
-    const onImgSrcChange = (arg: string) => {
-        setFormState({ ...formState, productImageUrl: arg });
-        setItem({ ...item, productImageUrl: arg });
+    const onImgSrcChange = (arg: InputFileChange) => {
+        setFormState({
+            ...formState,
+            productImageUrl: arg.productImageUrl,
+            productFormData: arg.productFromData,
+        });
+        setItem({
+            ...item,
+            productImageUrl: arg.productImageUrl,
+        });
+        setFile(arg.productFromData);
     };
 
     const onInputChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
-        console.log(target.id);
         setFormState({ ...formState, [target.id]: target.value });
         setItem({ ...item, [target.id]: target.value });
     };
@@ -55,10 +73,12 @@ export const CreateSingleCollectible = () => {
     };
 
     const checkIfFilledForm = (formState: createFormState) => {
+        if (formState.ownerID === "") return false;
         if (formState.productName === "") return false;
         if (formState.productDescription === "") return false;
         if (formState.productImageUrl === "") return false;
         if (formState.productCategory === "") return false;
+        if (formState.productFormData === undefined) return false;
         return true;
     };
 
@@ -66,14 +86,17 @@ export const CreateSingleCollectible = () => {
         e.preventDefault();
         const isFormFilled = checkIfFilledForm(formState);
         if (isFormFilled) {
-            await fetch(SEND_FORM_URL, {
+            const res = await uploadFile(file);
+            setItem({ ...item, productImageUrl: res.data.message });
+            item.productImageUrl = res.data.message;
+            const res2 = await fetch("http://localhost:8000/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(item),
             });
-            alert("wysłano");
+            console.log(res2);
         }
-        if (!isFormFilled) alert("nie wyslano");
+        if (!isFormFilled) alert("Uploading failed!");
 
         setFormState(defaultFormState);
     };

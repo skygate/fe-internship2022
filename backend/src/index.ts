@@ -7,6 +7,7 @@ const session = require("express-session");
 dotenv.config();
 const port = process.env.PORT;
 const mongo = process.env.MONGO || "";
+const cloudinary = require("cloudinary").v2;
 
 const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo");
@@ -50,6 +51,7 @@ const auctionsRoute = require("./routes/auctions");
 const profileRoute = require("./routes/profile");
 const categoriesRoute = require("./routes/categories");
 const userProfilesRoute = require("./routes/userProfiles");
+const uploadRoute = require("./routes/upload");
 
 // USE ROUTES
 app.use("/products", productRoute);
@@ -58,6 +60,7 @@ app.use("/auctions", auctionsRoute);
 app.use("/profiles", profileRoute);
 app.use("/categories", categoriesRoute);
 app.use("/userProfiles", userProfilesRoute);
+app.use("/upload", uploadRoute);
 
 // CONNECT MONGO
 mongoose
@@ -66,3 +69,9 @@ mongoose
         app.listen(port, () => console.log(`Server Running on Port: http://localhost:${port}`))
     )
     .catch((error: any) => console.log(`${error} did not connect`));
+// CONNECT CLOUDINARY
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});

@@ -2,18 +2,13 @@ import style from "./createSingleCollectible.module.scss";
 import { Preview } from "./";
 import { CreateSingleCollectibleForm } from "./";
 import React from "react";
-
-interface Product {
-    productName: string;
-    productDescription: string;
-    productImageUrl: string;
-    productCategory: string;
-}
+import { InputFileChange } from "../../interfaces/file";
+import { Product } from "../../interfaces/product";
 
 interface CreateSingleCollectibleViewProps {
     onInputChange: (e: React.ChangeEvent) => void;
     onToggleChange: (e: React.ChangeEvent) => void;
-    onImgSrcChange: (arg: string) => void;
+    onImgSrcChange: (arg: InputFileChange) => void;
     item: Product;
     onClickClear: () => void;
     onFormSubmit: (e: React.FormEvent) => void;

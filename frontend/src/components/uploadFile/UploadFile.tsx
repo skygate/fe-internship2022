@@ -1,29 +1,6 @@
 import React, { useState } from "react";
 import { UploadFileView } from "./uploadFileView";
-
-interface UploadFileProps {
-    onImgSrcChange: (arg: string) => void;
-}
-enum FileType {
-    Png,
-    Gif,
-    Webp,
-    Mp4,
-    Mp3,
-}
-
-interface FileTypeArray {
-    name: FileType;
-    label: string;
-}
-
-const fileType: FileTypeArray[] = [
-    { name: FileType.Png, label: "image/png" },
-    { name: FileType.Gif, label: "image/gif" },
-    { name: FileType.Webp, label: "image/webp" },
-    { name: FileType.Mp4, label: "video/mp4" },
-    { name: FileType.Mp3, label: "audio/mpeg" },
-];
+import { UploadFileProps, fileType } from "../../interfaces/file";
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
 
@@ -37,7 +14,9 @@ export const UploadFile = ({ onImgSrcChange }: UploadFileProps) => {
 
         if (file.size > MAX_FILE_SIZE) return;
 
-        onImgSrcChange(URL.createObjectURL(file));
+        const imageForm = new FormData();
+        imageForm.append("file", file);
+        onImgSrcChange({ productImageUrl: URL.createObjectURL(file), productFromData: imageForm });
     };
 
     const onDrop = (e: React.DragEvent) => {

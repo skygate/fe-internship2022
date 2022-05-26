@@ -3,13 +3,13 @@ import { ToggleInputs } from "components";
 import { WideTextInputs } from "components";
 import { RowTextInputs } from "components";
 import { UploadFile } from "components";
-
 import icon from "assets/arrowRight.svg";
+import { InputFileChange } from "../../../interfaces/file";
 
 interface FormProps {
     onInputChange: (e: React.ChangeEvent) => void;
     onToggleChange: (e: React.ChangeEvent) => void;
-    onImgSrcChange: (arg: string) => void;
+    onImgSrcChange: (arg: InputFileChange) => void;
     onFormSubmit: (e: React.FormEvent) => void;
 }
 

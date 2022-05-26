@@ -1,8 +1,9 @@
 export interface createFormState {
-    productId: null;
+    ownerID: string;
     productName: string;
     productDescription: string;
     productImageUrl: string;
+    productFormData: FormData;
     productCategory: string;
     productSize: string;
     productProperties: string;

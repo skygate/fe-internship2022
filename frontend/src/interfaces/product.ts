@@ -1,5 +1,5 @@
 export interface Product {
-    productId: null;
+    ownerID: string;
     productName: string;
     productDescription: string;
     productImageUrl: string;
