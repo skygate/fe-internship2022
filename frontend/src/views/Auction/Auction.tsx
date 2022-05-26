@@ -14,7 +14,6 @@ export const Auction = () => {
     const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get("id") || "6284a1cd7d6f7f57abede036";
 
-    // // 6284a1cd7d6f7f57abede036
     useEffect(() => {
         dispatch(getAuction(id));
     }, []);
