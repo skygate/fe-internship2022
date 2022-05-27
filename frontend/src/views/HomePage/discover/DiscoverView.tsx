@@ -31,7 +31,7 @@ export const DiscoverView = ({
 }: DiscoverProps) => {
     return (
         <section id="discover">
-            <h3>Discover</h3>
+            <h3 className={style.h3}>Discover</h3>
             <form className={style.filters}>
                 <div className={style.topFilters}>
                     <div className={style.buttons}>

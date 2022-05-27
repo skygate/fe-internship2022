@@ -1,22 +1,28 @@
-import React from "react";
-import { FC } from "react";
 import { ProfilePicture } from "components";
 import styles from "./CreatorsListItem.module.scss";
-import { NFTItem } from "interfaces";
+import { ProfileInterface } from "interfaces";
 
-interface Creator {
-    nft: NFTItem;
+interface CreatorsListItemProps {
+    profile: ProfileInterface;
+    offer?: number;
 }
 
-export const CreatorsListItem: FC<Creator> = ({ nft }) => {
+export const CreatorsListItem = ({ profile, offer }: CreatorsListItemProps) => {
     return (
         <div className={styles.creatorContainer}>
-            <ProfilePicture width={"56px"} url={nft.profilePic} />
-            <span className={styles.avatarBadge}>{nft.NFTS.length}</span>
+            <ProfilePicture width={"56px"} url={profile.profilePicture} />
+            {profile.badge ? <span className={styles.avatarBadge}></span> : null}
             <div className={styles.creatorInfo}>
-                <span className={styles.creatorName}>{nft.authorName}</span>
+                <span className={styles.creatorName}>{profile.profileName}</span>
+                {offer && (
+                    <span className={styles.creatorNFTSValue}>
+                        {offer}
+                        <span className={styles.ETHText}>ETH</span>
+                    </span>
+                )}
+
                 <span className={styles.creatorNFTSValue}>
-                    {nft.NFTS.reduce((sum, current) => sum + current.price, 0)}
+                    {profile.totalEthValue ? profile.totalEthValue : null}
                     <span className={styles.ETHText}>ETH</span>
                 </span>
             </div>

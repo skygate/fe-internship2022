@@ -70,7 +70,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 })
                 .populate({
                     path: "bidHistory.bid.profileID",
-                    select: "profilePicture profileName",
+                    select: "about profilePicture profileName",
                 })
                 .exec();
             auctionWithInfo !== null

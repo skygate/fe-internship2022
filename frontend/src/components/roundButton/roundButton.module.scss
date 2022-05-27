@@ -1,0 +1,13 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.roundBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $spacer-48;
+    height: $spacer-48;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 50%;
+}
