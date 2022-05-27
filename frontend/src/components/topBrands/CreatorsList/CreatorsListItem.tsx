@@ -14,12 +14,12 @@ export const CreatorsListItem = ({ profile, offer }: CreatorsListItemProps) => {
             {profile.badge ? <span className={styles.avatarBadge}></span> : null}
             <div className={styles.creatorInfo}>
                 <span className={styles.creatorName}>{profile.profileName}</span>
-                {offer ? (
+                {offer && (
                     <span className={styles.creatorNFTSValue}>
                         {offer}
                         <span className={styles.ETHText}>ETH</span>
                     </span>
-                ) : null}
+                )}
 
                 <span className={styles.creatorNFTSValue}>
                     {profile.totalEthValue ? profile.totalEthValue : null}

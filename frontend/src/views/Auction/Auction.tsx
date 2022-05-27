@@ -9,7 +9,7 @@ export const Auction = () => {
     const dispatch = useAppDispatch();
     const data = useAppSelector((state) => state.auction.auction);
 
-    const [auctionData, setAuctionData] = useState<AuctionItem>();
+    const [auctionData, setAuctionData] = useState<AuctionItem | null>(null);
     const id = useParams().auctionID || "";
 
     useEffect(() => {
@@ -17,7 +17,7 @@ export const Auction = () => {
     }, []);
 
     useEffect(() => {
-        setAuctionData(data);
+        setAuctionData(data || null);
     }, [data]);
 
     const ethDolarExchange = (eth: number) => {

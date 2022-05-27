@@ -6,7 +6,7 @@ import moreOptionsImg from "assets/threeDots.svg";
 import heartImg from "assets/heartRed.svg";
 
 interface AuctionViewProps {
-    auctionData: AuctionItem | undefined;
+    auctionData: AuctionItem | null;
     ethDolarExchange: (eth: number) => number;
 }
 
@@ -32,15 +32,13 @@ export const AuctionView = ({ auctionData, ethDolarExchange }: AuctionViewProps)
                 <div className={style.productDescription}>{productDescription}</div>
                 <div>
                     <h4 className={style.bids}>Bids</h4>
-                    {bidHistory?.map((item, index) => {
-                        return (
-                            <CreatorsListItem
-                                profile={item.bid.profileID}
-                                offer={item.bid.offer}
-                                key={index}
-                            />
-                        );
-                    })}
+                    {bidHistory?.map((item, index) => (
+                        <CreatorsListItem
+                            profile={item.bid.profileID}
+                            offer={item.bid.offer}
+                            key={index}
+                        />
+                    ))}
                 </div>
                 <div className={style.highestBidContainer}>
                     {highestBid ? (
