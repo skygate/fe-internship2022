@@ -3,6 +3,7 @@ import { CreateSingleCollectibleView } from "./CreateSingleCollectibleView";
 import { Product } from "interfaces/product";
 import { createFormState } from "interfaces/createFormState";
 import { uploadFile } from "API/UserService/uploadFile";
+import { addProduct } from "API/UserService/addProduct";
 import { InputFileChange } from "interfaces/file";
 import { useAppSelector } from "store/store";
 
@@ -40,7 +41,7 @@ export const CreateSingleCollectible = () => {
             setItem({ ...item, ownerID: activeProfile.activeProfile?._id });
             setFormState({ ...formState, ownerID: activeProfile.activeProfile?._id });
         }
-    }, [activeProfile]);
+    }, [file]);
 
     const onImgSrcChange = (arg: InputFileChange) => {
         setFormState({
@@ -86,19 +87,15 @@ export const CreateSingleCollectible = () => {
         e.preventDefault();
         const isFormFilled = checkIfFilledForm(formState);
         if (isFormFilled) {
-            const res = await uploadFile(file);
-            setItem({ ...item, productImageUrl: res.data.message });
-            item.productImageUrl = res.data.message;
-            const res2 = await fetch("http://localhost:8000/products", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(item),
-            });
-            console.log(res2);
+            const uploadImage = await uploadFile(file);
+            setItem({ ...item, productImageUrl: uploadImage.data.message });
+            item.productImageUrl = uploadImage.data.message;
+            addProduct(item);
+            onClickClear();
         }
         if (!isFormFilled) alert("Uploading failed!");
-
-        setFormState(defaultFormState);
+        console.log(item);
+        console.log(formState);
     };
 
     return (
