@@ -1,6 +1,7 @@
 import axiosInstance from "services/axios";
 
-export const fetchAuctions = () => {
+export const fetchAuctions = (id?: string) => {
+    if (id) return axiosInstance.get(`/auctions?full=true&id=${id}`);
     return axiosInstance.get("/auctions?full=true");
 };
 

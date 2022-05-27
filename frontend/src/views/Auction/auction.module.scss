@@ -1,0 +1,146 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.auctionNotFound {
+    margin: auto;
+    margin-top: 180px;
+}
+
+.noBids {
+    text-align: left;
+    margin-top: $spacer-24;
+}
+
+.sectionContainer {
+    width: 1220px;
+    display: flex;
+    margin: auto;
+    margin-top: 180px;
+    position: relative;
+}
+
+.productImage {
+    width: 50%;
+    max-width: 640px;
+    border-radius: $spacer-16;
+}
+
+.productInfo {
+    margin-left: $spacer-96;
+}
+
+.productName {
+    font-size: $font-size-headline-3;
+    font-weight: $font-weight-700;
+    line-height: $line-height-headline-3;
+    letter-spacing: $letter-spacing--01em;
+    color: $c-neutrals-2;
+    text-align: left;
+    padding-bottom: $spacer-12;
+}
+
+.priceInfo {
+    display: flex;
+    column-gap: $spacer-12;
+    align-items: center;
+    margin-bottom: $spacer-48;
+}
+
+.dolarValue {
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    color: $c-neutrals-4;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 3px;
+    padding: $spacer-2;
+}
+
+.stockValue {
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    color: $c-neutrals-4;
+}
+
+.productDescription {
+    margin-bottom: $spacer-48;
+    text-align: left;
+    font-size: $font-size-body-2;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2;
+    color: $c-neutrals-4;
+}
+
+.bids {
+    text-align: left;
+    font-size: $font-size-headline-4;
+    font-weight: $font-weight-700;
+    line-height: $line-height-headline-4;
+    color: $c-neutrals-4;
+}
+
+.highestBidContainer {
+    background-color: $c-neutrals-8;
+    border: 1px solid $c-neutrals-6;
+    box-shadow: 0px 50px 64px rgba(31, 47, 70, 0.12);
+    border-radius: $spacer-16;
+    padding: $spacer-24;
+    margin-top: $spacer-64;
+}
+
+.bidInfo {
+    display: flex;
+    justify-content: center;
+    column-gap: $spacer-16;
+    margin-bottom: $spacer-32;
+}
+
+.highestBid {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2;
+    color: $c-neutrals-4;
+    text-align: left;
+    padding-bottom: $spacer-4;
+}
+
+.highestBidName {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2-bold;
+    color: $c-neutrals-2;
+    padding-left: $spacer-8;
+}
+
+.cashValues {
+    display: flex;
+    column-gap: $spacer-24;
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+}
+
+.bidEthValue {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-2;
+}
+
+.bidDolarValue {
+    color: $c-neutrals-4;
+}
+
+.roundButtons {
+    display: flex;
+    flex-direction: column;
+    row-gap: $spacer-16;
+    position: absolute;
+    right: -56px;
+}

@@ -94,8 +94,6 @@ export const CreateSingleCollectible = () => {
             onClickClear();
         }
         if (!isFormFilled) alert("Uploading failed!");
-        console.log(item);
-        console.log(formState);
     };
 
     return (

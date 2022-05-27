@@ -1,0 +1,23 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.buttonPrimary {
+    background-color: $c-primary-1;
+    color: $c-neutrals-8;
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    border: 2px solid $c-primary-1;
+    border-radius: 90px;
+    padding: $spacer-16 $spacer-32;
+}
+
+.buttonSecondary {
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 90px;
+    padding: $spacer-16 $spacer-32;
+}

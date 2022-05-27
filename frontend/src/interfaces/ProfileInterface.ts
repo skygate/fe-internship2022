@@ -1,18 +1,20 @@
 export interface ProfileInterface {
-    __v: string;
+    __v?: string;
     _id: string;
-    userID: string;
+    userID?: string;
     profileName: string;
-    about: string;
+    about?: string;
     profilePicture: string;
-    coverPicture: string;
-    websiteUrl: string;
-    instagramUrl: string;
-    twitterUrl: string;
-    facebookUrl: string;
-    following: string[];
-    followers: string[];
-    joinDate: Date;
+    coverPicture?: string;
+    websiteUrl?: string;
+    instagramUrl?: string;
+    twitterUrl?: string;
+    facebookUrl?: string;
+    following?: string[];
+    followers?: string[];
+    joinDate?: Date;
+    badge?: number;
+    totalEthValue?: number;
 }
 
 export interface ChangeActiveProfilePayload {
