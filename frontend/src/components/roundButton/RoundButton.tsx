@@ -1,13 +1,14 @@
 import style from "./roundButton.module.scss";
 
 interface RoundButtonProps {
-    img: string;
+    element: JSX.Element;
+    onClick?: (e: React.MouseEvent) => void;
 }
 
-export const RoundButton = ({ img }: RoundButtonProps) => {
+export const RoundButton = ({ element, onClick }: RoundButtonProps) => {
     return (
-        <button type="button" className={style.roundBtn}>
-            <img src={img} alt="" />
+        <button type="button" className={style.roundBtn} onClick={onClick}>
+            {element}
         </button>
     );
 };

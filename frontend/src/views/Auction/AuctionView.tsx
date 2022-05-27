@@ -3,19 +3,29 @@ import { AuctionItem } from "interfaces/index";
 import { GreenETHValue, CreatorsListItem, ProfilePicture, RoundButton, Button } from "components";
 import shareImg from "assets/share.svg";
 import moreOptionsImg from "assets/threeDots.svg";
-import heartImg from "assets/heartRed.svg";
+import heartImgRed from "assets/heartRed.svg";
+import heartImgGrey from "assets/heartGrey.svg";
+import { AiFillHeart } from "react-icons/ai";
+import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
     ethDolarExchange: (eth: number) => number;
+    onLikeButtonClick: (e: React.MouseEvent) => void;
 }
 
-export const AuctionView = ({ auctionData, ethDolarExchange }: AuctionViewProps) => {
+export const AuctionView = ({
+    auctionData,
+    ethDolarExchange,
+    onLikeButtonClick,
+}: AuctionViewProps) => {
     const { productID, price, amount, bidHistory } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
 
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
+
+    const icon = <AiFillHeart />;
 
     return !auctionData ? (
         <div className={style.auctionNotFound}>Auction not found</div>
@@ -71,9 +81,12 @@ export const AuctionView = ({ auctionData, ethDolarExchange }: AuctionViewProps)
                 </div>
             </div>
             <div className={style.roundButtons}>
-                <RoundButton img={shareImg} />
-                <RoundButton img={heartImg} />
-                <RoundButton img={moreOptionsImg} />
+                <RoundButton element={<FiShare fontSize="24px" color="#777e91" />} />
+                <RoundButton
+                    element={<AiFillHeart fontSize="24px" color="#777e91" />}
+                    onClick={onLikeButtonClick}
+                />
+                <RoundButton element={<FiMoreHorizontal fontSize="24px" color="#777e91" />} />
             </div>
         </div>
     );

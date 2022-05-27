@@ -21,7 +21,17 @@ const auctionsSchema = new mongoose.Schema({
     ],
     startDate: Date,
     endDate: Date,
-    likes: Number,
+    likes: [
+        {
+            like: {
+                profileID: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: true,
+                    ref: "Profiles",
+                },
+            },
+        },
+    ],
 });
 const auctions = mongoose.model("Auctions", auctionsSchema);
 export default auctions;

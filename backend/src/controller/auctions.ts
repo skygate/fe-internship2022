@@ -1,3 +1,4 @@
+import { profile } from "console";
 import { Request, Response } from "express";
 import auctions from "../models/auctions";
 
@@ -23,6 +24,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "bidHistory.bid.profileID",
                     select: "profilePicture profileName",
                 })
+                .populate({
+                    path: "likes.like.profileID",
+                    select: "about profilePicture profileName",
+                })
                 .exec();
             res.status(200).json(auctionsWithInfo);
         } catch (error: any) {
@@ -41,6 +46,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .populate({
                     path: "bidHistory.bid.profileID",
                     select: "profilePicture profileName",
+                })
+                .populate({
+                    path: "likes.like.profileID",
+                    select: "about profilePicture profileName",
                 })
                 .exec();
             res.status(200).json(auctionsWithInfo);
@@ -70,6 +79,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 })
                 .populate({
                     path: "bidHistory.bid.profileID",
+                    select: "about profilePicture profileName",
+                })
+                .populate({
+                    path: "likes.like.profileID",
                     select: "about profilePicture profileName",
                 })
                 .exec();
@@ -150,7 +163,7 @@ export const addAuction = async (req: Request, res: Response) => {
         bidHistory: new Array(),
         startDate: new Date(),
         endDate: new Date(new Date().setHours(new Date().getHours() + req.body.duration)),
-        likes: 0,
+        likes: [],
     });
     try {
         await newAuction.save();
@@ -245,5 +258,45 @@ export const deleteAuction = async (req: Request, res: Response) => {
         res.status(200).json({ message: "Auction was succesfully deleted" });
     } catch (error: any) {
         res.status(404).json({ message: error.message });
+    }
+};
+
+export const addRemoveLike = async (req: Request, res: Response) => {
+    const { auctionID } = req.params;
+    const { profileID, add } = req.body;
+
+    const checkIfExistingProfileID = (likesArray: any) => {
+        return likesArray.findIndex((item: any) => item.like.profileID == profileID);
+    };
+
+    if (add) {
+        const newLike = {
+            like: {
+                profileID,
+            },
+        };
+        try {
+            const foundAuction = await auctions.findById(auctionID);
+            const returnValue = checkIfExistingProfileID(foundAuction.likes);
+            if (returnValue > -1) {
+                return res.status(400).json({ errorMessage: "Auction already liked" });
+            }
+            foundAuction.likes.push(newLike);
+            foundAuction.save();
+            return res.status(200).json({ errorMessage: "Succesfully liked an auction" });
+        } catch (error) {
+            return res.status(400).json({ errorMessage: "Something gone wrong" });
+        }
+    }
+
+    try {
+        const foundAuction = await auctions.findById(auctionID);
+        let likes = foundAuction.likes;
+        likes = likes.filter((item: any) => item.like.profileID != profileID);
+        foundAuction.likes = likes;
+        foundAuction.save();
+        res.status(200).json({ errorMessage: "Succesfully unliked an auction" });
+    } catch (error) {
+        res.status(400).json({ errorMessage: "Something gone wrong" });
     }
 };
