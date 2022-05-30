@@ -150,7 +150,7 @@ export const addAuction = async (req: Request, res: Response) => {
         bidHistory: new Array(),
         startDate: new Date(),
         endDate: new Date(new Date().setHours(new Date().getHours() + req.body.duration)),
-        likes: 0,
+        likes: [],
     });
     try {
         await newAuction.save();

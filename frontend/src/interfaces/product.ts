@@ -5,3 +5,7 @@ export interface Product {
     productImageUrl: string;
     productCategory: string;
 }
+
+export interface CreatedProductProps {
+    item: Product;
+}

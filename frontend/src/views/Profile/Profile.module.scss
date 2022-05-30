@@ -38,13 +38,13 @@
     flex-direction: column;
 }
 
-.settingsButtons{
+.settingsButtons {
     margin-top: $spacer-32;
     margin-left: auto;
     height: 40px;
 }
 
-.buttonOnCoverPhoto{
+.buttonOnCoverPhoto {
     font-family: $font-family-dm-sans;
     font-weight: $font-weight-700;
     line-height: $line-height-button-2;
@@ -57,19 +57,19 @@
     padding: $spacer-8 $spacer-12;
 }
 
-.buttonIcon{
+.buttonIcon {
     margin-left: $spacer-12;
-    margin:0;
+    margin: 0;
     padding: 0;
 }
 
-.profileDisplayOptions{
+.profileDisplayOptions {
     margin-top: $spacer-96;
     text-align: left;
     margin-left: $spacer-64;
 }
 
-.profileDisplayLabel{
+.profileDisplayLabel {
     font-family: $font-family-dm-sans;
     font-weight: $font-weight-700;
     line-height: $line-height-button-2;
@@ -79,7 +79,7 @@
     margin-right: $spacer-24;
 }
 
-.selectedProfileDisplayLabel{
+.selectedProfileDisplayLabel {
     padding: $spacer-4 $spacer-12;
     font-family: $font-family-dm-sans;
     font-weight: $font-weight-700;
@@ -92,9 +92,7 @@
     margin-right: $spacer-24;
 }
 
-.profileDisplayRadio{
+.profileDisplayRadio {
     visibility: hidden;
     display: none;
 }
-
-

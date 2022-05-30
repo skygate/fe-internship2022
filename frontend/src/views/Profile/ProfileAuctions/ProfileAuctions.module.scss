@@ -1,0 +1,49 @@
+@import "../../../theme/lightThemeColors.scss";
+@import "../../../theme/spacers.scss";
+@import "../../../theme/typography.scss";
+
+.createdList {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.itemsBox {
+    display: flex;
+    max-width: 1000px;
+    padding: $spacer-32;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrow {
+    box-sizing: content-box;
+    width: 15px;
+    height: 15px;
+    padding: $spacer-8;
+    border: 1px solid transparent;
+    border-radius: 50%;
+}
+
+.arrow:hover {
+    border: 1px solid $c-neutrals-4;
+    cursor: pointer;
+}
+
+.arrows {
+    display: flex;
+}
+
+.productsEmptyText {
+    color: $c-neutrals-2;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+    font-size: $line-height-body-1-bold;
+    font-family: $font-family-poppins;
+    padding: $spacer-24;
+}
+
+.auctionWrapper {
+    margin: $spacer-12;
+}

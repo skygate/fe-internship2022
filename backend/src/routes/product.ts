@@ -7,5 +7,6 @@ router.get("/:id", product.getProduct);
 router.post("/", product.addProduct);
 router.delete("/", product.deleteProduct);
 router.patch("/", product.editProduct);
+router.get("/profile/:id", product.getUsersProducts);
 
 module.exports = router;
