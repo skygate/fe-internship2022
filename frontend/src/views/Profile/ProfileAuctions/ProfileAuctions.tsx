@@ -25,10 +25,8 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
                             usersAuctions
                                 .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                                 .map((auction, index) => (
-                                    <div className={styles.auctionWrapper}>
-                                        <div className={styles.productCard}>
-                                            <ProductCard key={index} item={auction} />
-                                        </div>
+                                    <div className={styles.productCard}>
+                                        <ProductCard key={index} item={auction} />
                                     </div>
                                 ))}
                     </div>

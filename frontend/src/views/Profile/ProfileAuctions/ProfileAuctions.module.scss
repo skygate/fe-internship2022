@@ -7,7 +7,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding-left: $spacer-48;
+    padding-left: $spacer-64;
 }
 
 .itemsBox {
@@ -18,8 +18,8 @@
     align-items: center;
 }
 
-.productCard {
-    margin: $spacer-12;
+.productCard:nth-child(2) {
+    margin: 0 $spacer-12;
 }
 
 .arrow {
