@@ -18,9 +18,9 @@ const FORM_STATE_DEFAULT: DiscoverFormState = {
     sort: "startDate",
     ascending: "-1",
     priceMin: 0,
-    priceMax: 1000,
+    priceMax: 2000,
     priceRangeMin: 0,
-    priceRangeMax: 1000,
+    priceRangeMax: 2000,
 };
 
 const calculatePercentage = (nominator: number, denominator: number) =>
@@ -43,8 +43,8 @@ export const Discover = () => {
         const sortBy = urlParams.get("sortBy") || FORM_STATE_DEFAULT.sort;
         const ascending = urlParams.get("ascending") || FORM_STATE_DEFAULT.ascending;
         const category = urlParams.get("category") || FORM_STATE_DEFAULT.category;
-        const priceMin = Number(urlParams.get("priceMin"));
-        const priceMax = Number(urlParams.get("priceMax"));
+        const priceMin = Number(urlParams.get("priceMin")) || FORM_STATE_DEFAULT.priceMin;
+        const priceMax = Number(urlParams.get("priceMax")) || FORM_STATE_DEFAULT.priceMax;
         setFormState({
             ...formState,
             category: category,
