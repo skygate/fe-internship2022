@@ -8,7 +8,6 @@ import facebook from "../../assets/facebook.svg";
 import instagram from "../../assets/instagram.svg";
 import twitter from "../../assets/twitter.svg";
 import format from "date-fns/format";
-import { parseISO } from "date-fns";
 
 interface ProfileInfoProp {
     profile: ProfileInterface;
@@ -22,7 +21,7 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
             <div className={styles.profileAvatar}>
                 <ProfilePicture width={"160px"} url={profile.profilePicture} />
             </div>
-            <span className={styles.usernameText}>{profile.profileName.slice(0, 16)}</span>
+            <span className={styles.usernameText}>{profile.profileName.slice(0, 10)}</span>
             <div className={isExpanded ? styles.aboutExpanded : styles.aboutWrapper}>
                 <span className={styles.aboutText} onClick={() => setIsExpanded(!isExpanded)}>
                     {profile.about}
@@ -36,7 +35,9 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
                     rel="noopener noreferrer"
                     className={styles.websiteText}
                 >
-                    {profile.websiteUrl}
+                    {profile.websiteUrl && profile.websiteUrl?.length > 20
+                        ? `${profile.websiteUrl?.slice(0, 17)}...`
+                        : profile.websiteUrl}
                 </a>
             </div>
             <button type="button" className={styles.followButton}>
@@ -58,7 +59,7 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
                 </a>
             </div>
             <span className={styles.memberSince}>
-                Member since
+                Member since{" "}
                 {profile.joinDate ? format(new Date(profile.joinDate), "MMM d, yyyy") : null}
             </span>
         </div>

@@ -6,15 +6,20 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding-left: $spacer-48;
 }
 
 .itemsBox {
     display: flex;
     max-width: 1000px;
-    padding: $spacer-32;
+    padding: $spacer-32 0;
     justify-content: center;
     align-items: center;
+}
+
+.productCard {
+    margin: $spacer-12;
 }
 
 .arrow {
@@ -33,6 +38,7 @@
 
 .arrows {
     display: flex;
+    margin: 0 auto;
 }
 
 .productsEmptyText {
@@ -42,8 +48,4 @@
     font-size: $line-height-body-1-bold;
     font-family: $font-family-poppins;
     padding: $spacer-24;
-}
-
-.auctionWrapper {
-    margin: $spacer-12;
 }

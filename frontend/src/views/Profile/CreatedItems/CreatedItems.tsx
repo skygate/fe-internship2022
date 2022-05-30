@@ -17,7 +17,7 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
         lastItem: 3,
     });
     return (
-        <div className={styles.createdList}>
+        <div className={styles.createdListt}>
             {usersProducts.length > 0 ? (
                 <div className={styles.createdList}>
                     <div className={styles.itemsBox}>
@@ -25,7 +25,9 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
                             usersProducts
                                 .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                                 .map((product, index) => (
-                                    <CreatedProduct key={index} item={product} />
+                                    <div className={styles.productCard}>
+                                        <CreatedProduct key={index} item={product} />
+                                    </div>
                                 ))}
                     </div>
                     <div className={styles.arrows}>

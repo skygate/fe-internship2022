@@ -17,7 +17,7 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
         lastItem: 3,
     });
     return (
-        <div className={styles.createdList}>
+        <div className={styles.createdListt}>
             {usersAuctions.length > 0 ? (
                 <div className={styles.createdList}>
                     <div className={styles.itemsBox}>
@@ -26,7 +26,9 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
                                 .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                                 .map((auction, index) => (
                                     <div className={styles.auctionWrapper}>
-                                        <ProductCard key={index} item={auction} />
+                                        <div className={styles.productCard}>
+                                            <ProductCard key={index} item={auction} />
+                                        </div>
                                     </div>
                                 ))}
                     </div>
