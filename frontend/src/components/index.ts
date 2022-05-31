@@ -23,3 +23,4 @@ export { NavbarDropDown } from "./navbarDropDown/NavbarDropDown";
 export { ProfileModal } from "./Modal/ProfileModal/ProfileModal";
 export { RoundButton } from "./roundButton/RoundButton";
 export { Button } from "./button/Button";
+export { CreatedProduct } from "./createdProduct/CreatedProduct";
