@@ -1,6 +1,11 @@
-import { profile } from "console";
 import { Request, Response } from "express";
 import auctions from "../models/auctions";
+
+interface Like {
+    like: {
+        profileID: {};
+    };
+}
 
 export const getAllAuctions = (req: Request, res: Response) => {
     const defaultAuctions = async () => {
@@ -265,8 +270,8 @@ export const addRemoveLike = async (req: Request, res: Response) => {
     const { auctionID } = req.params;
     const { profileID } = req.body;
 
-    const checkIfExistingLike = (likesArray: any) => {
-        return likesArray.findIndex((item: any) => item.like.profileID == profileID);
+    const checkIfExistingLike = (likesArray: Like[]) => {
+        return likesArray.findIndex((item) => item.like.profileID == profileID);
     };
 
     const newLike = {
@@ -279,7 +284,7 @@ export const addRemoveLike = async (req: Request, res: Response) => {
         const isAlreadyLiked = checkIfExistingLike(foundAuction.likes);
         if (isAlreadyLiked > -1) {
             let likes = foundAuction.likes;
-            likes = likes.filter((item: any) => item.like.profileID != profileID);
+            likes = likes.filter((item: Like) => item.like.profileID != profileID);
             foundAuction.likes = likes;
             foundAuction.save();
             return res.status(200).json({ errorMessage: "Succesfully unliked an auction" });

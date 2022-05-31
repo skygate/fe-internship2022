@@ -35,7 +35,6 @@ const toolsArray: ToolsItem[] = [
 
 export const Auction = () => {
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
-
     const [auctionData, setAuctionData] = useState<AuctionItem | null>(null);
     const [isLiked, setIsLiked] = useState(false);
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
