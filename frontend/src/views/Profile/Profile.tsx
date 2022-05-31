@@ -93,8 +93,9 @@ export function Profile() {
                         <div className={styles.settingsButtons}></div>
                     )}
                     <div className={styles.profileDisplayOptions}>
-                        {profileDisplayOptions.map((opt) => (
+                        {profileDisplayOptions.map((opt, index) => (
                             <label
+                                key={index}
                                 className={
                                     selectedProfileDisplay === opt.value
                                         ? styles.selectedProfileDisplayLabel

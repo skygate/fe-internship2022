@@ -10,6 +10,10 @@
     padding-left: $spacer-64;
 }
 
+.createdListContainer {
+    margin-top: 20px;
+}
+
 .itemsBox {
     display: flex;
     max-width: 1000px;
@@ -47,5 +51,4 @@
     line-height: $line-height-body-1-bold;
     font-size: $line-height-body-1-bold;
     font-family: $font-family-poppins;
-    padding: $spacer-24;
 }

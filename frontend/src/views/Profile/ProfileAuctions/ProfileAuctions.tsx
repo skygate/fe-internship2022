@@ -19,15 +19,15 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
     const itemsPerPage = 3;
     const listIsNotEmpty = usersAuctions.length > 0;
     return (
-        <div className={styles.createdListt}>
+        <div className={styles.createdListContainer}>
             {listIsNotEmpty ? (
                 <div className={styles.createdList}>
                     <div className={styles.itemsBox}>
                         {usersAuctions
                             .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                             .map((auction, index) => (
-                                <div className={styles.productCard}>
-                                    <ProductCard key={index} item={auction} />
+                                <div key={index} className={styles.productCard}>
+                                    <ProductCard item={auction} />
                                 </div>
                             ))}
                     </div>
@@ -67,7 +67,7 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
                     </div>
                 </div>
             ) : (
-                <span className={styles.productsEmptyText}>This user has not any auctions</span>
+                <h1 className={styles.productsEmptyText}>This user has not any auctions</h1>
             )}
         </div>
     );

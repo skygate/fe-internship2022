@@ -19,15 +19,15 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
     const itemsPerPage = 3;
     const listIsNotEmpty = usersProducts.length > 0;
     return (
-        <div className={styles.createdListt}>
+        <div className={styles.createdListContainer}>
             {listIsNotEmpty ? (
                 <div className={styles.createdList}>
                     <div className={styles.itemsBox}>
                         {usersProducts
                             .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                             .map((product, index) => (
-                                <div className={styles.productCard}>
-                                    <CreatedProduct key={index} item={product} />
+                                <div key={index} className={styles.productCard}>
+                                    <CreatedProduct item={product} />
                                 </div>
                             ))}
                     </div>
