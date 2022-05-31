@@ -4,6 +4,7 @@ export * from "./loginFormInputs";
 export * from "./registerFormInputs";
 export * from "./user";
 export * from "./Bid";
+export * from "./like";
 export * from "./productItem";
 export * from "./ProfileInterface";
 export * from "./AuctionWithProductInfo";

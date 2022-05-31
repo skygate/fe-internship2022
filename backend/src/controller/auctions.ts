@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import auctions from "../models/auctions";
 
+interface Like {
+    like: {
+        profileID: {};
+    };
+}
+
 export const getAllAuctions = (req: Request, res: Response) => {
     const defaultAuctions = async () => {
         try {
@@ -23,6 +29,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     path: "bidHistory.bid.profileID",
                     select: "profilePicture profileName",
                 })
+                .populate({
+                    path: "likes.like.profileID",
+                    select: "about profilePicture profileName",
+                })
                 .exec();
             res.status(200).json(auctionsWithInfo);
         } catch (error: any) {
@@ -41,6 +51,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .populate({
                     path: "bidHistory.bid.profileID",
                     select: "profilePicture profileName",
+                })
+                .populate({
+                    path: "likes.like.profileID",
+                    select: "about profilePicture profileName",
                 })
                 .exec();
             res.status(200).json(auctionsWithInfo);
@@ -70,6 +84,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 })
                 .populate({
                     path: "bidHistory.bid.profileID",
+                    select: "about profilePicture profileName",
+                })
+                .populate({
+                    path: "likes.like.profileID",
                     select: "about profilePicture profileName",
                 })
                 .exec();
@@ -245,5 +263,36 @@ export const deleteAuction = async (req: Request, res: Response) => {
         res.status(200).json({ message: "Auction was succesfully deleted" });
     } catch (error: any) {
         res.status(404).json({ message: error.message });
+    }
+};
+
+export const addRemoveLike = async (req: Request, res: Response) => {
+    const { auctionID } = req.params;
+    const { profileID } = req.body;
+
+    const checkIfExistingLike = (likesArray: Like[]) => {
+        return likesArray.findIndex((item) => item.like.profileID == profileID);
+    };
+
+    const newLike = {
+        like: {
+            profileID,
+        },
+    };
+    try {
+        const foundAuction = await auctions.findById(auctionID);
+        const isAlreadyLiked = checkIfExistingLike(foundAuction.likes);
+        if (isAlreadyLiked > -1) {
+            let likes = foundAuction.likes;
+            likes = likes.filter((item: Like) => item.like.profileID != profileID);
+            foundAuction.likes = likes;
+            foundAuction.save();
+            return res.status(200).json({ errorMessage: "Succesfully unliked an auction" });
+        }
+        foundAuction.likes.push(newLike);
+        foundAuction.save();
+        return res.status(200).json({ errorMessage: "Succesfully liked an auction" });
+    } catch (error) {
+        return res.status(400).json({ errorMessage: "Something gone wrong" });
     }
 };

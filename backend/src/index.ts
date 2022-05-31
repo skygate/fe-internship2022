@@ -13,6 +13,20 @@ const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo");
 const app: Express = express();
 
+const io = require("socket.io")(8080, {
+    cors: {
+        origin: ["http://localhost:3000"],
+    },
+});
+
+io.on("connection", (socket: any) => {
+    console.log("socket.io: User connected: ", socket.id);
+
+    socket.on("disconnect", () => {
+        console.log("socket.io: User disconnected: ", socket.id);
+    });
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -63,12 +77,24 @@ app.use("/userProfiles", userProfilesRoute);
 app.use("/upload", uploadRoute);
 
 // CONNECT MONGO
+
 mongoose
     .connect(mongo, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() =>
         app.listen(port, () => console.log(`Server Running on Port: http://localhost:${port}`))
     )
     .catch((error: any) => console.log(`${error} did not connect`));
+
+//CONNECTION SOCKET.IO
+const connection = mongoose.connection;
+
+connection.once("open", () => {
+    const auctionsChangeStream = connection.collection("auctions").watch();
+    auctionsChangeStream.on("change", () => {
+        io.emit("auction-change");
+    });
+});
+
 // CONNECT CLOUDINARY
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
