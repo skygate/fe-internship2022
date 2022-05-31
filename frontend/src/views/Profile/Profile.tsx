@@ -8,8 +8,7 @@ import editIcon from "../../assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
 import Modal from "components/Modal/Modal";
 import { ProfileModal } from "../../components";
-import { Product } from "interfaces/product";
-import { getUsersProducts } from "API/UserService/getProducts";
+import { fetchUserProducts } from "store/userProducts";
 import { CreatedItems } from "./CreatedItems/CreatedItems";
 import { getProfile } from "API/UserService/profile";
 import { ProfileAuctions } from "./ProfileAuctions/ProfileAuctions";
@@ -34,21 +33,26 @@ export function Profile() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const user = useAppSelector((state) => state.user);
     const activeProfile = useAppSelector((state) => state.activeProfile);
-    const [usersProducts, setUsersProducts] = useState<Product[]>([]);
+    const usersProducts = useAppSelector((state) => state.userProducts.products);
 
     useEffect(() => {
         (async () => {
             if (!profileID) return;
             setProfile(await getProfile(profileID));
             setAuctions(await getUsersAuctions(profileID));
-            setUsersProducts(await getUsersProducts(profileID));
+            dispatch(fetchUserProducts(profileID));
         })();
     }, [profileID, activeProfile]);
 
     const profileDisplay = (displayOption: string) => {
         switch (displayOption) {
             case "created":
-                return <CreatedItems usersProducts={usersProducts} />;
+                return (
+                    <CreatedItems
+                        usersProducts={usersProducts}
+                        profileID={profileID ? profileID : ""}
+                    />
+                );
             case "onsale":
                 return <ProfileAuctions usersAuctions={auctions} />;
         }

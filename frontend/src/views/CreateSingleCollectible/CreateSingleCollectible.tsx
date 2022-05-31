@@ -8,6 +8,7 @@ import { InputFileChange } from "interfaces/file";
 import { useAppSelector } from "store/store";
 
 const defaultItem: Product = {
+    _id: "",
     ownerID: "",
     productName: "Example Name",
     productDescription: "Example description",
