@@ -16,23 +16,24 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
         firstItem: 0,
         lastItem: 3,
     });
+    const itemsPerPage = 3;
+    const listIsNotEmpty = usersAuctions.length > 0;
     return (
         <div className={styles.createdListt}>
-            {usersAuctions.length > 0 ? (
+            {listIsNotEmpty ? (
                 <div className={styles.createdList}>
                     <div className={styles.itemsBox}>
-                        {usersAuctions &&
-                            usersAuctions
-                                .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
-                                .map((auction, index) => (
-                                    <div className={styles.productCard}>
-                                        <ProductCard key={index} item={auction} />
-                                    </div>
-                                ))}
+                        {usersAuctions
+                            .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
+                            .map((auction, index) => (
+                                <div className={styles.productCard}>
+                                    <ProductCard key={index} item={auction} />
+                                </div>
+                            ))}
                     </div>
                     <div className={styles.arrows}>
                         <div>
-                            {createdPageNumber.firstItem > 0 ? (
+                            {createdPageNumber.firstItem > 0 && (
                                 <img
                                     src={leftArrow}
                                     alt="arrow left"
@@ -40,17 +41,15 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
                                     id="prevPage"
                                     onClick={() =>
                                         setCreatedPageNumber({
-                                            firstItem: createdPageNumber.firstItem - 3,
-                                            lastItem: createdPageNumber.lastItem - 3,
+                                            firstItem: createdPageNumber.firstItem - itemsPerPage,
+                                            lastItem: createdPageNumber.lastItem - itemsPerPage,
                                         })
                                     }
                                 />
-                            ) : (
-                                <></>
-                            )}{" "}
+                            )}
                         </div>
                         <div>
-                            {createdPageNumber.lastItem <= usersAuctions.length ? (
+                            {createdPageNumber.lastItem <= usersAuctions.length && (
                                 <img
                                     src={rightArrow}
                                     alt="arrow right"
@@ -58,13 +57,11 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
                                     id="nextPage"
                                     onClick={() =>
                                         setCreatedPageNumber({
-                                            firstItem: createdPageNumber.firstItem + 3,
-                                            lastItem: createdPageNumber.lastItem + 3,
+                                            firstItem: createdPageNumber.firstItem + itemsPerPage,
+                                            lastItem: createdPageNumber.lastItem + itemsPerPage,
                                         })
                                     }
                                 />
-                            ) : (
-                                <></>
                             )}
                         </div>
                     </div>

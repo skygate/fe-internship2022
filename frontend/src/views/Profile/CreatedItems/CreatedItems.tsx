@@ -16,23 +16,24 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
         firstItem: 0,
         lastItem: 3,
     });
+    const itemsPerPage = 3;
+    const listIsNotEmpty = usersProducts.length > 0;
     return (
         <div className={styles.createdListt}>
-            {usersProducts.length > 0 ? (
+            {listIsNotEmpty ? (
                 <div className={styles.createdList}>
                     <div className={styles.itemsBox}>
-                        {usersProducts &&
-                            usersProducts
-                                .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
-                                .map((product, index) => (
-                                    <div className={styles.productCard}>
-                                        <CreatedProduct key={index} item={product} />
-                                    </div>
-                                ))}
+                        {usersProducts
+                            .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
+                            .map((product, index) => (
+                                <div className={styles.productCard}>
+                                    <CreatedProduct key={index} item={product} />
+                                </div>
+                            ))}
                     </div>
                     <div className={styles.arrows}>
                         <div>
-                            {createdPageNumber.firstItem > 0 ? (
+                            {createdPageNumber.firstItem > 0 && (
                                 <img
                                     src={leftArrow}
                                     alt="arrow left"
@@ -40,17 +41,15 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
                                     id="prevPage"
                                     onClick={() =>
                                         setCreatedPageNumber({
-                                            firstItem: createdPageNumber.firstItem - 3,
-                                            lastItem: createdPageNumber.lastItem - 3,
+                                            firstItem: createdPageNumber.firstItem - itemsPerPage,
+                                            lastItem: createdPageNumber.lastItem - itemsPerPage,
                                         })
                                     }
                                 />
-                            ) : (
-                                <></>
-                            )}{" "}
+                            )}
                         </div>
                         <div>
-                            {createdPageNumber.lastItem <= usersProducts.length ? (
+                            {createdPageNumber.lastItem <= usersProducts.length && (
                                 <img
                                     src={rightArrow}
                                     alt="arrow right"
@@ -58,13 +57,11 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
                                     id="nextPage"
                                     onClick={() =>
                                         setCreatedPageNumber({
-                                            firstItem: createdPageNumber.firstItem + 3,
-                                            lastItem: createdPageNumber.lastItem + 3,
+                                            firstItem: createdPageNumber.firstItem + itemsPerPage,
+                                            lastItem: createdPageNumber.lastItem + itemsPerPage,
                                         })
                                     }
                                 />
-                            ) : (
-                                <></>
                             )}
                         </div>
                     </div>
