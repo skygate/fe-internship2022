@@ -46,6 +46,15 @@ export const getProduct = async (req: Request, res: Response) => {
     }
 };
 
+export const getUsersProducts = async (req: Request, res: Response) => {
+    try {
+        const foundProducts = await product.find({ ownerID: req.params.id }).exec();
+        res.status(200).json(foundProducts);
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
 export const addProduct = async (req: Request, res: Response) => {
     const { productName, productDescription, productImageUrl, productCategory, ownerID } = req.body;
     const newProduct = new product({

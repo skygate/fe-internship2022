@@ -1,14 +1,20 @@
 import styles from "./Profile.module.scss";
 import { useParams } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ProfileInterface } from "../../interfaces/ProfileInterface";
-import { AuctionWithProductInfo } from "../../interfaces/AuctionWithProductInfo";
 import { ProfileInfoPanel } from "../../components";
 import imageIcon from "../../assets/imageIcon.svg";
 import editIcon from "../../assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
 import Modal from "components/Modal/Modal";
 import { ProfileModal } from "../../components";
+import { Product } from "interfaces/product";
+import { getUsersProducts } from "API/UserService/getProducts";
+import { CreatedItems } from "./CreatedItems/CreatedItems";
+import { getProfile } from "API/UserService/profile";
+import { ProfileAuctions } from "./ProfileAuctions/ProfileAuctions";
+import { AuctionItem } from "interfaces";
+import { getUsersAuctions } from "API/UserService/auctions";
 
 const profileDisplayOptions = [
     { value: "onsale", label: "On Sale" },
@@ -19,53 +25,34 @@ const profileDisplayOptions = [
     { value: "followers", label: "Followers" },
 ];
 
-async function getProfile(profileID: string): Promise<ProfileInterface | null> {
-    try {
-        const response = await fetch(`http://localhost:8000/profiles/${profileID}`, {
-            method: "GET",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                "Access-Control-Allow-Origin": "http://localhost:3000/",
-            },
-        });
-        return response.json();
-    } catch (error) {
-        throw new Error("Couldn't log user");
-    }
-}
-
-async function getUserAuctions(profileID: string): Promise<AuctionWithProductInfo[] | null> {
-    try {
-        const auctionsResponse = await fetch(
-            `http://localhost:8000/auctions/?full=true&profileID=${profileID}`
-        );
-        return auctionsResponse.json();
-    } catch (err) {
-        return null;
-    }
-}
-
 export function Profile() {
     const { profileID } = useParams();
     const dispatch = useAppDispatch();
     const [profile, setProfile] = useState<ProfileInterface | null>(null);
-    const [auctions, setAuctions] = useState<AuctionWithProductInfo[] | null>(null);
+    const [auctions, setAuctions] = useState<AuctionItem[]>([]);
     const [selectedProfileDisplay, setSelectedProfileDisplay] = useState<string>("onsale");
     const [isModalVisible, setIsModalVisible] = useState(false);
     const user = useAppSelector((state) => state.user);
     const activeProfile = useAppSelector((state) => state.activeProfile);
+    const [usersProducts, setUsersProducts] = useState<Product[]>([]);
 
     useEffect(() => {
         (async () => {
             if (!profileID) return;
             setProfile(await getProfile(profileID));
-            setAuctions(await getUserAuctions(profileID));
+            setAuctions(await getUsersAuctions(profileID));
+            setUsersProducts(await getUsersProducts(profileID));
         })();
     }, [profileID, activeProfile]);
+
+    const profileDisplay = (displayOption: string) => {
+        switch (displayOption) {
+            case "created":
+                return <CreatedItems usersProducts={usersProducts} />;
+            case "onsale":
+                return <ProfileAuctions usersAuctions={auctions} />;
+        }
+    };
 
     return (
         <div className={styles.profileContainer}>
@@ -106,8 +93,9 @@ export function Profile() {
                         <div className={styles.settingsButtons}></div>
                     )}
                     <div className={styles.profileDisplayOptions}>
-                        {profileDisplayOptions.map((opt) => (
+                        {profileDisplayOptions.map((opt, index) => (
                             <label
+                                key={index}
                                 className={
                                     selectedProfileDisplay === opt.value
                                         ? styles.selectedProfileDisplayLabel
@@ -126,6 +114,7 @@ export function Profile() {
                             </label>
                         ))}
                     </div>
+                    {profileDisplay(selectedProfileDisplay)}
                 </div>
             </div>
             {isModalVisible && (

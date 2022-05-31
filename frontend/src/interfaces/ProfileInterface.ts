@@ -51,3 +51,8 @@ export interface ProfileInput {
     placeholder: string;
     type: string;
 }
+
+export interface PageSlice {
+    firstItem: number;
+    lastItem: number;
+}
