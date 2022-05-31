@@ -30,9 +30,7 @@ export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
                             <button
                                 className={styles.deleteButton}
                                 type="button"
-                                onClick={() => {
-                                    handleDelete();
-                                }}
+                                onClick={handleDelete}
                             >
                                 Delete
                             </button>
