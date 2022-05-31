@@ -1,5 +1,9 @@
 import styles from "./createdProduct.module.scss";
-import { CreatedProductProps } from "interfaces/product";
+import { Product } from "interfaces/product";
+
+export interface CreatedProductProps {
+    item: Product;
+}
 
 export const CreatedProduct = ({ item }: CreatedProductProps) => {
     return (
