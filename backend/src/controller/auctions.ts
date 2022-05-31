@@ -263,40 +263,31 @@ export const deleteAuction = async (req: Request, res: Response) => {
 
 export const addRemoveLike = async (req: Request, res: Response) => {
     const { auctionID } = req.params;
-    const { profileID, add } = req.body;
+    const { profileID } = req.body;
 
-    const checkIfExistingProfileID = (likesArray: any) => {
+    const checkIfExistingLike = (likesArray: any) => {
         return likesArray.findIndex((item: any) => item.like.profileID == profileID);
     };
 
-    if (add) {
-        const newLike = {
-            like: {
-                profileID,
-            },
-        };
-        try {
-            const foundAuction = await auctions.findById(auctionID);
-            const returnValue = checkIfExistingProfileID(foundAuction.likes);
-            if (returnValue > -1) {
-                return res.status(400).json({ errorMessage: "Auction already liked" });
-            }
-            foundAuction.likes.push(newLike);
-            foundAuction.save();
-            return res.status(200).json({ errorMessage: "Succesfully liked an auction" });
-        } catch (error) {
-            return res.status(400).json({ errorMessage: "Something gone wrong" });
-        }
-    }
-
+    const newLike = {
+        like: {
+            profileID,
+        },
+    };
     try {
         const foundAuction = await auctions.findById(auctionID);
-        let likes = foundAuction.likes;
-        likes = likes.filter((item: any) => item.like.profileID != profileID);
-        foundAuction.likes = likes;
+        const isAlreadyLiked = checkIfExistingLike(foundAuction.likes);
+        if (isAlreadyLiked > -1) {
+            let likes = foundAuction.likes;
+            likes = likes.filter((item: any) => item.like.profileID != profileID);
+            foundAuction.likes = likes;
+            foundAuction.save();
+            return res.status(200).json({ errorMessage: "Succesfully unliked an auction" });
+        }
+        foundAuction.likes.push(newLike);
         foundAuction.save();
-        res.status(200).json({ errorMessage: "Succesfully unliked an auction" });
+        return res.status(200).json({ errorMessage: "Succesfully liked an auction" });
     } catch (error) {
-        res.status(400).json({ errorMessage: "Something gone wrong" });
+        return res.status(400).json({ errorMessage: "Something gone wrong" });
     }
 };

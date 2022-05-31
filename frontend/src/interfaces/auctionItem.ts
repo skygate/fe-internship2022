@@ -1,4 +1,5 @@
 import { Bid } from "interfaces";
+import { Like } from "interfaces";
 import { ProductItem } from "interfaces";
 
 export interface AuctionItem {
@@ -10,6 +11,6 @@ export interface AuctionItem {
     bidHistory: Bid[];
     startDate: string;
     endDate: string;
-    likes: number;
+    likes: Like[];
     __v: number;
 }
