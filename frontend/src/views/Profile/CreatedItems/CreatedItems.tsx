@@ -9,9 +9,10 @@ import { FC } from "react";
 
 interface ProductsList {
     usersProducts: Product[];
+    profileID: string;
 }
 
-export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
+export const CreatedItems: FC<ProductsList> = ({ usersProducts, profileID }) => {
     const [createdPageNumber, setCreatedPageNumber] = useState<PageSlice>({
         firstItem: 0,
         lastItem: 3,
@@ -27,7 +28,7 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
                             .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                             .map((product, index) => (
                                 <div key={index} className={styles.productCard}>
-                                    <CreatedProduct item={product} />
+                                    <CreatedProduct item={product} profileID={profileID} />
                                 </div>
                             ))}
                     </div>
@@ -49,7 +50,7 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts }) => {
                             )}
                         </div>
                         <div>
-                            {createdPageNumber.lastItem <= usersProducts.length && (
+                            {createdPageNumber.lastItem < usersProducts.length && (
                                 <img
                                     src={rightArrow}
                                     alt="arrow right"

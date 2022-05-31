@@ -49,7 +49,7 @@ export const ProfileAuctions: FC<AuctionsList> = ({ usersAuctions }) => {
                             )}
                         </div>
                         <div>
-                            {createdPageNumber.lastItem <= usersAuctions.length && (
+                            {createdPageNumber.lastItem < usersAuctions.length && (
                                 <img
                                     src={rightArrow}
                                     alt="arrow right"

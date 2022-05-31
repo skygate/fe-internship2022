@@ -74,14 +74,13 @@ export const addProduct = async (req: Request, res: Response) => {
 
 export default productsArray;
 
-module.exports.deleteProduct = (req: Request, res: Response) => {
-    if (!req.body || !productsArray.find((product) => product.productId === req.body.productId)) {
-        res.status(400).json({ errorMessage: "Rosources not found" });
+module.exports.deleteProduct = async (req: Request, res: Response) => {
+    try {
+        await product.findByIdAndDelete(req.params.id).exec();
+        res.status(200).json({ message: "Product deleted" });
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
     }
-
-    productsArray = productsArray.filter((product) => product.productId !== req.body.productId);
-
-    res.status(200).json({ errorMessage: "Successfully deleted product" });
 };
 
 module.exports.editProduct = (req: Request, res: Response) => {

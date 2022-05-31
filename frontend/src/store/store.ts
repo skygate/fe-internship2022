@@ -5,6 +5,7 @@ import profilesReducer from "./profile";
 import auctionsReducer from "./auctions";
 import auctionReducer from "./auction";
 import activeProfileReducer from "./activeProfile";
+import userProductsReducer from "./userProducts";
 
 export const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
         auctions: auctionsReducer,
         auction: auctionReducer,
         activeProfile: activeProfileReducer,
+        userProducts: userProductsReducer,
     },
 });
 
