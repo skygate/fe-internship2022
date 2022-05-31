@@ -6,7 +6,7 @@ import { ProfileInfoPanel } from "../../components";
 import imageIcon from "../../assets/imageIcon.svg";
 import editIcon from "../../assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
-import Modal from "components/Modal/Modal";
+import { Modal } from "components";
 import { ProfileModal } from "../../components";
 import { Product } from "interfaces/product";
 import { getUsersProducts } from "API/UserService/getProducts";

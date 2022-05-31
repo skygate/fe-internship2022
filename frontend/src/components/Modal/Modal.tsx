@@ -13,7 +13,7 @@ export interface ModalProps {
     containerClassName?: string;
 }
 
-const Modal = ({ title, visible, onClose, children, description = "" }: ModalProps) => {
+export const Modal = ({ title, visible, onClose, children, description = "" }: ModalProps) => {
     const escFunction = useCallback(
         (e) => {
             if (e.key === "Escape") {
@@ -57,5 +57,3 @@ const Modal = ({ title, visible, onClose, children, description = "" }: ModalPro
         document.body
     );
 };
-
-export default Modal;

@@ -4,6 +4,8 @@ import { GreenETHValue, CreatorsListItem, ProfilePicture, RoundButton, Button } 
 import { AiFillHeart } from "react-icons/ai";
 import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 import { Toast } from "components";
+import { AddBidModal } from "components/Modal";
+import { Modal } from "components";
 
 enum ToolsOptions {
     EditAuction = "editAuction",
@@ -131,6 +133,7 @@ export const AuctionView = ({
                 </div>
             </div>
             {toastMessage && <Toast message={toastMessage} />}
+            {/* <Modal /> */}
         </>
     );
 };
