@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect } from "react";
+import React, { ReactNode, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Modal.module.scss";
 import ExitIcon from "../../assets/ExitIcon.svg";
@@ -8,27 +8,27 @@ export interface ModalProps {
     description?: string;
     children?: ReactNode;
     visible: boolean;
-    onClose: () => void;
+    onClose: (e: React.MouseEvent) => void;
     outerClassName?: string;
     containerClassName?: string;
 }
 
-const Modal = ({ title, visible, onClose, children, description = "" }: ModalProps) => {
+export const Modal = ({ title, visible, onClose, children, description = "" }: ModalProps) => {
     const escFunction = useCallback(
         (e) => {
             if (e.key === "Escape") {
-                onClose();
+                onClose(e);
             }
         },
         [onClose]
     );
 
     useEffect(() => {
-        document.body.style.overflow = "hidden";
+        if (visible) document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = "auto";
         };
-    }, []);
+    }, [visible]);
 
     useEffect(() => {
         document.addEventListener("keydown", escFunction, false);
@@ -57,5 +57,3 @@ const Modal = ({ title, visible, onClose, children, description = "" }: ModalPro
         document.body
     );
 };
-
-export default Modal;
