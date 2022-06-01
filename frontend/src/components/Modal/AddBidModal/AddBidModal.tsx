@@ -18,9 +18,7 @@ interface AddBidModalProps {
 export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
     const [inputValue, setInputValue] = useState("0");
-    const onCancelButtonClick = (e: React.MouseEvent) => {
-        onClose(e);
-    };
+    const onCancelButtonClick = (e: React.MouseEvent) => onClose(e);
     const onInputValueChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
         setInputValue(target.value);
