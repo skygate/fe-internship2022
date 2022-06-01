@@ -10,6 +10,8 @@ import { AiOutlineCloseCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { addLike } from "API/UserService";
 import { Bid } from "interfaces";
 import { addBid } from "API/UserService";
+import { BidOffer } from "interfaces";
+import { ToolsOptions, ToolsItem, ModalsVisibilityState } from "./interfaces";
 
 const socket = io("http://localhost:8080");
 
@@ -18,27 +20,11 @@ const ethDolarExchange = (eth: number) => {
     return eth * exchangeRate;
 };
 
-enum ToolsOptions {
-    EditAuction = "edit auction",
-    RemoveFromSale = "remove from sale",
-    Report = "report",
-}
-
-interface ToolsItem {
-    action: ToolsOptions;
-    icon: JSX.Element;
-}
-
 const toolsArray: ToolsItem[] = [
     { action: ToolsOptions.EditAuction, icon: <MdOutlineModeEdit /> },
     { action: ToolsOptions.RemoveFromSale, icon: <AiOutlineCloseCircle /> },
     { action: ToolsOptions.Report, icon: <AiOutlineInfoCircle /> },
 ];
-
-interface ModalsVisibilityState {
-    placeBid: boolean;
-    purchase: boolean;
-}
 
 const DEFAULT_MODAL_VISIBILITY: ModalsVisibilityState = {
     placeBid: false,
@@ -49,24 +35,26 @@ const DEFAULT_VISIBLE_BIDS = 3;
 
 export const Auction = () => {
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
-    const [auctionData, setAuctionData] = useState<AuctionItem | null>(null);
-    const highestBid: Bid | undefined = auctionData?.bidHistory[auctionData.bidHistory.length - 1];
-    const [isLiked, setIsLiked] = useState(false);
-    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    const [toastMessage, setToastMessage] = useState<string>();
-    const [modalsVisibility, setModalsVisibility] = useState(DEFAULT_MODAL_VISIBILITY);
     const auctionID = useParams().auctionID || "";
+    const [auctionData, setAuctionData] = useState<AuctionItem | null>(null);
+    const [isAuctionLiked, setisAuctionLiked] = useState(false);
+    const [dropdownVisibility, setdropdownVisibility] = useState(false);
+    const [modalsVisibility, setModalsVisibility] = useState(DEFAULT_MODAL_VISIBILITY);
+    const [toastMessage, setToastMessage] = useState<string>();
+    const [visibleBids, setVisibleBids] = useState(DEFAULT_VISIBLE_BIDS);
+    const highestBid: Bid | undefined = auctionData?.bidHistory[auctionData.bidHistory.length - 1];
+    const moreOptionsDropDownRef = useRef<HTMLDivElement>(null);
 
-    const clearToastMessage = () => {
+    const changeToastMessage = (text: string) => {
+        setToastMessage(text);
         setTimeout(() => {
             setToastMessage(undefined);
         }, 1000);
     };
 
-    const checkIsLiked = () => {
-        return auctionData && profile
-            ? auctionData.likes.findIndex((item) => item.like.profileID._id == profile._id)
-            : -1;
+    const checkisAuctionLiked = () => {
+        if (auctionData && profile)
+            return auctionData.likes.find((item) => item.like.profileID._id == profile._id);
     };
 
     useEffect(() => {
@@ -74,83 +62,46 @@ export const Auction = () => {
     }, []);
 
     useEffect(() => {
-        socket.on("auction-change", () => {
-            console.log("socket");
-            getAuction(auctionID).then((auctionsResponse) => setAuctionData(auctionsResponse.data));
-        });
+        socket.on("auction-change", () =>
+            getAuction(auctionID).then((auctionsResponse) => setAuctionData(auctionsResponse.data))
+        );
     }, [socket]);
 
     useEffect(() => {
-        const check = checkIsLiked();
-        check > -1 ? setIsLiked(true) : setIsLiked(false);
+        checkisAuctionLiked() ? setisAuctionLiked(true) : setisAuctionLiked(false);
     }, [auctionData, profile]);
 
     useEffect(() => {
         moreOptionsDropDownRef.current &&
-            (isDropdownVisible
+            (dropdownVisibility
                 ? (moreOptionsDropDownRef.current.style.opacity = "1")
                 : (moreOptionsDropDownRef.current.style.opacity = "0"));
-    }, [isDropdownVisible]);
+    }, [dropdownVisibility]);
 
     const onLikeButtonClick = () => {
-        if (!profile) {
-            setToastMessage("You have to be logged in");
-            clearToastMessage();
-            return;
-        }
-        const profileID = profile._id;
-        addLike(profileID, auctionID);
-        checkIsLiked();
+        if (!profile) return changeToastMessage("You have to be logged in");
+        addLike(profile._id, auctionID);
     };
 
-    const onShareButtonClick = () => {
-        navigator.clipboard.writeText(window.location.href);
-    };
+    const onShareButtonClick = () => navigator.clipboard.writeText(window.location.href);
 
-    const onMoreInfoButtonClick = () => {
-        setIsDropdownVisible((prev) => !prev);
-    };
-
-    const moreOptionsDropDownRef = useRef<HTMLDivElement>(null);
+    const onMoreInfoButtonClick = () => setdropdownVisibility((prev) => !prev);
 
     const changeModalsVisibility = (e: React.MouseEvent, modalID?: string) => {
-        if (modalID) {
-            if (!profile) {
-                setToastMessage("You have to be logged in");
-                clearToastMessage();
-                return;
-            }
-            setModalsVisibility({ ...modalsVisibility, [modalID]: true });
-            return;
-        }
+        if (!profile) return changeToastMessage("You have to be logged in");
+        if (modalID) return setModalsVisibility({ ...modalsVisibility, [modalID]: true });
         setModalsVisibility(DEFAULT_MODAL_VISIBILITY);
     };
 
-    interface dataInterface {
-        offer: number;
-        profileID: string;
-    }
-
-    const placeBid = (data: dataInterface) => {
-        if (highestBid && data.offer <= highestBid.bid.offer) {
-            setToastMessage("Offer has to be higher than last bid");
-            clearToastMessage();
-            return;
-        }
-        if (data.profileID === auctionData?.profileID) {
-            setToastMessage("You cannot bid your own auction");
-            clearToastMessage();
-            return;
-        }
-        if (data.profileID == highestBid?.bid.profileID._id) {
-            setToastMessage("You cannot bid twice");
-            clearToastMessage();
-            return;
-        }
+    const placeBid = (data: BidOffer) => {
+        if (highestBid && data.offer <= highestBid.bid.offer)
+            return changeToastMessage("Offer has to be higher than last bid");
+        if (data.profileID === auctionData?.profileID)
+            return changeToastMessage("You cannot bid your own auction");
+        if (data.profileID == highestBid?.bid.profileID._id)
+            return changeToastMessage("You cannot bid twice");
         addBid(data, auctionID);
     };
-
-    const [visibleBids, setVisibleBids] = useState<number>(DEFAULT_VISIBLE_BIDS);
 
     const showAllBids = () => {
         if (visibleBids == 0) return setVisibleBids(DEFAULT_VISIBLE_BIDS);
@@ -163,7 +114,7 @@ export const Auction = () => {
             ethDolarExchange={ethDolarExchange}
             onLikeButtonClick={onLikeButtonClick}
             onShareButtonClick={onShareButtonClick}
-            isLiked={isLiked}
+            isAuctionLiked={isAuctionLiked}
             toolsArray={toolsArray}
             onMoreInfoButtonClick={onMoreInfoButtonClick}
             moreOptionsDropDownRef={moreOptionsDropDownRef}

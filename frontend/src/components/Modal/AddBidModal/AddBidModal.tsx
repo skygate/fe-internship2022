@@ -2,12 +2,16 @@ import style from "./addBidModal.module.scss";
 import { Button } from "components";
 import { useAppSelector } from "store/store";
 import React, { useState } from "react";
-interface dataInterface {
-    offer: number;
-    profileID: string;
+import { BidOffer } from "interfaces";
+
+enum buttonTypes {
+    button = "button",
+    submit = "submit",
+    reset = "reset",
 }
+
 interface AddBidModalProps {
-    onPlaceBid: (data: dataInterface) => void;
+    onPlaceBid: (data: BidOffer) => void;
     onClose: (e: React.MouseEvent) => void;
 }
 
@@ -30,11 +34,6 @@ export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
         onPlaceBid(data);
         onClose(e);
     };
-    enum buttonTypes {
-        button = "button",
-        submit = "submit",
-        reset = "reset",
-    }
 
     return (
         <form className={style.form}>

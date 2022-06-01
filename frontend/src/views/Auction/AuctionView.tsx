@@ -6,39 +6,22 @@ import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 import { Toast } from "components";
 import { AddBidModal } from "components/Modal";
 import { Modal } from "components";
+import { BidOffer } from "interfaces/bidOffer";
+import { ToolsItem, ModalsVisibilityState } from "./interfaces";
 
-enum ToolsOptions {
-    EditAuction = "editAuction",
-    RemoveFromSale = "removeFromSale",
-    Report = "report",
-}
-
-interface ToolsItem {
-    action: ToolsOptions;
-    icon: JSX.Element;
-}
-interface dataInterface {
-    offer: number;
-    profileID: string;
-}
-
-interface ModalsVisibilityState {
-    placeBid: boolean;
-    purchase: boolean;
-}
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
     ethDolarExchange: (eth: number) => number;
     onLikeButtonClick: () => void;
     onShareButtonClick: () => void;
     onMoreInfoButtonClick: () => void;
-    isLiked: boolean;
+    isAuctionLiked: boolean;
     toolsArray: ToolsItem[];
     moreOptionsDropDownRef: React.RefObject<HTMLDivElement>;
     toastMessage?: string;
     modalsVisibility: ModalsVisibilityState;
     changeModalsVisibility: (e: React.MouseEvent, modalID?: string) => void;
-    placeBid: (data: dataInterface) => void;
+    placeBid: (data: BidOffer) => void;
     visibleBids: number;
     showAllBids: () => void;
 }
@@ -49,7 +32,7 @@ export const AuctionView = ({
     onLikeButtonClick,
     onShareButtonClick,
     onMoreInfoButtonClick,
-    isLiked,
+    isAuctionLiked,
     toolsArray,
     moreOptionsDropDownRef,
     toastMessage,
@@ -61,7 +44,6 @@ export const AuctionView = ({
 }: AuctionViewProps) => {
     const { productID, price, amount, bidHistory } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
-
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
 
@@ -144,7 +126,7 @@ export const AuctionView = ({
                     />
                     <RoundButton
                         element={
-                            isLiked ? (
+                            isAuctionLiked ? (
                                 <AiFillHeart fontSize="24px" color="#EF466F" />
                             ) : (
                                 <AiFillHeart fontSize="24px" color="#777e91" />
