@@ -3,12 +3,7 @@ import { Button } from "components";
 import { useAppSelector } from "store/store";
 import React, { useState } from "react";
 import { BidOffer } from "interfaces";
-
-enum buttonTypes {
-    button = "button",
-    submit = "submit",
-    reset = "reset",
-}
+import { ButtonTypes } from "interfaces";
 
 interface AddBidModalProps {
     onPlaceBid: (data: BidOffer) => void;
@@ -40,7 +35,7 @@ export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
             <div className={style.buttons}>
                 <Button text="Cancel" id="cancelButton" onClick={onCancelButtonClick} />
                 <Button
-                    type={buttonTypes.submit}
+                    type={ButtonTypes.submit}
                     text="Place Bid"
                     id="bidButton"
                     blue={true}

@@ -6,5 +6,5 @@ interface DataInterface {
 }
 
 export const addBid = (data: DataInterface, auctionID: string) => {
-    axiosInstance.post(`http://localhost:8000/auctions/${auctionID}/bid`, data);
+    axiosInstance.post(`/auctions/${auctionID}/bid`, data);
 };

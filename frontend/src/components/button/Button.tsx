@@ -1,13 +1,8 @@
 import style from "./button.module.scss";
-
-enum buttonTypes {
-    button = "button",
-    submit = "submit",
-    reset = "reset",
-}
+import { ButtonTypes } from "interfaces";
 
 interface ButtonProps {
-    type?: buttonTypes;
+    type?: ButtonTypes;
     text: string;
     blue?: boolean;
     id: string;
