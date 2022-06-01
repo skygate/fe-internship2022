@@ -1,13 +1,26 @@
 import style from "./button.module.scss";
 
-interface ButtonProps {
-    text: string;
-    blue: boolean;
+enum buttonTypes {
+    button = "button",
+    submit = "submit",
+    reset = "reset",
 }
 
-export const Button = ({ text, blue }: ButtonProps) => {
+interface ButtonProps {
+    type?: buttonTypes;
+    text: string;
+    blue?: boolean;
+    id: string;
+    onClick: (e: React.MouseEvent, arg?: string) => void;
+}
+
+export const Button = ({ type, text, blue, id, onClick }: ButtonProps) => {
     return (
-        <button type="button" className={blue ? style.buttonPrimary : style.buttonSecondary}>
+        <button
+            type={type ?? "button"}
+            className={blue ? style.buttonPrimary : style.buttonSecondary}
+            onClick={(e) => onClick(e, id)}
+        >
             {text}
         </button>
     );

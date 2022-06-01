@@ -6,5 +6,5 @@ export interface Bid {
         offer: number;
         date: string;
     };
-    _id: string;
+    _id?: string;
 }

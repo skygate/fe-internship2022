@@ -17,6 +17,15 @@ interface ToolsItem {
     action: ToolsOptions;
     icon: JSX.Element;
 }
+interface dataInterface {
+    offer: number;
+    profileID: string;
+}
+
+interface ModalsVisibilityState {
+    placeBid: boolean;
+    purchase: boolean;
+}
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
     ethDolarExchange: (eth: number) => number;
@@ -27,6 +36,11 @@ interface AuctionViewProps {
     toolsArray: ToolsItem[];
     moreOptionsDropDownRef: React.RefObject<HTMLDivElement>;
     toastMessage?: string;
+    modalsVisibility: ModalsVisibilityState;
+    changeModalsVisibility: (e: React.MouseEvent, modalID?: string) => void;
+    placeBid: (data: dataInterface) => void;
+    visibleBids: number;
+    showAllBids: () => void;
 }
 
 export const AuctionView = ({
@@ -39,6 +53,11 @@ export const AuctionView = ({
     toolsArray,
     moreOptionsDropDownRef,
     toastMessage,
+    modalsVisibility,
+    changeModalsVisibility,
+    placeBid,
+    visibleBids,
+    showAllBids,
 }: AuctionViewProps) => {
     const { productID, price, amount, bidHistory } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
@@ -49,7 +68,7 @@ export const AuctionView = ({
     return !auctionData ? (
         <div className={style.auctionNotFound}>Auction not found</div>
     ) : (
-        <>
+        <div>
             <div className={style.sectionContainer}>
                 <img src={productImageUrl} alt="productImage" className={style.productImage} />
                 <div className={style.productInfo}>
@@ -64,13 +83,18 @@ export const AuctionView = ({
                     <div className={style.productDescription}>{productDescription}</div>
                     <div>
                         <h4 className={style.bids}>Bids</h4>
-                        {bidHistory?.map((item, index) => (
+                        {bidHistory?.slice(visibleBids * -1).map((item, index) => (
                             <CreatorsListItem
                                 profile={item.bid.profileID}
                                 offer={item.bid.offer}
                                 key={index}
                             />
                         ))}
+                        {!visibleBids ? (
+                            <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
+                        ) : (
+                            <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
+                        )}
                     </div>
                     <div className={style.highestBidContainer}>
                         {highestBid ? (
@@ -98,8 +122,18 @@ export const AuctionView = ({
                                 </div>
                             </div>
                         ) : null}
-                        <Button text="Purchase now" blue={true} />
-                        <Button text="Place a bid" blue={false} />
+                        <Button
+                            text="Purchase now"
+                            id="purchase"
+                            blue={true}
+                            onClick={changeModalsVisibility}
+                        />
+                        <Button
+                            text="Place a bid"
+                            id="placeBid"
+                            blue={false}
+                            onClick={changeModalsVisibility}
+                        />
                     </div>
                 </div>
                 <div className={style.roundButtons}>
@@ -133,7 +167,13 @@ export const AuctionView = ({
                 </div>
             </div>
             {toastMessage && <Toast message={toastMessage} />}
-            {/* <Modal /> */}
-        </>
+            <Modal
+                visible={modalsVisibility.placeBid}
+                title="Place bid"
+                onClose={changeModalsVisibility}
+            >
+                <AddBidModal onPlaceBid={placeBid} onClose={changeModalsVisibility} />
+            </Modal>
+        </div>
     );
 };
