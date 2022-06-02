@@ -5,7 +5,7 @@ interface ButtonProps {
     type?: ButtonTypes;
     text: string;
     blue?: boolean;
-    id: string;
+    id?: string;
     onClick: (e: React.MouseEvent, arg?: string) => void;
 }
 

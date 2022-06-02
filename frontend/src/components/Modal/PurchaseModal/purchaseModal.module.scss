@@ -1,0 +1,34 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.title {
+    text-align: center;
+    font-size: $font-size-body-2-bold;
+    color: $c-neutrals-4;
+    line-height: $line-height-body-2-bold;
+}
+.titleBold {
+    font-weight: $font-weight-700;
+    color: $c-neutrals-2;
+}
+
+.value {
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-700;
+    text-align: center;
+    padding: $spacer-24 0;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.titleQuestion {
+    text-align: center;
+    font-size: $font-size-body-2-bold;
+    color: $c-neutrals-4;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2-bold;
+}

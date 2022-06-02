@@ -4,7 +4,7 @@ import { GreenETHValue, CreatorsListItem, ProfilePicture, RoundButton, Button } 
 import { AiFillHeart } from "react-icons/ai";
 import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 import { Toast } from "components";
-import { AddBidModal } from "components/Modal";
+import { AddBidModal, PurchaseModal } from "components/Modal";
 import { Modal } from "components";
 import { BidOffer } from "interfaces/bidOffer";
 import { ToolsItem, ModalsVisibilityState } from "./interfaces";
@@ -155,6 +155,13 @@ export const AuctionView = ({
                 onClose={changeModalsVisibility}
             >
                 <AddBidModal onPlaceBid={placeBid} onClose={changeModalsVisibility} />
+            </Modal>
+            <Modal
+                visible={modalsVisibility.purchase}
+                title="Purchase item"
+                onClose={changeModalsVisibility}
+            >
+                <PurchaseModal onClose={changeModalsVisibility} auctionData={auctionData} />
             </Modal>
         </div>
     );
