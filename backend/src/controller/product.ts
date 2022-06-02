@@ -83,25 +83,27 @@ module.exports.deleteProduct = async (req: Request, res: Response) => {
     }
 };
 
-module.exports.editProduct = (req: Request, res: Response) => {
-    if (!req.body) {
+module.exports.editProduct = async (req: Request, res: Response) => {
+    try {
+        const foundProduct = await product.findById(req.body.productID);
+        req.body.productName
+            ? (foundProduct.productName = req.body.productName)
+            : (foundProduct.productName = foundProduct.productName);
+        req.body.productDescription
+            ? (foundProduct.productDescription = req.body.productDescription)
+            : (foundProduct.productDescription = foundProduct.productDescription);
+        req.body.productCategory
+            ? (foundProduct.productCategory = req.body.productCategory)
+            : (foundProduct.productCategory = foundProduct.productCategory);
+        req.body.productImageUrl
+            ? (foundProduct.productImageUrl = req.body.productImageUrl)
+            : (foundProduct.productImageUrl = foundProduct.productImageUrl);
+        req.body.ownerID
+            ? (foundProduct.ownerID = req.body.ownerID)
+            : (foundProduct.ownerID = foundProduct.ownerID);
+        foundProduct.save();
+        res.status(200).json({ errorMessage: "Succesfully changed product" });
+    } catch (error) {
         res.status(400).json({ errorMessage: "Rosources not found" });
     }
-
-    let index = productsArray.findIndex((product) => product.productId === req.body.productId);
-
-    req.body.productName
-        ? (productsArray[index].productName = req.body.productName)
-        : (productsArray[index].productName = productsArray[index].productName);
-    req.body.productDescription
-        ? (productsArray[index].productDescription = req.body.productDescription)
-        : (productsArray[index].productDescription = productsArray[index].productDescription);
-    req.body.productCategory
-        ? (productsArray[index].productCategory = req.body.productCategory)
-        : (productsArray[index].productCategory = productsArray[index].productCategory);
-    req.body.productImageUrl
-        ? (productsArray[index].productImageUrl = req.body.productImageUrl)
-        : (productsArray[index].productImageUrl = productsArray[index].productImageUrl);
-
-    res.status(200).json({ errorMessage: "Succesfully changed product" });
 };
