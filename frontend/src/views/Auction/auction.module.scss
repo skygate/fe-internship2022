@@ -24,6 +24,7 @@
     width: 50%;
     max-width: 640px;
     border-radius: $spacer-16;
+    align-self: flex-start;
 }
 
 .productInfo {
@@ -143,4 +144,47 @@
     row-gap: $spacer-16;
     position: absolute;
     right: -56px;
+}
+
+.moreOptionsDropDown {
+    opacity: 0;
+    position: absolute;
+    width: 200px;
+    top: 200px;
+    right: 0px;
+    padding: $spacer-32 $spacer-16;
+    background-color: $c-neutrals-8;
+    color: $c-neutrals-4;
+    font-size: $font-size-button-2;
+    line-height: $font-size-button-2;
+    font-weight: $font-weight-700;
+    border-radius: $spacer-12;
+    box-shadow: 0px 16px 30px rgba(31, 47, 70, 0.3);
+    transition: opacity 0.5s;
+}
+
+.moreOptionsDropDown::after {
+    content: "";
+    position: absolute;
+    top: -20px;
+    right: 0%;
+    margin-right: 25px;
+    border: solid 10px;
+    border-color: transparent transparent $c-neutrals-8 transparent;
+}
+
+.optionContainer {
+    display: flex;
+    align-items: center;
+    column-gap: $spacer-12;
+    border-bottom: 1px solid $c-neutrals-6;
+    padding: $spacer-12 0;
+}
+
+.optionContainer:hover {
+    cursor: pointer;
+}
+
+.optionContainer svg {
+    font-size: 17px;
 }

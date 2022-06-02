@@ -3,7 +3,6 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import userReducer from "./user";
 import profilesReducer from "./profile";
 import auctionsReducer from "./auctions";
-import auctionReducer from "./auction";
 import activeProfileReducer from "./activeProfile";
 import userProductsReducer from "./userProducts";
 
@@ -12,7 +11,6 @@ export const store = configureStore({
         user: userReducer,
         profiles: profilesReducer,
         auctions: auctionsReducer,
-        auction: auctionReducer,
         activeProfile: activeProfileReducer,
         userProducts: userProductsReducer,
     },

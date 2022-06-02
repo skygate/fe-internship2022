@@ -11,7 +11,7 @@ import ArrowDownSign from "../../assets/ArrowDownSign.svg";
 import profileIcon from "../../assets/profileIcon.svg";
 import plusIcon from "../../assets/plusIcon.svg";
 import { Link } from "react-router-dom";
-import Modal from "components/Modal/Modal";
+import { Modal } from "components";
 import { ProfileModal } from "components/Modal/ProfileModal/ProfileModal";
 
 export function NavbarDropDown() {

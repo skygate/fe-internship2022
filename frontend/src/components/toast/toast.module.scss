@@ -1,0 +1,21 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.toast {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 80px;
+    position: fixed;
+    right: 10px;
+    bottom: 20px;
+    border: 1px solid $c-primary-3;
+    border-radius: $spacer-16;
+    box-shadow: 0px 16px 30px rgba(31, 47, 70, 0.3);
+    color: $c-neutrals-4;
+    background-color: $c-neutrals-8;
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-600;
+}

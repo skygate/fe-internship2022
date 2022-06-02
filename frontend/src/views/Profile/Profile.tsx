@@ -6,7 +6,7 @@ import { ProfileInfoPanel } from "../../components";
 import imageIcon from "../../assets/imageIcon.svg";
 import editIcon from "../../assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
-import Modal from "components/Modal/Modal";
+import { Modal } from "components";
 import { ProfileModal } from "../../components";
 import { fetchUserProducts } from "store/userProducts";
 import { CreatedItems } from "./CreatedItems/CreatedItems";
@@ -42,7 +42,7 @@ export function Profile() {
             setAuctions(await getUsersAuctions(profileID));
             dispatch(fetchUserProducts(profileID));
         })();
-    }, [profileID, activeProfile]);
+    }, [profileID, activeProfile, user.userID]);
 
     const profileDisplay = (displayOption: string) => {
         switch (displayOption) {
@@ -66,7 +66,7 @@ export function Profile() {
             <div className={styles.contentContainer}>
                 {profile && <ProfileInfoPanel profile={profile} />}
                 <div className={styles.mainContent}>
-                    {profileID === activeProfile.activeProfile?._id ? (
+                    {profileID === activeProfile.activeProfile?._id && user.userID !== "" ? (
                         <div className={styles.settingsButtons}>
                             <button type="button" className={styles.buttonOnCoverPhoto}>
                                 Edit cover photo
