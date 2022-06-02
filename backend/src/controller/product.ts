@@ -86,21 +86,10 @@ module.exports.deleteProduct = async (req: Request, res: Response) => {
 module.exports.editProduct = async (req: Request, res: Response) => {
     try {
         const foundProduct = await product.findById(req.body.productID);
-        req.body.productName
-            ? (foundProduct.productName = req.body.productName)
-            : (foundProduct.productName = foundProduct.productName);
-        req.body.productDescription
-            ? (foundProduct.productDescription = req.body.productDescription)
-            : (foundProduct.productDescription = foundProduct.productDescription);
-        req.body.productCategory
-            ? (foundProduct.productCategory = req.body.productCategory)
-            : (foundProduct.productCategory = foundProduct.productCategory);
-        req.body.productImageUrl
-            ? (foundProduct.productImageUrl = req.body.productImageUrl)
-            : (foundProduct.productImageUrl = foundProduct.productImageUrl);
-        req.body.ownerID
-            ? (foundProduct.ownerID = req.body.ownerID)
-            : (foundProduct.ownerID = foundProduct.ownerID);
+
+        for (const key in foundProduct) {
+            foundProduct[key] = req.body[key] || foundProduct[key];
+        }
         foundProduct.save();
         res.status(200).json({ errorMessage: "Succesfully changed product" });
     } catch (error) {
