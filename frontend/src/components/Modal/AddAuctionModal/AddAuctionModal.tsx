@@ -76,7 +76,7 @@ export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionMo
                 />
             ))}
             <ToggleInputs onToggleChange={formik.handleChange} />
-            {formik.values["instantSellPrice"] && (
+            {formik.values.instantSellPrice && (
                 <RenderInput
                     item={{
                         id: "price",
