@@ -31,12 +31,6 @@ const toggleSwitchesArray: ToggleSwitches[] = [
         label: "Instant sell price",
         info: "Enter the price for which the item will be instantly sold",
     },
-    {
-        id: "unlockOncePurchased",
-        name: ToggleSwitchType.UnlockOncePurchased,
-        label: "Unlock once purchased",
-        info: "Content will be unlocked after succesfull transaction",
-    },
 ];
 export const ToggleInputs = ({ onToggleChange }: ToggleInputsProps) => {
     return (

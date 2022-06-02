@@ -159,12 +159,17 @@ export const getAllAuctions = (req: Request, res: Response) => {
 };
 
 export const addAuction = async (req: Request, res: Response) => {
-    const { profileID, productID, amount, price } = req.body;
+    const { profileID, productID, amount, price, putOnSale, instantSellPrice } = req.body;
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    // Handling authentication on every fetch
+    if (req.user === undefined) return res.status(401).json({ message: "Not authenticated" });
     const newAuction = new auctions({
         profileID,
         productID,
         amount,
         price,
+        putOnSale,
+        instantSellPrice,
         bidHistory: new Array(),
         startDate: new Date(),
         endDate: new Date(new Date().setHours(new Date().getHours() + req.body.duration)),

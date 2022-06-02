@@ -44,18 +44,27 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                                 </button>
                             </div>
                             <div className={styles.placeBidContainer}>
-                                <button type="button" className={styles.placeBidButton}>
-                                    <span>Place a bid</span>
-                                </button>
+                                {item.instantSellPrice && (
+                                    <button type="button" className={styles.placeBidButton}>
+                                        <span>Buy now!</span>
+                                    </button>
+                                )}
+                                {item.putOnSale && (
+                                    <button type="button" className={styles.placeBidButton}>
+                                        <span>Place a bid</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className={styles.titleAndPrice}>
                     <span className={styles.nftTitle}>{item.productID.productName}</span>
-                    <span className={styles.nftPrice}>
-                        <GreenETHValue ETHValue={item.price} />
-                    </span>
+                    {item.instantSellPrice && (
+                        <span className={styles.nftPrice}>
+                            <GreenETHValue ETHValue={item.price} />
+                        </span>
+                    )}
                 </div>
                 <div className={styles.avatarsAndUnits}>
                     <div className={styles.avatars}>

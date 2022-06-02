@@ -41,8 +41,9 @@ export function Profile() {
             setProfile(await getProfile(profileID));
             setAuctions(await getUsersAuctions(profileID));
             dispatch(fetchUserProducts(profileID));
+            console.log(auctions);
         })();
-    }, [profileID, activeProfile]);
+    }, [user]);
 
     const profileDisplay = (displayOption: string) => {
         switch (displayOption) {
@@ -66,7 +67,7 @@ export function Profile() {
             <div className={styles.contentContainer}>
                 {profile && <ProfileInfoPanel profile={profile} />}
                 <div className={styles.mainContent}>
-                    {profileID === activeProfile.activeProfile?._id ? (
+                    {profileID === activeProfile.activeProfile?._id && user.userID !== "" ? (
                         <div className={styles.settingsButtons}>
                             <button type="button" className={styles.buttonOnCoverPhoto}>
                                 Edit cover photo

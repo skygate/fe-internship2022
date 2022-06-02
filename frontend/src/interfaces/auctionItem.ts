@@ -6,6 +6,8 @@ export interface AuctionItem {
     _id: string;
     profileID: string;
     productID: ProductItem;
+    putOnSale: boolean;
+    instantSellPrice: boolean;
     price: number;
     amount: number;
     bidHistory: Bid[];

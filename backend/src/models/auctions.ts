@@ -5,6 +5,8 @@ const auctionsSchema = new mongoose.Schema({
     productID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Products" },
     price: Number,
     amount: Number,
+    putOnSale: Boolean,
+    instantSellPrice: Boolean,
     bidHistory: [
         {
             bid: {
