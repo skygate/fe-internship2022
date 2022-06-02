@@ -28,7 +28,6 @@ export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionMo
     };
     const handleResponse = (data: AxiosResponse, errorText: string) => {
         setResponse(data.statusText);
-        console.log(data.statusText);
         if (data.statusText !== errorText) formik.resetForm();
     };
 
@@ -57,7 +56,6 @@ export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionMo
         validationSchema,
         validateOnChange: false,
         onSubmit: async (values) => {
-            console.log(values);
             await addAuction(values).then((data) => {
                 handleResponse(data, "Adding auction failed!");
             });

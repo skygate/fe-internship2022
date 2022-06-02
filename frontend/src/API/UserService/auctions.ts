@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { AuctionItem } from "interfaces";
 import axiosInstance from "services/axios";
 
-interface item123 {
+interface NewAuction {
     userID: string;
     profileID: string;
     productID: string;
@@ -18,7 +18,7 @@ export const getUsersAuctions = async (profileID: string) => {
     return response.data;
 };
 
-export const addAuction = async (item: item123) => {
+export const addAuction = async (item: NewAuction) => {
     const response = axiosInstance.post(`/auctions`, JSON.stringify(item));
     return response;
 };
