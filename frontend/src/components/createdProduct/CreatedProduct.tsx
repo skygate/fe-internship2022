@@ -17,6 +17,13 @@ export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const user = useAppSelector((state) => state.user);
     const activeProfile = useAppSelector((state) => state.activeProfile.activeProfile?._id);
+
+    const handleDelete = async () => {
+        if (activeProfile === item.ownerID) {
+            await deleteProduct(item._id);
+            await dispatch(fetchUserProducts(profileID));
+        }
+    };
     return (
         <div className={styles.container}>
             <div className={styles.imageWrapper}>
@@ -29,12 +36,7 @@ export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
                                 <button
                                     className={styles.deleteButton}
                                     type="button"
-                                    onClick={async () => {
-                                        if (activeProfile === item.ownerID) {
-                                            await deleteProduct(item._id);
-                                            await dispatch(fetchUserProducts(profileID));
-                                        }
-                                    }}
+                                    onClick={handleDelete}
                                 >
                                     Delete
                                 </button>
