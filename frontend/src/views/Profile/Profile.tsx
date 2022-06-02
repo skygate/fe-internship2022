@@ -41,6 +41,7 @@ export function Profile() {
             setProfile(await getProfile(profileID));
             setAuctions(await getUsersAuctions(profileID));
             dispatch(fetchUserProducts(profileID));
+            console.log(auctions);
         })();
     }, [profileID, activeProfile, user.userID]);
 

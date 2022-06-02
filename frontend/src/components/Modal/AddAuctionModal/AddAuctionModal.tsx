@@ -85,8 +85,8 @@ export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionMo
                         type: "number",
                     }}
                     onInputChange={formik.handleChange}
-                    value={formik.values["Price"]}
-                    error={formik.errors["price"]}
+                    value={formik.values.Price}
+                    error={formik.errors.price}
                 />
             )}
             <button type="submit" className={styles.submitButton}>

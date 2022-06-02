@@ -44,12 +44,12 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                                 </button>
                             </div>
                             <div className={styles.placeBidContainer}>
-                                {item.instantSellPrice === true && (
+                                {item.instantSellPrice && (
                                     <button type="button" className={styles.placeBidButton}>
                                         <span>Buy now!</span>
                                     </button>
                                 )}
-                                {item.putOnSale === true && (
+                                {item.putOnSale && (
                                     <button type="button" className={styles.placeBidButton}>
                                         <span>Place a bid</span>
                                     </button>
