@@ -43,7 +43,7 @@ export function Profile() {
             dispatch(fetchUserProducts(profileID));
             console.log(auctions);
         })();
-    }, [profileID, activeProfile, user.userID]);
+    }, [user]);
 
     const profileDisplay = (displayOption: string) => {
         switch (displayOption) {
