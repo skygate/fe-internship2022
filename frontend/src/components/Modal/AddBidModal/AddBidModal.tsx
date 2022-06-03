@@ -24,7 +24,7 @@ export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
     const onBidButtonClick = () => {
         if (!profile) return;
         const data = {
-            profileID: user.userID,
+            profileID: profile._id,
             offer: Number(inputValue),
         };
         onPlaceBid(data);

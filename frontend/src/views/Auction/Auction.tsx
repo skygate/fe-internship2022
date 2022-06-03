@@ -119,7 +119,7 @@ export const Auction = () => {
             return changeToastMessage("Offer has to be higher than last bid");
         if (data.profileID === auctionData?.profileID)
             return changeToastMessage("You cannot bid your own auction");
-        if (data.profileID == highestBid?.bid.profileID.userID)
+        if (data.profileID == highestBid?.bid.profileID._id)
             return changeToastMessage("You cannot bid twice");
         addBid(data, auctionID);
     };
