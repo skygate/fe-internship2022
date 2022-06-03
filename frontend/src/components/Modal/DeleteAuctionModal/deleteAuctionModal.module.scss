@@ -1,0 +1,27 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-600;
+    color: $c-neutrals-2;
+}
+
+.buttons {
+    margin-top: $spacer-24;
+    display: flex;
+}
+
+.success {
+    color: $c-neutrals-4;
+    font-weight: $font-weight-500;
+    font-size: $font-size-body-2-bold;
+    text-align: center;
+    line-height: $spacer-32;
+}
