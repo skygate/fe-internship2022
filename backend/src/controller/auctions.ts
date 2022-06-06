@@ -200,9 +200,8 @@ export const addBid = async (req: Request, res: Response) => {
     const { profileID, offer } = req.body;
     const userID = req.user?.userID._id;
 
-    let foundAuction;
     try {
-        foundAuction = await auctions.findById(req.params.id).populate({
+        const foundAuction = await auctions.findById(req.params.id).populate({
             path: "profileID",
             select: "userID",
         });
@@ -219,10 +218,9 @@ export const addBid = async (req: Request, res: Response) => {
             foundAuction.bidHistory.length !== 0 &&
             userID ==
                 foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.profileID.userID
-        ) {
-            console.log("test");
+        )
             return res.status(400).json({ errorMessage: "You cannot bid twice" });
-        }
+
         const newBid = {
             bid: {
                 profileID,
