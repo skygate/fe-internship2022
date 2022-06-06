@@ -12,6 +12,7 @@ import { Bid } from "interfaces";
 import { addBid } from "API/UserService";
 import { BidOffer } from "interfaces";
 import { ToolsOptions, ToolsItem, ModalsVisibilityState } from "./interfaces";
+import { toast } from "react-toastify";
 
 const socket = io("http://localhost:8080");
 
@@ -44,7 +45,13 @@ export const Auction = () => {
 
     const changeModalsVisibility = (modalID?: string) => {
         setdropdownVisibility(false);
-        if (!profile) return changeToastMessage("You have to be logged in");
+        if (!profile)
+            return toast.error("You must be logged!", {
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
         if (modalID) return setModalsVisibility({ ...modalsVisibility, [modalID]: true });
         setModalsVisibility(DEFAULT_MODAL_VISIBILITY);
     };
@@ -71,13 +78,6 @@ export const Auction = () => {
             visible: "all",
         },
     ];
-
-    const changeToastMessage = (text: string) => {
-        setToastMessage(text);
-        setTimeout(() => {
-            setToastMessage(undefined);
-        }, 1000);
-    };
 
     const checkisAuctionLiked = () => {
         if (auctionData && profile)
@@ -106,7 +106,13 @@ export const Auction = () => {
     }, [dropdownVisibility]);
 
     const onLikeButtonClick = () => {
-        if (!profile) return changeToastMessage("You have to be logged in");
+        if (!profile)
+            return toast.error("You must be logged!", {
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
         addLike(profile._id, auctionID);
     };
 
@@ -114,14 +120,50 @@ export const Auction = () => {
 
     const onMoreInfoButtonClick = () => setdropdownVisibility((prev) => !prev);
 
-    const placeBid = (data: BidOffer) => {
+    const placeBid = async (data: BidOffer) => {
+        const placeBidToast = toast.loading("Placing bid...");
         if (highestBid && data.offer <= highestBid.bid.offer)
-            return changeToastMessage("Offer has to be higher than last bid");
+            return toast.update(placeBidToast, {
+                render: "Offer has to be higher than last bid",
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
         if (data.profileID === auctionData?.profileID)
-            return changeToastMessage("You cannot bid your own auction");
+            return toast.update(placeBidToast, {
+                render: "You cannot bid your own auction",
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
         if (data.profileID == highestBid?.bid.profileID._id)
-            return changeToastMessage("You cannot bid twice");
-        addBid(data, auctionID);
+            return toast.update(placeBidToast, {
+                render: "You cannot bid twice",
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
+        try {
+            await addBid(data, auctionID);
+            toast.update(placeBidToast, {
+                render: "Successfully placed bid!",
+                type: "success",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
+        } catch (err) {
+            toast.update(placeBidToast, {
+                render: "Something gone wrong!",
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
+        }
     };
 
     const showAllBids = () => {

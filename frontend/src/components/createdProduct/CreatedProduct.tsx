@@ -6,6 +6,7 @@ import { fetchUserProducts } from "store/userProducts";
 import { useState } from "react";
 import { Modal } from "components/Modal/Modal";
 import { AddAuctionModal } from "components/Modal/AddAuctionModal/AddAuctionModal";
+import { toast } from "react-toastify";
 
 export interface CreatedProductProps {
     item: Product;
@@ -20,11 +21,30 @@ export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
     const isOwner = activeProfile === item.ownerID;
 
     const handleDelete = async () => {
-        if (isOwner) {
-            await deleteProduct(item._id);
-            await dispatch(fetchUserProducts(profileID));
-        }
+        if (!isOwner) return;
+        const deleteToast = toast.loading("Deleting product...");
+        await deleteProduct(item._id)
+            .then(() =>
+                toast.update(deleteToast, {
+                    render: "Successfully deleted",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            )
+            .catch((err) =>
+                toast.update(deleteToast, {
+                    render: "Something went wrong",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            )
+            .finally(() => dispatch(fetchUserProducts(profileID)));
     };
+
     return (
         <div className={styles.container}>
             <div className={styles.imageWrapper}>
@@ -66,6 +86,7 @@ export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
                         activeProfile={activeProfile}
                         userID={user.userID}
                         product={item}
+                        isVisible={() => setIsModalVisible(false)}
                     />
                 </Modal>
             )}

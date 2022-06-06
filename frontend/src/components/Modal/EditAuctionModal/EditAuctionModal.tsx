@@ -2,6 +2,8 @@ import { RenderInput, Button } from "components";
 import { FormikValues, useFormik } from "formik";
 import { ButtonTypes } from "interfaces";
 import { editAuction } from "API/UserService";
+import { toast } from "react-toastify";
+
 const inputs = [
     {
         id: "price",
@@ -37,10 +39,29 @@ export const EditAuctionModal = ({ auctionID, onClose }: EditAuctionModalProps) 
             endDate: "",
         },
         validateOnChange: false,
-        onSubmit: () => {
+        onSubmit: async () => {
+            const editAuctionToast = toast.loading("Editing auction...");
             const data = formik.values;
-            editAuction(auctionID, data);
-            onClose();
+            await editAuction(auctionID, data)
+                .then(() => {
+                    toast.update(editAuctionToast, {
+                        render: "Successfully edited!",
+                        type: "success",
+                        isLoading: false,
+                        autoClose: 2500,
+                        closeOnClick: true,
+                    });
+                })
+                .catch((err) =>
+                    toast.update(editAuctionToast, {
+                        render: `Something gone wrong! ${err.message}`,
+                        type: "error",
+                        isLoading: false,
+                        autoClose: 2500,
+                        closeOnClick: true,
+                    })
+                )
+                .finally(() => onClose());
         },
     });
 
