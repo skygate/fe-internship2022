@@ -5,31 +5,6 @@ import passport from "passport";
 import user from "../models/users";
 import profile from "../models/profile";
 
-//FUNKCJA DO GENEROWANIA BAZY USERÓW
-
-// const createUsersArray = async () => {
-//     for (let i = 0; i < 20; i++) {
-//         const newUser = new user({
-//             username: `ExampleUser${i}`,
-//             email: `mail${i}@mail.pl`,
-//             password: await bcrypt.hash(`password${i}`, 10),
-//         });
-
-//         await newUser.save();
-//         const { _id } = await user.findOne({ username: `ExampleUser${i}` });
-//         const newProfile = new profile({
-//             userID: _id,
-//             about: "",
-//             websiteUrl: "",
-//             profilePicture: "",
-//             coverPicture: "",
-//         });
-//         await newProfile.save();
-//     }
-// };
-
-// createUsersArray();
-
 module.exports.getAllUsers = async (req: Request, res: Response) => {
     try {
         const users = await user.find();

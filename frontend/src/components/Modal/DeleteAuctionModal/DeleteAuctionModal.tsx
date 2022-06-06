@@ -17,7 +17,7 @@ export const DeleteAuctionModal = ({ onClose, auctionData }: DeleteAuctionModalP
     const profile = useAppSelector((state) => state.activeProfile.activeProfile);
     const onCancel = () => onClose();
     const onAuctionDelete = () => {
-        if (profile?._id !== auctionData.profileID) return;
+        if (profile?._id !== auctionData.profileID._id) return;
         deleteAuction(auctionData._id);
         setIsDeleted(true);
         setTimeout(() => {

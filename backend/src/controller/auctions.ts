@@ -22,6 +22,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
             const auctionsWithInfo = await auctions
                 .find()
                 .populate({
+                    path: "profileID",
+                    select: "userID",
+                })
+                .populate({
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
@@ -44,6 +48,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
         try {
             const auctionsWithInfo = await auctions
                 .find({ profileID: req.query.profileID })
+                .populate({
+                    path: "profileID",
+                    select: "userID",
+                })
                 .populate({
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
@@ -78,6 +86,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
         try {
             const auctionWithInfo = await auctions
                 .findById(req.query.id)
+                .populate({
+                    path: "profileID",
+                    select: "userID",
+                })
                 .populate({
                     path: "productID",
                     select: "ownerID productDescription productName productImageUrl productCategory",
@@ -184,47 +196,45 @@ export const addAuction = async (req: Request, res: Response) => {
 };
 
 export const addBid = async (req: Request, res: Response) => {
-    if (typeof req.body == undefined)
-        return res.status(400).json({ errorMessage: "Rosources not found" });
+    if (!req.body) return res.status(400).json({ errorMessage: "Data was not send" });
     const { profileID, offer } = req.body;
+    const userID = req.user?.userID._id;
 
     let foundAuction;
     try {
-        foundAuction = await auctions.findById(req.params.id).exec();
-    } catch (error: any) {
-        res.status(404).json({ message: error.message });
-    }
-    if (!foundAuction) return res.status(400).json({ errorMessage: "Auction not found" });
-
-    const isProfileIDEmpty = !!req.body.profileID;
-    if (!isProfileIDEmpty) return res.status(400).json({ errorMessage: "ProfileID is empty" });
-    const isBidsHistoryEmpty = foundAuction.bidHistory.length === 0;
-    const isNewOfferHighestThanPrevious = isBidsHistoryEmpty
-        ? true
-        : req.body.offer > foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.offer;
-    const isBiddingProfileDifferentThanSeller = req.body.profileID === foundAuction.profileID;
-    const isProfileBiddingHimself = isBidsHistoryEmpty
-        ? false
-        : req.body.profileID ==
-          foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.profileID;
-
-    const newBid = {
-        bid: {
-            profileID,
-            offer,
-            date: new Date(),
-        },
-    };
-
-    if (
-        (isBidsHistoryEmpty || (isNewOfferHighestThanPrevious && !isProfileBiddingHimself)) &&
-        !isBiddingProfileDifferentThanSeller
-    ) {
+        foundAuction = await auctions.findById(req.params.id).populate({
+            path: "profileID",
+            select: "userID",
+        });
+        if (!foundAuction) return res.status(400).json({ errorMessage: "Auction not found" });
+        if (!profileID) return res.status(400).json({ errorMessage: "ProfileID is empty" });
+        if (
+            foundAuction.bidHistory.length !== 0 &&
+            offer < foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.offer
+        )
+            return res.status(400).json({ errorMessage: "Offer is too low!" });
+        if (userID == foundAuction.profileID.userID)
+            return res.status(400).json({ errorMessage: "You cannot bid your own auction" });
+        if (
+            foundAuction.bidHistory.length !== 0 &&
+            userID ==
+                foundAuction.bidHistory[foundAuction.bidHistory.length - 1].bid.profileID.userID
+        ) {
+            console.log("test");
+            return res.status(400).json({ errorMessage: "You cannot bid twice" });
+        }
+        const newBid = {
+            bid: {
+                profileID,
+                offer,
+                date: new Date(),
+            },
+        };
         foundAuction.bidHistory.push(newBid);
         foundAuction.save();
-        res.status(200).json({ errorMessage: "Succesfully placed a bid" });
-    } else {
-        res.status(400).json({ errorMessage: "Something gone wrong" });
+        return res.status(200).json({ errorMessage: "Succesfully placed a bid" });
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
     }
 };
 

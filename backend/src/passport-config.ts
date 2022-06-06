@@ -4,6 +4,12 @@ import bcrypt from "bcryptjs";
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
+interface User {
+    _id: string;
+    username: string;
+    email: string;
+}
+
 const authenticateUser: VerifyFunction = async (email: string, password: string, done) => {
     const user = await users.findOne({ email: email });
     if (user == null) return done(null, false);
@@ -22,12 +28,12 @@ const authenticateUser: VerifyFunction = async (email: string, password: string,
 const strategy = new LocalStrategy({ usernameField: "email" }, authenticateUser);
 passport.use(strategy);
 
-passport.serializeUser((user: Express.User, done: (err: null, id: string) => void) => {
+passport.serializeUser((user: User, done: (err: null, id: string) => void) => {
     done(null, user._id);
 });
 
 passport.deserializeUser((id: string, done: (err: Error, user: {}) => void) => {
-    users.findOne({ _id: id }, (err: Error, user: Express.User) => {
+    users.findOne({ _id: id }, (err: Error, user: User) => {
         const userInformation = {
             userID: user._id,
         };
