@@ -6,6 +6,6 @@ interface AuctionData {
     endDate: string;
 }
 
-export const editAuction = async (auctionID: string, data: AuctionData) => {
+export const editAuction = (auctionID: string, data: AuctionData) => {
     axiosInstance.patch(`/auctions/${auctionID}`, data);
 };

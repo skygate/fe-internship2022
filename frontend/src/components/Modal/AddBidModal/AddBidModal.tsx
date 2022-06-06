@@ -13,7 +13,6 @@ interface AddBidModalProps {
 
 export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
     const profile = useAppSelector((state) => state.activeProfile.activeProfile);
-    const user = useAppSelector((state) => state.user);
     const [inputValue, setInputValue] = useState("0");
     const onCancelButtonClick = () => onClose();
     const onInputValueChange = (e: React.ChangeEvent) => {
