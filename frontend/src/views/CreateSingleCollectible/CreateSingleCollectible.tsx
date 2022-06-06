@@ -107,7 +107,7 @@ export const CreateSingleCollectible = () => {
         await addProduct(item)
             .then(() => {
                 toast.update(createProductToast, {
-                    render: "All is good",
+                    render: "Product created",
                     type: "success",
                     isLoading: false,
                     autoClose: 2500,
