@@ -4,28 +4,30 @@ import { useAppSelector } from "store/store";
 import React, { useState } from "react";
 import { BidOffer } from "interfaces";
 import { ButtonTypes } from "interfaces";
+import activeProfile from "store/activeProfile";
 
 interface AddBidModalProps {
     onPlaceBid: (data: BidOffer) => void;
-    onClose: (e: React.MouseEvent) => void;
+    onClose: () => void;
 }
 
 export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
-    const profile = useAppSelector((state) => state.profiles.profiles[0]);
+    const profile = useAppSelector((state) => state.activeProfile.activeProfile);
     const [inputValue, setInputValue] = useState("0");
-    const onCancelButtonClick = (e: React.MouseEvent) => onClose(e);
+    const onCancelButtonClick = () => onClose();
     const onInputValueChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
         setInputValue(target.value);
     };
 
-    const onBidButtonClick = (e: React.MouseEvent) => {
+    const onBidButtonClick = () => {
+        if (!profile) return;
         const data = {
             profileID: profile._id,
             offer: Number(inputValue),
         };
         onPlaceBid(data);
-        onClose(e);
+        onClose();
     };
 
     return (

@@ -1,17 +1,19 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import style from "./roundButton.module.scss";
 
 interface RoundButtonProps {
     element: JSX.Element;
-    onClick: () => void;
+    id?: string;
+    onClick: (arg?: string) => void;
     tooltip?: string;
 }
 
-export const RoundButton = ({ element, onClick, tooltip }: RoundButtonProps) => {
+export const RoundButton = ({ element, id, onClick, tooltip }: RoundButtonProps) => {
     const spanRef = useRef<HTMLSpanElement>(null);
 
     const onButtonClick = () => {
-        onClick();
+        id ? onClick(id) : onClick();
+
         if (tooltip && spanRef.current) {
             spanRef.current.style.opacity = "1";
             setTimeout(() => {

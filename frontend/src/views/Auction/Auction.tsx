@@ -19,16 +19,13 @@ const ethDolarExchange = (eth: number) => {
     const exchangeRate = 1800; //   1800 $ / eth
     return eth * exchangeRate;
 };
-
-const toolsArray: ToolsItem[] = [
-    { action: ToolsOptions.EditAuction, icon: <MdOutlineModeEdit /> },
-    { action: ToolsOptions.RemoveFromSale, icon: <AiOutlineCloseCircle /> },
-    { action: ToolsOptions.Report, icon: <AiOutlineInfoCircle /> },
-];
+const onReportSubmit = () => {};
 
 const DEFAULT_MODAL_VISIBILITY: ModalsVisibilityState = {
     placeBid: false,
     purchase: false,
+    editAuction: false,
+    deleteAuction: false,
 };
 
 const DEFAULT_VISIBLE_BIDS = 3;
@@ -44,6 +41,36 @@ export const Auction = () => {
     const [visibleBids, setVisibleBids] = useState(DEFAULT_VISIBLE_BIDS);
     const highestBid: Bid | undefined = auctionData?.bidHistory[auctionData.bidHistory.length - 1];
     const moreOptionsDropDownRef = useRef<HTMLDivElement>(null);
+
+    const changeModalsVisibility = (modalID?: string) => {
+        setdropdownVisibility(false);
+        if (!profile) return changeToastMessage("You have to be logged in");
+        if (modalID) return setModalsVisibility({ ...modalsVisibility, [modalID]: true });
+        setModalsVisibility(DEFAULT_MODAL_VISIBILITY);
+    };
+    const toolsArray: ToolsItem[] = [
+        {
+            action: ToolsOptions.EditAuction,
+            label: "Edit auction",
+            icon: <MdOutlineModeEdit />,
+            onClick: changeModalsVisibility,
+            visible: "owner",
+        },
+        {
+            action: ToolsOptions.DeleteAuction,
+            label: "Delete auction",
+            icon: <AiOutlineCloseCircle />,
+            onClick: changeModalsVisibility,
+            visible: "owner",
+        },
+        {
+            action: ToolsOptions.Report,
+            label: "Report",
+            icon: <AiOutlineInfoCircle />,
+            onClick: onReportSubmit,
+            visible: "all",
+        },
+    ];
 
     const changeToastMessage = (text: string) => {
         setToastMessage(text);
@@ -86,12 +113,6 @@ export const Auction = () => {
     const onShareButtonClick = () => navigator.clipboard.writeText(window.location.href);
 
     const onMoreInfoButtonClick = () => setdropdownVisibility((prev) => !prev);
-
-    const changeModalsVisibility = (e: React.MouseEvent, modalID?: string) => {
-        if (!profile) return changeToastMessage("You have to be logged in");
-        if (modalID) return setModalsVisibility({ ...modalsVisibility, [modalID]: true });
-        setModalsVisibility(DEFAULT_MODAL_VISIBILITY);
-    };
 
     const placeBid = (data: BidOffer) => {
         if (highestBid && data.offer <= highestBid.bid.offer)
