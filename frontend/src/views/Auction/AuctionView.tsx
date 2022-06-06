@@ -4,10 +4,11 @@ import { GreenETHValue, CreatorsListItem, ProfilePicture, RoundButton, Button } 
 import { AiFillHeart } from "react-icons/ai";
 import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 import { Toast } from "components";
-import { AddBidModal, PurchaseModal } from "components/Modal";
+import { AddBidModal, PurchaseModal, EditAuctionModal, DeleteAuctionModal } from "components/Modal";
 import { Modal } from "components";
 import { BidOffer } from "interfaces/bidOffer";
 import { ToolsItem, ModalsVisibilityState } from "./interfaces";
+import { useAppSelector } from "store/store";
 
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
@@ -20,7 +21,7 @@ interface AuctionViewProps {
     moreOptionsDropDownRef: React.RefObject<HTMLDivElement>;
     toastMessage?: string;
     modalsVisibility: ModalsVisibilityState;
-    changeModalsVisibility: (e: React.MouseEvent, modalID?: string) => void;
+    changeModalsVisibility: (modalID?: string) => void;
     placeBid: (data: BidOffer) => void;
     visibleBids: number;
     showAllBids: () => void;
@@ -46,6 +47,7 @@ export const AuctionView = ({
     const { productImageUrl, productName, productDescription } = productID || {};
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
+    const profile = useAppSelector((state) => state.activeProfile.activeProfile);
 
     return !auctionData ? (
         <div className={style.auctionNotFound}>Auction not found</div>
@@ -136,15 +138,25 @@ export const AuctionView = ({
                     />
                     <RoundButton
                         element={<FiMoreHorizontal fontSize="24px" color="#777e91" />}
+                        id="editAuction"
                         onClick={onMoreInfoButtonClick}
                     />
                     <div ref={moreOptionsDropDownRef} className={style.moreOptionsDropDown}>
-                        {toolsArray.map((item) => (
-                            <div key={item.action} className={style.optionContainer}>
-                                {item.icon}
-                                <p>{item.action}</p>
-                            </div>
-                        ))}
+                        {toolsArray
+                            .filter((item) => {
+                                if (profile?._id == auctionData.profileID) return item;
+                                return item.visible === "all";
+                            })
+                            .map((item) => (
+                                <div
+                                    key={item.action}
+                                    className={style.optionContainer}
+                                    onClick={() => item.onClick(item.action)}
+                                >
+                                    {item.icon}
+                                    <p>{item.label}</p>
+                                </div>
+                            ))}
                     </div>
                 </div>
             </div>
@@ -162,6 +174,20 @@ export const AuctionView = ({
                 onClose={changeModalsVisibility}
             >
                 <PurchaseModal onClose={changeModalsVisibility} auctionData={auctionData} />
+            </Modal>
+            <Modal
+                visible={modalsVisibility.editAuction}
+                title="Edit item"
+                onClose={changeModalsVisibility}
+            >
+                <EditAuctionModal auctionID={auctionData._id} onClose={changeModalsVisibility} />
+            </Modal>
+            <Modal
+                visible={modalsVisibility.deleteAuction}
+                title="Delete item"
+                onClose={changeModalsVisibility}
+            >
+                <DeleteAuctionModal onClose={changeModalsVisibility} auctionData={auctionData} />
             </Modal>
         </div>
     );
