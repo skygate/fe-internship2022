@@ -21,12 +21,12 @@ const auctionsSchema = new mongoose.Schema({
                 },
                 bidID: String,
                 offer: Number,
-                date: Date,
+                date: String,
             },
         },
     ],
-    startDate: Date,
-    endDate: Date,
+    startDate: String,
+    endDate: String,
     likes: [
         {
             like: {

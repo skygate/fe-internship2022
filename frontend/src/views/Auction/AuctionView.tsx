@@ -48,7 +48,7 @@ export const AuctionView = ({
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
     const profile = useAppSelector((state) => state.activeProfile.activeProfile);
-
+    console.log(auctionData);
     return !auctionData ? (
         <div className={style.auctionNotFound}>Auction not found</div>
     ) : (
@@ -57,6 +57,10 @@ export const AuctionView = ({
                 <img src={productImageUrl} alt="productImage" className={style.productImage} />
                 <div className={style.productInfo}>
                     <h3 className={style.productName}>{productName}</h3>
+                    <div className={style.productDescription}>{productDescription}</div>
+                    <div>
+                        <CreatorsListItem profile={auctionData.profileID} />
+                    </div>
                     <div className={style.priceInfo}>
                         <GreenETHValue ETHValue={auctionData.price} />
                         <p className={style.dolarValue}>
@@ -64,9 +68,15 @@ export const AuctionView = ({
                         </p>
                         <p className={style.stockValue}>{amount} in stock</p>
                     </div>
-                    <div className={style.productDescription}>{productDescription}</div>
+                    <div className={style.auctionEndDate}>
+                        <p>Koniec aukcji:</p>
+                        <p>{auctionData.endDate}</p>
+                    </div>
                     <div>
-                        <h4 className={style.bids}>Bids</h4>
+                        {bidHistory && bidHistory.length > 0 && (
+                            <h4 className={style.bids}>Bids</h4>
+                        )}
+
                         {bidHistory?.slice(visibleBids * -1).map((item, index) => (
                             <CreatorsListItem
                                 profile={item.bid.profileID}
@@ -74,13 +84,21 @@ export const AuctionView = ({
                                 key={index}
                             />
                         ))}
-                        {!visibleBids ? (
-                            <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
-                        ) : (
-                            <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
-                        )}
+                        {bidHistory &&
+                            bidHistory?.length > 2 &&
+                            (!visibleBids ? (
+                                <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
+                            ) : (
+                                <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
+                            ))}
                     </div>
-                    <div className={style.highestBidContainer}>
+                    <div
+                        className={
+                            bidHistory && bidHistory.length > 0
+                                ? style.highestBidContainer
+                                : style.highestBidContainerEmpty
+                        }
+                    >
                         {highestBid ? (
                             <div className={style.bidInfo}>
                                 <ProfilePicture
@@ -106,18 +124,23 @@ export const AuctionView = ({
                                 </div>
                             </div>
                         ) : null}
-                        <Button
-                            text="Purchase now"
-                            id="purchase"
-                            blue={true}
-                            onClick={changeModalsVisibility}
-                        />
-                        <Button
-                            text="Place a bid"
-                            id="placeBid"
-                            blue={false}
-                            onClick={changeModalsVisibility}
-                        />
+
+                        {auctionData.instantSellPrice && (
+                            <Button
+                                text="Purchase now"
+                                id="purchase"
+                                blue={true}
+                                onClick={changeModalsVisibility}
+                            />
+                        )}
+                        {auctionData.putOnSale && (
+                            <Button
+                                text="Place a bid"
+                                id="placeBid"
+                                blue={false}
+                                onClick={changeModalsVisibility}
+                            />
+                        )}
                     </div>
                 </div>
                 <div className={style.roundButtons}>
@@ -180,7 +203,7 @@ export const AuctionView = ({
                 title="Edit item"
                 onClose={changeModalsVisibility}
             >
-                <EditAuctionModal auctionID={auctionData._id} onClose={changeModalsVisibility} />
+                <EditAuctionModal auction={auctionData} onClose={changeModalsVisibility} />
             </Modal>
             <Modal
                 visible={modalsVisibility.deleteAuction}

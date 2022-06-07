@@ -88,7 +88,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .findById(req.query.id)
                 .populate({
                     path: "profileID",
-                    select: "userID",
+                    select: "userID profileName profilePicture",
                 })
                 .populate({
                     path: "productID",
@@ -237,36 +237,18 @@ export const addBid = async (req: Request, res: Response) => {
 };
 
 export const editAuction = async (req: Request, res: Response) => {
-    if (typeof req.body == undefined) {
-        res.status(400).json({ errorMessage: "Rosources not found" });
-    } else {
-        let foundAuction;
-        try {
-            foundAuction = await auctions.findById(req.params.id).exec();
-        } catch (error: any) {
-            res.status(404).json({ message: error.message });
-        }
-
-        if (!!foundAuction) {
-            req.body.price
-                ? (foundAuction.price = req.body.price)
-                : (foundAuction.price = foundAuction.price);
-            req.body.amount
-                ? (foundAuction.amount = req.body.amount)
-                : (foundAuction.amount = foundAuction.amount);
-            req.body.longerDuration
-                ? (foundAuction.endDate = new Date(
-                      new Date().setHours(foundAuction.endDate.getHours() + req.body.longerDuration)
-                  ))
-                : (foundAuction.endDate = foundAuction.endDate);
-            req.body.likes
-                ? (foundAuction.likes = req.body.likes)
-                : (foundAuction.likes = foundAuction.likes);
-            foundAuction.save();
-            res.status(200).json({ errorMessage: "Auction was updated" });
-        } else {
-            res.status(400).json({ errorMessage: "Rosources not found" });
-        }
+    if (!req.body) return res.status(400).json({ errorMessage: "Rosources not found" });
+    const { price, amount, endDate } = req.body;
+    console.log(req.body.endDate);
+    try {
+        const foundAuction = await auctions.findById(req.params.id);
+        if (price) foundAuction.price = price;
+        if (amount) foundAuction.amount = amount;
+        if (endDate) foundAuction.endDate = new Date(endDate);
+        foundAuction.save();
+        res.status(200).json({ errorMessage: "Auction was updated" });
+    } catch (error: any) {
+        res.status(404).json({ message: error.message });
     }
 };
 

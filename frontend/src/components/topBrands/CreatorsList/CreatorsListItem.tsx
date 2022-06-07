@@ -20,11 +20,6 @@ export const CreatorsListItem = ({ profile, offer }: CreatorsListItemProps) => {
                         <span className={styles.ETHText}>ETH</span>
                     </span>
                 )}
-
-                <span className={styles.creatorNFTSValue}>
-                    {profile.totalEthValue ? profile.totalEthValue : null}
-                    <span className={styles.ETHText}>ETH</span>
-                </span>
             </div>
         </div>
     );

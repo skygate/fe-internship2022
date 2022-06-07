@@ -45,7 +45,7 @@
     display: flex;
     column-gap: $spacer-12;
     align-items: center;
-    margin-bottom: $spacer-48;
+    margin-bottom: $spacer-16;
 }
 
 .dolarValue {
@@ -65,6 +65,15 @@
     color: $c-neutrals-4;
 }
 
+.auctionEndDate {
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    color: $c-neutrals-4;
+    text-align: left;
+    margin-bottom: $spacer-24;
+}
+
 .productDescription {
     margin-bottom: $spacer-48;
     text-align: left;
@@ -80,6 +89,15 @@
     font-weight: $font-weight-700;
     line-height: $line-height-headline-4;
     color: $c-neutrals-4;
+}
+
+.highestBidContainerEmpty {
+    padding: $spacer-24;
+    margin-top: $spacer-64;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .highestBidContainer {
