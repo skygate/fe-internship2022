@@ -5,6 +5,6 @@ interface DataInterface {
     profileID: string;
 }
 
-export const addBid = (data: DataInterface, auctionID: string) => {
+export const addBid = async (data: DataInterface, auctionID: string) => {
     axiosInstance.post(`/auctions/${auctionID}/bid`, data);
 };

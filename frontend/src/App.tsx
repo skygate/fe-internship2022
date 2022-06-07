@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from "store/store";
 import { getProfilesForLoggedUser } from "store/profile";
 import { getAuctions } from "store/auctions";
 import { changeActiveProfile } from "store/activeProfile";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -31,6 +33,7 @@ function App() {
     return (
         <div className="App">
             <Router />
+            <ToastContainer />
         </div>
     );
 }

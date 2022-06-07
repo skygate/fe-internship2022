@@ -11,7 +11,7 @@ interface NewAuction {
     duration: number;
 }
 
-export const getUsersAuctions = async (profileID: string) => {
+export const getUsersAuctions = async (profileID: string): Promise<AuctionItem[]> => {
     const response: AxiosResponse<AuctionItem[]> = await axiosInstance.get(
         `/auctions/?full=true&profileID=${profileID}`
     );
@@ -19,6 +19,6 @@ export const getUsersAuctions = async (profileID: string) => {
 };
 
 export const addAuction = async (item: NewAuction) => {
-    const response = axiosInstance.post(`/auctions`, JSON.stringify(item));
+    const response = await axiosInstance.post(`/auctions`, JSON.stringify(item));
     return response;
 };

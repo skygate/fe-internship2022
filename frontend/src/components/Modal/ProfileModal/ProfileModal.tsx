@@ -11,7 +11,12 @@ import { inputsArray } from "./InputsArray";
 import { ProfileModalProps } from "interfaces";
 import { AxiosResponse } from "axios";
 
-export const ProfileModal = ({ userID, isNew, activeProfile }: ProfileModalProps) => {
+export const ProfileModal = ({
+    userID,
+    isNew,
+    activeProfile,
+    changeVisiblity,
+}: ProfileModalProps) => {
     const dispatch = useAppDispatch();
 
     const handleResponse = (data: AxiosResponse, errorText: string) => {
@@ -76,6 +81,7 @@ export const ProfileModal = ({ userID, isNew, activeProfile }: ProfileModalProps
                       handleResponse(data, "Editing profile failed!");
                   });
             hideMessage();
+            changeVisiblity();
         },
     });
 

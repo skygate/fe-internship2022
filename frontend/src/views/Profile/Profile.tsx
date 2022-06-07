@@ -41,9 +41,8 @@ export function Profile() {
             setProfile(await getProfile(profileID));
             setAuctions(await getUsersAuctions(profileID));
             dispatch(fetchUserProducts(profileID));
-            console.log(auctions);
         })();
-    }, [user]);
+    }, [activeProfile, usersProducts]);
 
     const profileDisplay = (displayOption: string) => {
         switch (displayOption) {
@@ -134,6 +133,7 @@ export function Profile() {
                         isNew={false}
                         userID={user.userID}
                         activeProfile={activeProfile.activeProfile}
+                        changeVisiblity={() => setIsModalVisible(false)}
                     />
                 </Modal>
             )}

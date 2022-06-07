@@ -6,6 +6,7 @@ import { uploadFile } from "API/UserService/uploadFile";
 import { addProduct } from "API/UserService/addProduct";
 import { InputFileChange } from "interfaces/file";
 import { useAppSelector } from "store/store";
+import { toast, useToast } from "react-toastify";
 
 const defaultItem: Product = {
     _id: "",
@@ -78,23 +79,51 @@ export const CreateSingleCollectible = () => {
         if (formState.ownerID === "") return false;
         if (formState.productName === "") return false;
         if (formState.productDescription === "") return false;
-        if (formState.productImageUrl === "") return false;
         if (formState.productCategory === "") return false;
-        if (formState.productFormData === undefined) return false;
         return true;
     };
 
     const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const isFormFilled = checkIfFilledForm(formState);
-        if (isFormFilled) {
-            const uploadImage = await uploadFile(file);
-            setItem({ ...item, productImageUrl: uploadImage.data.message });
-            item.productImageUrl = uploadImage.data.message;
-            addProduct(item);
-            onClickClear();
+        if (!isFormFilled) {
+            return toast.error("Form is not filled correctly...", { autoClose: 2500 });
         }
-        if (!isFormFilled) alert("Uploading failed!");
+        if (formState.productFormData === undefined || formState.productImageUrl === "")
+            return toast.error("Something is wrong with image...", { autoClose: 2500 });
+        const createProductToast = toast.loading("Creating product...");
+        const uploadImage = await uploadFile(file).catch(() =>
+            toast.update(createProductToast, {
+                render: "Something is wrong with image!",
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            })
+        );
+        if (!uploadImage) return null;
+        setItem({ ...item, productImageUrl: uploadImage.data.message });
+        item.productImageUrl = uploadImage.data.message;
+        await addProduct(item)
+            .then(() => {
+                toast.update(createProductToast, {
+                    render: "Product created",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                });
+                onClickClear();
+            })
+            .catch(() =>
+                toast.update(createProductToast, {
+                    render: "Something went wrong",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            );
     };
 
     return (

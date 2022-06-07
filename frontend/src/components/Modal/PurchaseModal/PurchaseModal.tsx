@@ -6,6 +6,7 @@ import { ButtonTypes } from "interfaces";
 import { Navigate } from "react-router-dom";
 import { editProduct, deleteAuction } from "API/UserService";
 import { AuctionItem } from "interfaces/index";
+import { toast } from "react-toastify";
 
 interface AddBidModalProps {
     onClose: () => void;
@@ -17,14 +18,43 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
     const [shouldRedirect, setShouldRedirect] = useState(false);
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
 
-    const onPurchase = () => {
+    const onPurchase = async () => {
+        const purchasingToast = toast.loading("Purchasing...");
         setIsPurchased(true);
         const soldProduct = {
             productID: auctionData.productID._id,
             ownerID: profile._id,
         };
-        editProduct(soldProduct);
-        deleteAuction(auctionData._id);
+        await editProduct(soldProduct)
+            .then()
+            .catch(() =>
+                toast.update(purchasingToast, {
+                    render: "Something gone wrong!",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            );
+        await deleteAuction(auctionData._id)
+            .then(() =>
+                toast.update(purchasingToast, {
+                    render: "Successfully purchased!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            )
+            .catch(() =>
+                toast.update(purchasingToast, {
+                    render: "Something gone wrong!",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            );
         setTimeout(() => {
             setShouldRedirect(true);
         }, 2000);

@@ -31,6 +31,7 @@ export interface ProfileModalProps {
     userID: string;
     isNew: boolean;
     activeProfile?: ProfileInterface | null;
+    changeVisiblity: () => void;
 }
 
 export enum ProfileInputType {

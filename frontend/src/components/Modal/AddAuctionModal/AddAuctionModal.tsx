@@ -8,14 +8,31 @@ import { AxiosResponse } from "axios";
 import { Product } from "interfaces/product";
 import { addAuction } from "API/UserService/auctions";
 import { ToggleInputs } from "components/toggleInputs/ToggleInputs";
+import { toast } from "react-toastify";
+import { useAppDispatch } from "store/store";
+import { fetchUserProducts } from "store/userProducts";
 
 interface AddAuctionModalProps {
     userID: string;
     activeProfile: string;
     product: Product;
+    isVisible: () => void;
 }
 
-export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionModalProps) => {
+export const AddAuctionModal = ({
+    userID,
+    activeProfile,
+    product,
+    isVisible,
+}: AddAuctionModalProps) => {
+    const [response, setResponse] = useState<string | null>(null);
+    const hideMessage = () => {
+        setTimeout(() => {
+            setResponse(null);
+        }, 2000);
+    };
+    const dispatch = useAppDispatch();
+
     const init = {
         userID: userID,
         profileID: activeProfile,
@@ -26,9 +43,30 @@ export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionMo
         putOnSale: false,
         instantSellPrice: false,
     };
-    const handleResponse = (data: AxiosResponse, errorText: string) => {
-        setResponse(data.statusText);
-        if (data.statusText !== errorText) formik.resetForm();
+
+    const AddAuctionWithToast = async (values: any) => {
+        const id = toast.loading("Starting new auction...");
+        try {
+            await addAuction(values);
+            formik.resetForm();
+            isVisible();
+            toast.update(id, {
+                render: "New auction started!",
+                type: "success",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
+            dispatch(fetchUserProducts(activeProfile));
+        } catch {
+            toast.update(id, {
+                render: "Something went wrong",
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
+        }
     };
 
     const validationSchema = Yup.object().shape({
@@ -44,21 +82,12 @@ export const AddAuctionModal = ({ userID, activeProfile, product }: AddAuctionMo
         instantPrice: Yup.boolean(),
     });
 
-    const [response, setResponse] = useState<string | null>(null);
-    const hideMessage = () => {
-        setTimeout(() => {
-            setResponse(null);
-        }, 2000);
-    };
-
     const formik: FormikValues = useFormik({
         initialValues: init,
         validationSchema,
         validateOnChange: false,
-        onSubmit: async (values) => {
-            await addAuction(values).then((data) => {
-                handleResponse(data, "Adding auction failed!");
-            });
+        onSubmit: (values) => {
+            AddAuctionWithToast(values);
             setResponse(null);
             hideMessage();
         },

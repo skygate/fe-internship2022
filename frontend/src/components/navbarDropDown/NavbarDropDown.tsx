@@ -119,7 +119,11 @@ export function NavbarDropDown() {
                     }}
                     title="Create new profile"
                 >
-                    <ProfileModal isNew={true} userID={user.userID} />
+                    <ProfileModal
+                        isNew={true}
+                        userID={user.userID}
+                        changeVisiblity={() => setIsModalVisible(false)}
+                    />
                 </Modal>
             )}
         </div>

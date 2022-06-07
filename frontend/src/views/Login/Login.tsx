@@ -5,6 +5,7 @@ import { LoginInputType } from "interfaces/index";
 import { loginUser, logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
 import { setUser } from "store/user";
+import { toast } from "react-toastify";
 
 interface FormState {
     email: string;
@@ -49,17 +50,25 @@ export const Login = () => {
     };
 
     const onFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        loginUser(formState).then((data) => {
-            if (data.data.hasOwnProperty("message")) {
-                setErrorMessage(data.data.message);
+        try {
+            e.preventDefault();
+            await loginUser(formState).then((data) => {
+                if (data.data.hasOwnProperty("message")) {
+                    setErrorMessage(data.data.message);
+                    setFormState(DEFAULT_STATE);
+                    throw new Error();
+                }
                 setFormState(DEFAULT_STATE);
-                return;
-            }
-            setFormState(DEFAULT_STATE);
-            dispatch(setUser());
-        });
+                dispatch(setUser());
+            });
+        } catch (err) {
+            return toast.error("Something gone wrong", {
+                type: "error",
+                isLoading: false,
+                autoClose: 2500,
+                closeOnClick: true,
+            });
+        }
     };
 
     const onLogoutUser = async (e: React.MouseEvent) => {

@@ -77,7 +77,7 @@ export default productsArray;
 module.exports.deleteProduct = async (req: Request, res: Response) => {
     try {
         await product.findByIdAndDelete(req.params.id).exec();
-        res.status(200).json({ message: "Product deleted" });
+        res.status(204).json({ message: "Product deleted" });
     } catch (error: any) {
         res.status(404).json({ message: error.message });
     }
