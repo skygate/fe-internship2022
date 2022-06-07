@@ -20,7 +20,7 @@ export const DeleteAuctionModal = ({ onClose, auctionData }: DeleteAuctionModalP
     const onAuctionDelete = async () => {
         const deleteAuctionToast = toast.loading("Editing auction...");
         try {
-            if (profile?._id !== auctionData.profileID) throw new Error();
+            if (profile?._id !== auctionData.profileID._id) throw new Error();
             await deleteAuction(auctionData._id);
             setIsDeleted(true);
             setTimeout(() => {

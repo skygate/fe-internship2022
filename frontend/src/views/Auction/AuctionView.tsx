@@ -144,7 +144,7 @@ export const AuctionView = ({
                     <div ref={moreOptionsDropDownRef} className={style.moreOptionsDropDown}>
                         {toolsArray
                             .filter((item) => {
-                                if (profile?._id == auctionData.profileID) return item;
+                                if (profile?._id == auctionData.profileID._id) return item;
                                 return item.visible === "all";
                             })
                             .map((item) => (

@@ -4,7 +4,10 @@ import { ProductItem } from "interfaces";
 
 export interface AuctionItem {
     _id: string;
-    profileID: string;
+    profileID: {
+        _id: string;
+        userID: string;
+    };
     productID: ProductItem;
     putOnSale: boolean;
     instantSellPrice: boolean;

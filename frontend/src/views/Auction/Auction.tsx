@@ -33,6 +33,7 @@ const DEFAULT_VISIBLE_BIDS = 3;
 
 export const Auction = () => {
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
+    const user = useAppSelector((state) => state.user);
     const auctionID = useParams().auctionID || "";
     const [auctionData, setAuctionData] = useState<AuctionItem | null>(null);
     const [isAuctionLiked, setisAuctionLiked] = useState(false);
@@ -130,7 +131,7 @@ export const Auction = () => {
                 autoClose: 2500,
                 closeOnClick: true,
             });
-        if (data.profileID === auctionData?.profileID)
+        if (user.userID === auctionData?.profileID.userID)
             return toast.update(placeBidToast, {
                 render: "You cannot bid your own auction",
                 type: "error",
