@@ -133,7 +133,7 @@ export function Profile() {
                         isNew={false}
                         userID={user.userID}
                         activeProfile={activeProfile.activeProfile}
-                        isVisible={() => setIsModalVisible(false)}
+                        changeVisiblity={() => setIsModalVisible(false)}
                     />
                 </Modal>
             )}

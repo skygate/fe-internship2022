@@ -122,7 +122,7 @@ export function NavbarDropDown() {
                     <ProfileModal
                         isNew={true}
                         userID={user.userID}
-                        isVisible={() => setIsModalVisible(false)}
+                        changeVisiblity={() => setIsModalVisible(false)}
                     />
                 </Modal>
             )}
