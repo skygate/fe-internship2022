@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const auctionsSchema = new mongoose.Schema({
-    profileID: String,
+    profileID: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Profiles",
+    },
     productID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Products" },
     price: Number,
     amount: Number,
