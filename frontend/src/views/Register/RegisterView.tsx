@@ -27,7 +27,7 @@ export const RegisterView = ({ inputsArray, formik, response }: RegisterViewProp
                     <button type="submit" className={styles.submitButton}>
                         Register
                     </button>
-                    {response ? <span className={styles.response}>{response}</span> : null}
+                    {response && <span className={styles.response}>{response}</span>}
                 </form>
             </div>
         </div>
