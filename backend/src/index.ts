@@ -1,8 +1,6 @@
 import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import uniqid from "uniqid";
-import { ChangeStreamEvents } from "mongodb";
 const passport = require("passport");
 const session = require("express-session");
 dotenv.config();

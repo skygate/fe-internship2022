@@ -146,7 +146,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 })
                 .exec((err, auctions) => {
                     const filteredAuctions = auctions.filter((item) => {
-                        return item.productID.ownerID;
+                        return item.productID;
                     });
                     !filteredAuctions
                         ? res.status(404).json({ message: "error" })
