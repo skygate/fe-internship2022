@@ -7,6 +7,5 @@ interface AuctionData {
 }
 
 export const editAuction = (auctionID: string, data: AuctionData) => {
-    console.log("helper", data.endDate);
     return axiosInstance.patch(`/auctions/${auctionID}`, data);
 };

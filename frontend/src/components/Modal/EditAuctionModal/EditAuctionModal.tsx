@@ -46,8 +46,6 @@ export const EditAuctionModal = ({ auction, onClose }: EditAuctionModalProps) =>
         onSubmit: async () => {
             const editAuctionToast = toast.loading("Editing auction...");
             const data = { ...formik.values, endDate: new Date(formik.values.endDate) };
-            console.log("formik", formik.values.endDate);
-            console.log("send", data.endDate);
             await editAuction(auction._id, data)
                 .then(() => {
                     toast.update(editAuctionToast, {

@@ -239,7 +239,6 @@ export const addBid = async (req: Request, res: Response) => {
 export const editAuction = async (req: Request, res: Response) => {
     if (!req.body) return res.status(400).json({ errorMessage: "Rosources not found" });
     const { price, amount, endDate } = req.body;
-    console.log(req.body.endDate);
     try {
         const foundAuction = await auctions.findById(req.params.id);
         if (price) foundAuction.price = price;
