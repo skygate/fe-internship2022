@@ -40,4 +40,13 @@ describe("store/auctions.ts", () => {
         expect(mockFetchFilteredAndSortedAuctions).toHaveBeenCalledWith(true);
         expect(getState()).toStrictEqual({ status: "success", auctions: [...fakeAuctions] });
     });
+
+    it("shouls set an empty array when fetch fails", async () => {
+        mockFetchFilteredAndSortedAuctions.mockImplementationOnce(() =>
+            Promise.reject("some error")
+        );
+        await store.dispatch(getAuctions(true));
+        expect(mockFetchFilteredAndSortedAuctions).toHaveBeenCalled();
+        expect(getState()).toStrictEqual({ status: "failed", auctions: [] });
+    });
 });
