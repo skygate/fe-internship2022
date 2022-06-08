@@ -9,6 +9,7 @@ import { Modal } from "components";
 import { BidOffer } from "interfaces/bidOffer";
 import { ToolsItem, ModalsVisibilityState } from "./interfaces";
 import { useAppSelector } from "store/store";
+import { format } from "date-fns";
 
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
@@ -43,12 +44,12 @@ export const AuctionView = ({
     visibleBids,
     showAllBids,
 }: AuctionViewProps) => {
-    const { productID, price, amount, bidHistory } = auctionData || {};
+    const { productID, amount, bidHistory, instantSellPrice, price, profileID } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
     const profile = useAppSelector((state) => state.activeProfile.activeProfile);
-    console.log(auctionData);
+
     return !auctionData ? (
         <div className={style.auctionNotFound}>Auction not found</div>
     ) : (
@@ -62,15 +63,15 @@ export const AuctionView = ({
                         <CreatorsListItem profile={auctionData.profileID} />
                     </div>
                     <div className={style.priceInfo}>
-                        <GreenETHValue ETHValue={auctionData.price} />
-                        <p className={style.dolarValue}>
-                            ${price ? ethDolarExchange(price) : null}
-                        </p>
+                        <p className={style.instantSellPrice}>Cena kup teraz:</p>
+                        {instantSellPrice && (
+                            <p className={style.dolarValue}>${price?.toLocaleString("en-US")}</p>
+                        )}
                         <p className={style.stockValue}>{amount} in stock</p>
                     </div>
                     <div className={style.auctionEndDate}>
                         <p>Koniec aukcji:</p>
-                        <p>{auctionData.endDate}</p>
+                        <p>{format(new Date(auctionData.endDate), "dd/MM/yyy HH:mm")}</p>
                     </div>
                     <div>
                         {bidHistory && bidHistory.length > 0 && (

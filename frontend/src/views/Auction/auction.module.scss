@@ -48,14 +48,21 @@
     margin-bottom: $spacer-16;
 }
 
-.dolarValue {
-    font-size: $font-size-button-2;
+.instantSellPrice {
+    font-size: $font-size-button-1;
     font-weight: $font-weight-700;
     line-height: $line-height-button-1;
     color: $c-neutrals-4;
-    border: 2px solid $c-neutrals-6;
+}
+
+.dolarValue {
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-1;
+    color: $c-neutrals-4;
+    border: 1px solid $c-neutrals-5;
     border-radius: 3px;
-    padding: $spacer-2;
+    padding: $spacer-4;
 }
 
 .stockValue {
@@ -67,7 +74,7 @@
 
 .auctionEndDate {
     font-size: $font-size-button-2;
-    font-weight: $font-weight-700;
+    font-weight: $font-weight-500;
     line-height: $line-height-button-1;
     color: $c-neutrals-4;
     text-align: left;

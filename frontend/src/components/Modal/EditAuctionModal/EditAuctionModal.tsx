@@ -4,7 +4,7 @@ import { ButtonTypes } from "interfaces";
 import { editAuction } from "API/UserService";
 import { toast } from "react-toastify";
 import { AuctionItem } from "interfaces";
-import { format, compareAsc } from "date-fns";
+import { format } from "date-fns";
 
 const inputs = [
     {
