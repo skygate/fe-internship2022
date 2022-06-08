@@ -17,8 +17,14 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
     const [isPurchased, setIsPurchased] = useState(false);
     const [shouldRedirect, setShouldRedirect] = useState(false);
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
+    const user = useAppSelector((state) => state.user);
 
     const onPurchase = async () => {
+        if (user.userID === auctionData.profileID.userID) {
+            toast.error("You can't buy from yourself");
+            onClose();
+            return;
+        }
         const purchasingToast = toast.loading("Purchasing...");
         setIsPurchased(true);
         const soldProduct = {
