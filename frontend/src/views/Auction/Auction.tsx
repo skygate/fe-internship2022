@@ -1,10 +1,9 @@
 import { AuctionView } from "./AuctionView";
 import { useAppSelector } from "store/store";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuctionItem } from "interfaces";
 import { useParams } from "react-router-dom";
 import { getAuction } from "API/UserService";
-import io from "socket.io-client";
 import { MdOutlineModeEdit } from "react-icons/md";
 import { AiOutlineCloseCircle, AiOutlineInfoCircle } from "react-icons/ai";
 import { addLike } from "API/UserService";
@@ -13,8 +12,7 @@ import { addBid } from "API/UserService";
 import { BidOffer } from "interfaces";
 import { ToolsOptions, ToolsItem, ModalsVisibilityState } from "./interfaces";
 import { toast } from "react-toastify";
-
-const socket = io("http://localhost:8080");
+import { SocketContext } from "App";
 
 const ethDolarExchange = (eth: number) => {
     const exchangeRate = 1800; //   1800 $ / eth
@@ -39,10 +37,10 @@ export const Auction = () => {
     const [isAuctionLiked, setisAuctionLiked] = useState(false);
     const [dropdownVisibility, setdropdownVisibility] = useState(false);
     const [modalsVisibility, setModalsVisibility] = useState(DEFAULT_MODAL_VISIBILITY);
-    const [toastMessage, setToastMessage] = useState<string>();
     const [visibleBids, setVisibleBids] = useState(DEFAULT_VISIBLE_BIDS);
     const highestBid: Bid | undefined = auctionData?.bidHistory[auctionData.bidHistory.length - 1];
     const moreOptionsDropDownRef = useRef<HTMLDivElement>(null);
+    const socket = useContext(SocketContext);
 
     const changeModalsVisibility = (modalID?: string) => {
         setdropdownVisibility(false);
@@ -186,7 +184,6 @@ export const Auction = () => {
             toolsArray={toolsArray}
             onMoreInfoButtonClick={onMoreInfoButtonClick}
             moreOptionsDropDownRef={moreOptionsDropDownRef}
-            toastMessage={toastMessage}
             modalsVisibility={modalsVisibility}
             changeModalsVisibility={changeModalsVisibility}
             placeBid={placeBid}

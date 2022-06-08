@@ -113,7 +113,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
 
     const filterAndSortAuctions = async (params: any) => {
         const sortBy = params.sort ?? "startDate";
-        const asc = params.asc ?? "-1";
+        const asc = params.ascending ?? "-1";
         const category = !params.category || params.category === "all" ? /.*/g : params.category;
         const time = params.time;
         const date = new Date();
@@ -128,9 +128,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
 
         try {
             auctions
-                .find({ startDate: { $gt: minDate } })
-                .find({ price: { $gt: priceMin } })
-                .find({ price: { $lt: priceMax } })
+                .find()
+                .find({ startDate: { $gte: minDate } })
+                .find({ price: { $gte: priceMin } })
+                .find({ price: { $lte: priceMax } })
                 .sort({ [sortBy]: [asc] })
                 .populate({
                     path: "bidHistory.bid.profileID",
@@ -144,9 +145,8 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
                 .exec((err, auctions) => {
-                    console.log(auctions);
                     const filteredAuctions = auctions.filter((item) => {
-                        return item.productID;
+                        return item.productID.ownerID;
                     });
                     !filteredAuctions
                         ? res.status(404).json({ message: "error" })

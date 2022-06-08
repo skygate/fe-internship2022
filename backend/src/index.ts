@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import uniqid from "uniqid";
+import { ChangeStreamEvents } from "mongodb";
 const passport = require("passport");
 const session = require("express-session");
 dotenv.config();
@@ -90,8 +91,10 @@ const connection = mongoose.connection;
 
 connection.once("open", () => {
     const auctionsChangeStream = connection.collection("auctions").watch();
-    auctionsChangeStream.on("change", () => {
-        io.emit("auction-change");
+    auctionsChangeStream.on("change", (data: any) => {
+        if (data.operationType === "update") io.emit("auction-change");
+        if (data.operationType === "insert" || data.operationType === "delete")
+            io.emit("auction-insert-delete");
     });
 });
 
