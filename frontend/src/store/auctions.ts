@@ -9,9 +9,7 @@ const initialState: AuctionsState = {
 
 export const getAuctions = createAsyncThunk("auctions/setAuctions", (sort: boolean) => {
     if (sort)
-        return fetchFilteredAndSortedAuctions(sort).then(
-            (auctionsResponse) => auctionsResponse.data
-        );
+        return fetchFilteredAndSortedAuctions().then((auctionsResponse) => auctionsResponse.data);
     return fetchAuctions().then((auctionsResponse) => auctionsResponse.data);
 });
 

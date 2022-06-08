@@ -119,7 +119,6 @@ export const getAllAuctions = (req: Request, res: Response) => {
         const date = new Date();
         const priceMin = params.priceMin || 0;
         const priceMax = params.priceMax || 1000;
-
         const minDate =
             time === "week"
                 ? date.getTime() - 7 * 24 * 60 * 60 * 1000
@@ -145,6 +144,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     select: "ownerID productDescription productName productImageUrl productCategory",
                 })
                 .exec((err, auctions) => {
+                    console.log(auctions);
                     const filteredAuctions = auctions.filter((item) => {
                         return item.productID;
                     });
