@@ -100,10 +100,14 @@ export const Auction = () => {
     }, [auctionData, profile]);
 
     useEffect(() => {
-        moreOptionsDropDownRef.current &&
-            (dropdownVisibility
-                ? (moreOptionsDropDownRef.current.style.opacity = "1")
-                : (moreOptionsDropDownRef.current.style.opacity = "0"));
+        if (moreOptionsDropDownRef.current && dropdownVisibility) {
+            moreOptionsDropDownRef.current.style.opacity = "1";
+            moreOptionsDropDownRef.current.style.display = "block";
+        }
+        if (moreOptionsDropDownRef.current && !dropdownVisibility) {
+            moreOptionsDropDownRef.current.style.opacity = "0";
+            moreOptionsDropDownRef.current.style.display = "none";
+        }
     }, [dropdownVisibility]);
 
     const onLikeButtonClick = () => {
