@@ -9,6 +9,7 @@ import { Modal } from "components";
 import { BidOffer } from "interfaces/bidOffer";
 import { ToolsItem, ModalsVisibilityState } from "./interfaces";
 import { useAppSelector } from "store/store";
+import { format } from "date-fns";
 
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
@@ -43,7 +44,7 @@ export const AuctionView = ({
     visibleBids,
     showAllBids,
 }: AuctionViewProps) => {
-    const { productID, price, amount, bidHistory } = auctionData || {};
+    const { productID, amount, bidHistory, instantSellPrice, price, profileID } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
@@ -57,16 +58,26 @@ export const AuctionView = ({
                 <img src={productImageUrl} alt="productImage" className={style.productImage} />
                 <div className={style.productInfo}>
                     <h3 className={style.productName}>{productName}</h3>
-                    <div className={style.priceInfo}>
-                        <GreenETHValue ETHValue={auctionData.price} />
-                        <p className={style.dolarValue}>
-                            ${price ? ethDolarExchange(price) : null}
-                        </p>
-                        <p className={style.stockValue}>{amount} in stock</p>
-                    </div>
                     <div className={style.productDescription}>{productDescription}</div>
                     <div>
-                        <h4 className={style.bids}>Bids</h4>
+                        <CreatorsListItem profile={auctionData.profileID} />
+                    </div>
+                    <div className={style.priceInfo}>
+                        <p className={style.instantSellPrice}>Cena kup teraz:</p>
+                        {instantSellPrice && (
+                            <p className={style.dolarValue}>${price?.toLocaleString("en-US")}</p>
+                        )}
+                        <p className={style.stockValue}>{amount} in stock</p>
+                    </div>
+                    <div className={style.auctionEndDate}>
+                        <p>Koniec aukcji:</p>
+                        <p>{format(new Date(auctionData.endDate), "dd/MM/yyy HH:mm")}</p>
+                    </div>
+                    <div>
+                        {bidHistory && bidHistory.length > 0 && (
+                            <h4 className={style.bids}>Bids</h4>
+                        )}
+
                         {bidHistory?.slice(visibleBids * -1).map((item, index) => (
                             <CreatorsListItem
                                 profile={item.bid.profileID}
@@ -74,13 +85,21 @@ export const AuctionView = ({
                                 key={index}
                             />
                         ))}
-                        {!visibleBids ? (
-                            <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
-                        ) : (
-                            <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
-                        )}
+                        {bidHistory &&
+                            bidHistory?.length > 2 &&
+                            (!visibleBids ? (
+                                <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
+                            ) : (
+                                <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
+                            ))}
                     </div>
-                    <div className={style.highestBidContainer}>
+                    <div
+                        className={
+                            bidHistory && bidHistory.length > 0
+                                ? style.highestBidContainer
+                                : style.highestBidContainerEmpty
+                        }
+                    >
                         {highestBid ? (
                             <div className={style.bidInfo}>
                                 <ProfilePicture
@@ -106,18 +125,23 @@ export const AuctionView = ({
                                 </div>
                             </div>
                         ) : null}
-                        <Button
-                            text="Purchase now"
-                            id="purchase"
-                            blue={true}
-                            onClick={changeModalsVisibility}
-                        />
-                        <Button
-                            text="Place a bid"
-                            id="placeBid"
-                            blue={false}
-                            onClick={changeModalsVisibility}
-                        />
+
+                        {auctionData.instantSellPrice && (
+                            <Button
+                                text="Purchase now"
+                                id="purchase"
+                                blue={true}
+                                onClick={changeModalsVisibility}
+                            />
+                        )}
+                        {auctionData.putOnSale && (
+                            <Button
+                                text="Place a bid"
+                                id="placeBid"
+                                blue={false}
+                                onClick={changeModalsVisibility}
+                            />
+                        )}
                     </div>
                 </div>
                 <div className={style.roundButtons}>
@@ -180,7 +204,7 @@ export const AuctionView = ({
                 title="Edit item"
                 onClose={changeModalsVisibility}
             >
-                <EditAuctionModal auctionID={auctionData._id} onClose={changeModalsVisibility} />
+                <EditAuctionModal auction={auctionData} onClose={changeModalsVisibility} />
             </Modal>
             <Modal
                 visible={modalsVisibility.deleteAuction}

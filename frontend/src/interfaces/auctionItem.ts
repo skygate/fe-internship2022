@@ -7,6 +7,8 @@ export interface AuctionItem {
     profileID: {
         _id: string;
         userID: string;
+        profileName: string;
+        profilePicture: string;
     };
     productID: ProductItem;
     putOnSale: boolean;
