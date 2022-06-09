@@ -61,7 +61,6 @@ export const AuctionView = ({
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
     const profile = useAppSelector((state) => state.activeProfile.activeProfile);
-    console.log(profile);
     const renderDisplayOption = () => {
         if (!auctionData) return;
         switch (selectedViewOption) {

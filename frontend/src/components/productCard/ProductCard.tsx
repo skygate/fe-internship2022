@@ -25,7 +25,6 @@ export const ProductCard = ({ item }: ProductCardProps) => {
     };
 
     const highestBid = item.bidHistory.slice(-1)[0]?.bid;
-    console.log(item.profileID);
     return (
         <Link to={`/auction/${item._id}`}>
             <div className={styles.productCardContainer}>

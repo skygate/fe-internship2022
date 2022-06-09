@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import style from "./horizontalSelectButtons.module.scss";
 import ButtonInterface from "components/horizontalSelectButtons/interface";
 
