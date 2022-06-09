@@ -50,7 +50,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .find({ profileID: req.query.profileID })
                 .populate({
                     path: "profileID",
-                    select: "userID",
+                    select: "userID about profilePicture profileName",
                 })
                 .populate({
                     path: "productID",
