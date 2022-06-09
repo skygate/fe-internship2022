@@ -5,7 +5,7 @@ export const fetchAuctions = (id?: string) => {
     return axiosInstance.get("/auctions?full=true");
 };
 
-export const fetchFilteredAndSortedAuctions = (params: any) => {
+export const fetchFilteredAndSortedAuctions = () => {
     const urlParams = new URLSearchParams(window.location.search);
 
     const defaultParams = {

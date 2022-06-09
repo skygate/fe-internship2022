@@ -1,6 +1,6 @@
 import style from "./auction.module.scss";
 import { AuctionItem } from "interfaces/index";
-import { GreenETHValue, CreatorsListItem, ProfilePicture, RoundButton, Button } from "components";
+import { CreatorsListItem, ProfilePicture, RoundButton, Button } from "components";
 import { AiFillHeart } from "react-icons/ai";
 import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 import { Toast } from "components";
@@ -20,7 +20,6 @@ interface AuctionViewProps {
     isAuctionLiked: boolean;
     toolsArray: ToolsItem[];
     moreOptionsDropDownRef: React.RefObject<HTMLDivElement>;
-    toastMessage?: string;
     modalsVisibility: ModalsVisibilityState;
     changeModalsVisibility: (modalID?: string) => void;
     placeBid: (data: BidOffer) => void;
@@ -37,7 +36,6 @@ export const AuctionView = ({
     isAuctionLiked,
     toolsArray,
     moreOptionsDropDownRef,
-    toastMessage,
     modalsVisibility,
     changeModalsVisibility,
     placeBid,
@@ -62,13 +60,14 @@ export const AuctionView = ({
                     <div>
                         <CreatorsListItem profile={auctionData.profileID} />
                     </div>
-                    <div className={style.priceInfo}>
-                        <p className={style.instantSellPrice}>Cena kup teraz:</p>
-                        {instantSellPrice && (
+                    {instantSellPrice && (
+                        <div className={style.priceInfo}>
+                            <p className={style.instantSellPrice}>Instant sell price:</p>
                             <p className={style.dolarValue}>${price?.toLocaleString("en-US")}</p>
-                        )}
-                        <p className={style.stockValue}>{amount} in stock</p>
-                    </div>
+                            <p className={style.stockValue}>{amount} in stock</p>
+                        </div>
+                    )}
+
                     <div className={style.auctionEndDate}>
                         <p>Koniec aukcji:</p>
                         <p>{format(new Date(auctionData.endDate), "dd/MM/yyy HH:mm")}</p>
@@ -184,7 +183,6 @@ export const AuctionView = ({
                     </div>
                 </div>
             </div>
-            {toastMessage && <Toast message={toastMessage} />}
             <Modal
                 visible={modalsVisibility.placeBid}
                 title="Place bid"

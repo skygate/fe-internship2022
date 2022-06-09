@@ -6,7 +6,7 @@ import { getAuctions } from "store/auctions";
 import { useSearchParams } from "react-router-dom";
 import { DiscoverFormState } from "interfaces";
 
-const PRICE_GAP = 20;
+const PRICE_GAP = 50;
 const AUCTIONS_PER_PAGE = 8;
 const INITIAL_STYLE = {
     background: `linear-gradient(to right, #E6E8EC 0% , #3772ff 0% , #3772ff 100%, #E6E8EC 100%)`,
@@ -23,6 +23,11 @@ const FORM_STATE_DEFAULT: DiscoverFormState = {
     priceRangeMax: 2000,
 };
 
+const PRICE_STATE_DEFAULT = {
+    priceMin: FORM_STATE_DEFAULT.priceMin,
+    priceMax: FORM_STATE_DEFAULT.priceMax,
+};
+
 const calculatePercentage = (nominator: number, denominator: number) =>
     (nominator / denominator) * 100;
 
@@ -30,6 +35,7 @@ export const Discover = () => {
     const auctions = useAppSelector((state) => state.auctions.auctions);
     const [activeAuctions, setActiveAuctions] = useState<AuctionItem[]>([]);
     const [activePage, setActivePage] = useState(0);
+    const [priceState, setPriceState] = useState(PRICE_STATE_DEFAULT);
     const [formState, setFormState] = useState(FORM_STATE_DEFAULT);
     const [priceInputBackground, setPriceInputBackground] = useState(INITIAL_STYLE);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -54,6 +60,10 @@ export const Discover = () => {
             priceMin: Number(priceMin),
             priceMax: Number(priceMax),
         });
+        setPriceState({
+            priceMin: Number(priceMin),
+            priceMax: Number(priceMax),
+        });
     }, []);
 
     useEffect(() => {
@@ -66,6 +76,10 @@ export const Discover = () => {
         setSearchParams(searchParams);
         fillColor();
     }, [formState]);
+
+    useEffect(() => {
+        fillColor();
+    }, [priceState]);
 
     useEffect(() => {
         const firstPageAuctions = auctions.slice(0, AUCTIONS_PER_PAGE);
@@ -111,20 +125,26 @@ export const Discover = () => {
 
     const onPriceChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
-        const check = checkGap(formState.priceMin, formState.priceMax, PRICE_GAP);
+        const check = checkGap(priceState.priceMin, priceState.priceMax, PRICE_GAP);
 
         return check
-            ? setFormState({ ...formState, [target.id]: Number(target.value) })
+            ? setPriceState({ ...priceState, [target.id]: Number(target.value) })
             : target.id === "priceMin"
-            ? setFormState({ ...formState, priceMin: formState.priceMax - PRICE_GAP })
-            : target.id === "priceMax"
-            ? setFormState({ ...formState, priceMax: formState.priceMin + PRICE_GAP })
-            : null;
+            ? setPriceState({ ...priceState, priceMin: formState.priceMax - PRICE_GAP })
+            : setPriceState({ ...priceState, priceMax: formState.priceMin + PRICE_GAP });
+    };
+
+    const setFormPrice = () => {
+        setFormState({
+            ...formState,
+            priceMin: priceState.priceMin,
+            priceMax: priceState.priceMax,
+        });
     };
 
     const fillColor = () => {
-        const percent1 = calculatePercentage(formState.priceMin, formState.priceRangeMax);
-        const percent2 = calculatePercentage(formState.priceMax, formState.priceRangeMax);
+        const percent1 = calculatePercentage(priceState.priceMin, formState.priceRangeMax);
+        const percent2 = calculatePercentage(priceState.priceMax, formState.priceRangeMax);
 
         setPriceInputBackground({
             background: `linear-gradient(to right, #E6E8EC ${percent1}% , #3772ff ${percent1}% , #3772ff ${percent2}%, #E6E8EC ${percent2}%)`,
@@ -166,6 +186,8 @@ export const Discover = () => {
             onCategorySelect={onCategorySelect}
             onPageChange={onPageChange}
             clearFilters={clearFilters}
+            priceState={priceState}
+            setFormPrice={setFormPrice}
         />
     );
 };

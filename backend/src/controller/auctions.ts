@@ -113,13 +113,12 @@ export const getAllAuctions = (req: Request, res: Response) => {
 
     const filterAndSortAuctions = async (params: any) => {
         const sortBy = params.sort ?? "startDate";
-        const asc = params.asc ?? "-1";
+        const asc = params.ascending ?? "-1";
         const category = !params.category || params.category === "all" ? /.*/g : params.category;
         const time = params.time;
         const date = new Date();
         const priceMin = params.priceMin || 0;
         const priceMax = params.priceMax || 1000;
-
         const minDate =
             time === "week"
                 ? date.getTime() - 7 * 24 * 60 * 60 * 1000
@@ -129,9 +128,13 @@ export const getAllAuctions = (req: Request, res: Response) => {
 
         try {
             auctions
-                .find({ startDate: { $gt: minDate } })
-                .find({ price: { $gt: priceMin } })
-                .find({ price: { $lt: priceMax } })
+                .find({
+                    $and: [
+                        { startDate: { $gte: minDate } },
+                        { price: { $gte: priceMin } },
+                        { price: { $lte: priceMax } },
+                    ],
+                })
                 .sort({ [sortBy]: [asc] })
                 .populate({
                     path: "bidHistory.bid.profileID",

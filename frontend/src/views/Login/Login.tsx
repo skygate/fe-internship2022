@@ -6,6 +6,7 @@ import { loginUser, logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
 import { setUser } from "store/user";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface FormState {
     email: string;
@@ -21,6 +22,7 @@ export const Login = () => {
     const dispatch = useAppDispatch();
     const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
     const [errorMessage, setErrorMessage] = useState(null);
+    const navigate = useNavigate();
     const inputsArray: LoginInputs[] = [
         {
             name: LoginInputType.Email,
@@ -60,6 +62,7 @@ export const Login = () => {
                 }
                 setFormState(DEFAULT_STATE);
                 dispatch(setUser());
+                navigate("/");
             });
         } catch (err) {
             return toast.error("Something gone wrong", {
@@ -71,19 +74,12 @@ export const Login = () => {
         }
     };
 
-    const onLogoutUser = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        await logoutUser();
-        dispatch(setUser());
-    };
-
     return (
         <LoginView
             onFormSubmit={onFormSubmit}
             onInputChange={onInputChange}
             inputsArray={inputsArray}
             errorMessage={errorMessage}
-            logoutUser={onLogoutUser}
         />
     );
 };
