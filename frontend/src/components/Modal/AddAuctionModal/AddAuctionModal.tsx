@@ -9,14 +9,13 @@ import { Product } from "interfaces/product";
 import { addAuction } from "API/UserService/auctions";
 import { ToggleInputs } from "components/toggleInputs/ToggleInputs";
 import { toast } from "react-toastify";
-import { useAppDispatch } from "store/store";
-import { fetchUserProducts } from "store/userProducts";
 
 interface AddAuctionModalProps {
     userID: string;
     activeProfile: string;
     product: Product;
     isVisible: () => void;
+    setAuctions: () => void;
 }
 
 export const AddAuctionModal = ({
@@ -24,6 +23,7 @@ export const AddAuctionModal = ({
     activeProfile,
     product,
     isVisible,
+    setAuctions,
 }: AddAuctionModalProps) => {
     const [response, setResponse] = useState<string | null>(null);
     const hideMessage = () => {
@@ -31,7 +31,6 @@ export const AddAuctionModal = ({
             setResponse(null);
         }, 2000);
     };
-    const dispatch = useAppDispatch();
 
     const init = {
         userID: userID,
@@ -57,7 +56,7 @@ export const AddAuctionModal = ({
                 autoClose: 2500,
                 closeOnClick: true,
             });
-            dispatch(fetchUserProducts(activeProfile));
+            setAuctions();
         } catch {
             toast.update(id, {
                 render: "Something went wrong",

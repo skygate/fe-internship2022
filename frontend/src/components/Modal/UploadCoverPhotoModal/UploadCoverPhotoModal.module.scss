@@ -1,0 +1,38 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.coverPhotoWrapper {
+    width: 100%;
+    max-height: 180x;
+}
+
+.coverPhoto {
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+}
+
+.buttonWrapper {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.updateButton:hover {
+    cursor: pointer;
+}
+
+.updateButton {
+    font-family: $font-family-dm-sans;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    font-size: $font-size-button-2;
+    color: $c-neutrals-4;
+    border: 2px solid $c-neutrals-4;
+    background-color: transparent;
+    border-radius: 32px;
+    display: inline-flex;
+    padding: $spacer-8 $spacer-12;
+}

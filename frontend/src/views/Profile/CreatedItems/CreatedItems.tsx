@@ -10,9 +10,10 @@ import { FC } from "react";
 interface ProductsList {
     usersProducts: Product[];
     profileID: string;
+    setAuctions: () => void;
 }
 
-export const CreatedItems: FC<ProductsList> = ({ usersProducts, profileID }) => {
+export const CreatedItems: FC<ProductsList> = ({ usersProducts, profileID, setAuctions }) => {
     const [createdPageNumber, setCreatedPageNumber] = useState<PageSlice>({
         firstItem: 0,
         lastItem: 3,
@@ -28,7 +29,11 @@ export const CreatedItems: FC<ProductsList> = ({ usersProducts, profileID }) => 
                             .slice(createdPageNumber.firstItem, createdPageNumber.lastItem)
                             .map((product, index) => (
                                 <div key={index} className={styles.productCard}>
-                                    <CreatedProduct item={product} profileID={profileID} />
+                                    <CreatedProduct
+                                        item={product}
+                                        profileID={profileID}
+                                        setAuctions={setAuctions}
+                                    />
                                 </div>
                             ))}
                     </div>

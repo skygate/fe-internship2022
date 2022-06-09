@@ -1,6 +1,6 @@
 import styles from "./NavbarDropDown.module.scss";
 import { useAppSelector } from "store/store";
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import SignOutIcon from "../../assets/SignOutIcon.svg";
 import { logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
@@ -14,6 +14,23 @@ import { Link } from "react-router-dom";
 import { Modal } from "components";
 import { ProfileModal } from "components/Modal/ProfileModal/ProfileModal";
 
+function useOutsideAlerter(
+    ref: any,
+    setActiveDropdownButton: React.Dispatch<React.SetStateAction<boolean>>
+) {
+    useEffect(() => {
+        function handleClickOutside(event: Event) {
+            if (ref.current && !ref.current.contains(event.target)) {
+                setActiveDropdownButton(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+}
+
 export function NavbarDropDown() {
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.user);
@@ -23,8 +40,34 @@ export function NavbarDropDown() {
     const [activeProfileSwitchButton, setActiveProfileSwitchButton] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    const wrapperRef = useRef(null);
+    useOutsideAlerter(wrapperRef, setActiveDropdownButton);
+
+    const escFunction = useCallback(
+        (e) => {
+            if (e.key === "Escape") {
+                setActiveDropdownButton(false);
+            }
+        },
+        [setActiveDropdownButton]
+    );
+
+    useEffect(() => {
+        if (activeDropdownButton) document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [activeDropdownButton]);
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, [escFunction]);
+
     return (
-        <div className={styles.dropdownMenu}>
+        <div className={styles.dropdownMenu} ref={wrapperRef}>
             <button
                 type="button"
                 onClick={() => {

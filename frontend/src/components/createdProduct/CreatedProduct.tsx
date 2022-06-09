@@ -11,9 +11,10 @@ import { toast } from "react-toastify";
 export interface CreatedProductProps {
     item: Product;
     profileID: string;
+    setAuctions: () => void;
 }
 
-export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
+export const CreatedProduct = ({ item, profileID, setAuctions }: CreatedProductProps) => {
     const dispatch = useAppDispatch();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const user = useAppSelector((state) => state.user);
@@ -86,6 +87,7 @@ export const CreatedProduct = ({ item, profileID }: CreatedProductProps) => {
                         activeProfile={activeProfile}
                         userID={user.userID}
                         product={item}
+                        setAuctions={setAuctions}
                         isVisible={() => setIsModalVisible(false)}
                     />
                 </Modal>

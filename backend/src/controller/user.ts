@@ -14,6 +14,34 @@ module.exports.getAllUsers = async (req: Request, res: Response) => {
     }
 };
 
+const confirmUser = async (id: string, password: string) => {
+    const userAccount = await user.findOne({ _id: id });
+    if (userAccount == null) return false;
+    try {
+        const response = await bcrypt.compare(password, userAccount.password);
+        return response;
+    } catch (e: any) {
+        return e;
+    }
+};
+
+module.exports.confirmUser = async (req: Request, res: Response) => {
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    if (req.user === undefined) return res.status(401).json({ message: "Not authenticated" });
+    const id = req.user.userID._id;
+    const password = req.body.password;
+    await confirmUser(id, password)
+        .then((data) => {
+            if (!data) {
+                throw new Error("Password incorect.");
+            }
+            res.status(200).json(data);
+        })
+        .catch((err: Error) => {
+            res.status(300).json({ message: err.message });
+        });
+};
+
 module.exports.getUser = async (req: Request, res: Response) => {
     const { id } = req.params;
 
@@ -45,7 +73,7 @@ module.exports.registerUser = async (req: Request, res: Response) => {
         const { _id } = await user.findOne({ email: email });
         const newProfile = new profile({
             userID: _id,
-            profileName: `${Math.random() * 99999999999}`,
+            profileName: username,
             about: "Default about",
             profilePicture:
                 "https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg",
@@ -72,7 +100,7 @@ module.exports.loginUser = (req: Request, res: Response, next: any) => {
     passport.authenticate("local", (err, user, info) => {
         if (err) throw err;
         if (!user) {
-            res.status(200).json({ message: "User doesn't exist" });
+            res.status(400).json({ message: "User doesn't exist" });
             return;
         }
         req.logIn(user, (err) => {
