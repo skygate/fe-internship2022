@@ -9,7 +9,6 @@ interface LoginViewProps {
     onInputChange: (e: React.ChangeEvent) => void;
     inputsArray: LoginInputs[];
     errorMessage: string | null;
-    logoutUser: (e: React.MouseEvent) => void;
 }
 
 export const LoginView = ({
@@ -17,7 +16,6 @@ export const LoginView = ({
     onInputChange,
     inputsArray,
     errorMessage,
-    logoutUser,
 }: LoginViewProps) => {
     return (
         <div className={styles.viewContainer}>

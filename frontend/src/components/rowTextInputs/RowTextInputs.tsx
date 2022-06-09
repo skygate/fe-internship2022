@@ -1,48 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import style from "./rowTextInputs.module.scss";
-import { RenderInput } from "components";
-import { createFormState } from "interfaces/createFormState";
-import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
 
 interface RowTextInputsProps {
     onInputChange: (e: React.ChangeEvent) => void;
-}
-
-enum TextInputTypeNarrow {
-    Size,
-    Properties,
-}
-
-interface TextInputNarrow {
-    name: TextInputTypeNarrow;
-    id: string;
-    label: string;
-    placeholder: string;
-    value: string;
 }
 
 //docelowo wczytać z bazy danych
 const categoryOptions = ["PNG", "GIF", "WEBP", "MP4", "MP3"];
 
 export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
-    const formState: createFormState = useContext(FormContext);
-
-    const textInputNarrowArray: TextInputNarrow[] = [
-        {
-            name: TextInputTypeNarrow.Size,
-            id: "productSize",
-            label: "SIZE",
-            placeholder: "e.g. Size",
-            value: formState.productSize,
-        },
-        {
-            name: TextInputTypeNarrow.Properties,
-            id: "productProperties",
-            label: "PROPERTIES",
-            placeholder: "e.g. Properties",
-            value: formState.productProperties,
-        },
-    ];
     return (
         <div className={style.row}>
             <div className={style.selectContainer}>
@@ -64,17 +30,6 @@ export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
                     })}
                 </select>
             </div>
-            {textInputNarrowArray.map((item) => {
-                return (
-                    <RenderInput
-                        key={item.id}
-                        item={item}
-                        onInputChange={onInputChange}
-                        width={"190px"}
-                        value={item.value}
-                    />
-                );
-            })}
         </div>
     );
 };

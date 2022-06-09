@@ -17,6 +17,11 @@ interface DiscoverProps {
     onPageChange: (e: React.MouseEvent) => void;
     clearFilters: (e: React.MouseEvent) => void;
     formState: DiscoverFormState;
+    priceState: {
+        priceMin: number;
+        priceMax: number;
+    };
+    setFormPrice: () => void;
 }
 
 export const DiscoverView = ({
@@ -28,6 +33,8 @@ export const DiscoverView = ({
     onPageChange,
     clearFilters,
     formState,
+    priceState,
+    setFormPrice,
 }: DiscoverProps) => {
     return (
         <section id="discover">
@@ -59,23 +66,25 @@ export const DiscoverView = ({
                                     min="0"
                                     max={formState.priceRangeMax}
                                     step="1"
-                                    value={formState.priceMin}
+                                    value={priceState.priceMin}
                                     id="priceMin"
                                     onChange={(e) => onPriceChange(e)}
+                                    onMouseUp={setFormPrice}
                                 />
                                 <input
                                     type="range"
                                     min="0"
                                     max={formState.priceRangeMax}
                                     step="1"
-                                    value={formState.priceMax}
+                                    value={priceState.priceMax}
                                     id="priceMax"
                                     onChange={(e) => onPriceChange(e)}
+                                    onMouseUp={setFormPrice}
                                 />
                             </div>
                             <div className={style.values}>
-                                <p>{formState.priceMin} ETH</p>
-                                <p>{formState.priceMax} ETH</p>
+                                <p>{priceState.priceMin} ETH</p>
+                                <p>{priceState.priceMax} ETH</p>
                             </div>
                         </div>
                     </div>

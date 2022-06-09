@@ -5,6 +5,8 @@ import { registerUser } from "API/UserService";
 import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import { yupRegisterPasswordValidation } from "components/passwordInput/PasswordInput";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
@@ -17,7 +19,7 @@ const validationSchema = Yup.object().shape({
 
 export const Register = () => {
     const [response, setResponse] = useState<string | null>(null);
-
+    const navigate = useNavigate();
     const hideMessage = () => {
         setTimeout(() => {
             setResponse(null);
@@ -35,11 +37,18 @@ export const Register = () => {
         validateOnChange: false,
         onSubmit: async (values) => {
             setResponse(null);
-            await registerUser(values).then((data) => {
+            const data = {
+                ...values,
+                email: values.username.toLowerCase(),
+            };
+            await registerUser(data).then((data) => {
                 setResponse(data.message);
-                if (data.message === "User added succesfully") formik.resetForm();
+                if (data.message === "User added succesfully") {
+                    formik.resetForm();
+                    toast.success("User added succesfully!");
+                    navigate("/");
+                }
             });
-
             hideMessage();
         },
     });

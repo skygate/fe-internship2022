@@ -10,7 +10,7 @@ import { ProfilePicture } from "components";
 import ArrowDownSign from "../../assets/ArrowDownSign.svg";
 import profileIcon from "../../assets/profileIcon.svg";
 import plusIcon from "../../assets/plusIcon.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Modal } from "components";
 import { ProfileModal } from "components/Modal/ProfileModal/ProfileModal";
 
@@ -66,6 +66,7 @@ export function NavbarDropDown() {
         };
     }, [escFunction]);
 
+    const navigate = useNavigate();
     return (
         <div className={styles.dropdownMenu} ref={wrapperRef}>
             <button
@@ -146,6 +147,7 @@ export function NavbarDropDown() {
                     onClick={async () => {
                         await logoutUser();
                         dispatch(setUser());
+                        navigate("/");
                     }}
                     className={styles.dropdownListButton}
                     type="button"

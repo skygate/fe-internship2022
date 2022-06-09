@@ -3,6 +3,8 @@ import { FormikValues, useFormik } from "formik";
 import { ButtonTypes } from "interfaces";
 import { editAuction } from "API/UserService";
 import { toast } from "react-toastify";
+import { AuctionItem } from "interfaces";
+import { format } from "date-fns";
 
 const inputs = [
     {
@@ -22,27 +24,29 @@ const inputs = [
         label: "End date",
         placeholder: "End date",
         required: false,
-        type: "date",
+        type: "datetime-local",
     },
 ];
 
 interface EditAuctionModalProps {
-    auctionID: string;
+    auction: AuctionItem;
     onClose: () => void;
 }
 
-export const EditAuctionModal = ({ auctionID, onClose }: EditAuctionModalProps) => {
+export const EditAuctionModal = ({ auction, onClose }: EditAuctionModalProps) => {
+    const endDate = new Date(auction.endDate);
+    const formatedEndDate = `${format(endDate, "yyyy-MM-dd")}T${format(endDate, "HH:mm")}`;
     const formik: FormikValues = useFormik({
         initialValues: {
-            price: "",
-            amount: "",
-            endDate: "",
+            price: auction.price,
+            amount: auction.amount,
+            endDate: formatedEndDate,
         },
         validateOnChange: false,
         onSubmit: async () => {
             const editAuctionToast = toast.loading("Editing auction...");
-            const data = formik.values;
-            await editAuction(auctionID, data)
+            const data = { ...formik.values, endDate: new Date(formik.values.endDate) };
+            await editAuction(auction._id, data)
                 .then(() => {
                     toast.update(editAuctionToast, {
                         render: "Successfully edited!",

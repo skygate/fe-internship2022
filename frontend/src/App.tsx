@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { createContext, useEffect } from "react";
 import "./App.css";
 import Router from "./routes";
 import { setUser } from "store/user";
@@ -8,6 +8,10 @@ import { getAuctions } from "store/auctions";
 import { changeActiveProfile } from "store/activeProfile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:8080");
+export const SocketContext = createContext(socket);
 
 function App() {
     const dispatch = useAppDispatch();
@@ -30,10 +34,16 @@ function App() {
         dispatch(changeActiveProfile({ profiles: profiles, isAuto: true }));
     }, [profiles]);
 
+    useEffect(() => {
+        socket.on("auction-insert-delete", () => dispatch(getAuctions(false)));
+    }, [socket]);
+
     return (
         <div className="App">
-            <Router />
-            <ToastContainer />
+            <SocketContext.Provider value={socket}>
+                <Router />
+                <ToastContainer />
+            </SocketContext.Provider>
         </div>
     );
 }
