@@ -13,6 +13,7 @@ import { BidOffer } from "interfaces";
 import { ToolsOptions, ToolsItem, ModalsVisibilityState } from "./interfaces";
 import { toast } from "react-toastify";
 import { SocketContext } from "App";
+import style from "./auction.module.scss";
 
 const ethDolarExchange = (eth: number) => {
     const exchangeRate = 1800; //   1800 $ / eth
@@ -98,14 +99,8 @@ export const Auction = () => {
     }, [auctionData, profile]);
 
     useEffect(() => {
-        if (moreOptionsDropDownRef.current && dropdownVisibility) {
-            moreOptionsDropDownRef.current.style.opacity = "1";
-            moreOptionsDropDownRef.current.style.display = "block";
-        }
-        if (moreOptionsDropDownRef.current && !dropdownVisibility) {
-            moreOptionsDropDownRef.current.style.opacity = "0";
-            moreOptionsDropDownRef.current.style.display = "none";
-        }
+        moreOptionsDropDownRef.current &&
+            moreOptionsDropDownRef.current.classList.toggle(style.moreOptionsDropDownVisible);
     }, [dropdownVisibility]);
 
     const onLikeButtonClick = () => {

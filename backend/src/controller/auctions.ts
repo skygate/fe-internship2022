@@ -128,10 +128,13 @@ export const getAllAuctions = (req: Request, res: Response) => {
 
         try {
             auctions
-                .find()
-                .find({ startDate: { $gte: minDate } })
-                .find({ price: { $gte: priceMin } })
-                .find({ price: { $lte: priceMax } })
+                .find({
+                    $and: [
+                        { startDate: { $gte: minDate } },
+                        { price: { $gte: priceMin } },
+                        { price: { $lte: priceMax } },
+                    ],
+                })
                 .sort({ [sortBy]: [asc] })
                 .populate({
                     path: "bidHistory.bid.profileID",

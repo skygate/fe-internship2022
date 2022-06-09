@@ -189,6 +189,11 @@
     transition: opacity 0.5s;
 }
 
+.moreOptionsDropDownVisible {
+    display: block;
+    opacity: 1;
+}
+
 .moreOptionsDropDown::after {
     content: "";
     position: absolute;
