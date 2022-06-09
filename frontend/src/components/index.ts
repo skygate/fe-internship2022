@@ -27,3 +27,4 @@ export { Toast } from "./toast/Toast";
 export { CreatedProduct } from "./createdProduct/CreatedProduct";
 export { Modal } from "./Modal/Modal";
 export { SelectInput } from "./selectInput/SelectInput";
+export { HorizontalSelectButtons } from "./horizontalSelectButtons/HorizontalSelectButtons";

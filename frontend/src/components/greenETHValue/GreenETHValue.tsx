@@ -6,6 +6,6 @@ interface ETHValueProp {
 }
 
 export const GreenETHValue: FC<ETHValueProp> = ({ ETHValue }) => {
-    return <span className={styles.ETHValue}>{ETHValue} ETH</span>;
+    return <span className={styles.ETHValue}>{ETHValue} $</span>;
 };
 export default GreenETHValue;

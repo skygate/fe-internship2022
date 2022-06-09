@@ -39,7 +39,7 @@ export const Register = () => {
             setResponse(null);
             const data = {
                 ...values,
-                email: values.username.toLowerCase(),
+                email: values.email.toLowerCase(),
             };
             await registerUser(data).then((data) => {
                 setResponse(data.message);

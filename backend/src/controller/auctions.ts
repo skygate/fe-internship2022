@@ -23,7 +23,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .find()
                 .populate({
                     path: "profileID",
-                    select: "userID",
+                    select: "userID about profilePicture profileName",
                 })
                 .populate({
                     path: "productID",
@@ -88,7 +88,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .findById(req.query.id)
                 .populate({
                     path: "profileID",
-                    select: "userID profileName profilePicture",
+                    select: "userID profileName profilePicture about",
                 })
                 .populate({
                     path: "productID",
@@ -136,6 +136,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                     ],
                 })
                 .sort({ [sortBy]: [asc] })
+                .populate({
+                    path: "profileID",
+                    select: "userID about profilePicture profileName",
+                })
                 .populate({
                     path: "bidHistory.bid.profileID",
                     select: "profilePicture profileName",
