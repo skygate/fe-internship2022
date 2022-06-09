@@ -1,7 +1,7 @@
 import style from "./passwordInput.module.scss";
 import * as Yup from "yup";
 
-interface ObjectType {
+export interface ObjectType {
     id: string;
     label: string;
     placeholder: string;
@@ -10,7 +10,7 @@ interface ObjectType {
     minlength?: number;
 }
 
-interface RenderInputProps {
+export interface RenderInputProps {
     item: ObjectType;
     onInputChange: (e: React.ChangeEvent) => void;
     width?: string;
@@ -39,6 +39,7 @@ export const PasswordInput = ({ item, onInputChange, value, width }: RenderInput
                 className={style.input}
                 onChange={onInputChange}
                 value={value}
+                data-testid="passwordInput"
                 // required={item.required}
                 // minLength={item.minlength}
             />
