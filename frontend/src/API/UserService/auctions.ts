@@ -6,7 +6,6 @@ interface NewAuction {
     userID: string;
     profileID: string;
     productID: string;
-    amount: number;
     price: number;
     duration: number;
 }
