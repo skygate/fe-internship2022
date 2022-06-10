@@ -9,7 +9,6 @@ import {
 } from "components";
 import { AiFillHeart } from "react-icons/ai";
 import { FiShare, FiMoreHorizontal } from "react-icons/fi";
-import { Toast } from "components";
 import { AddBidModal, PurchaseModal, EditAuctionModal, DeleteAuctionModal } from "components/Modal";
 import { Modal } from "components";
 import { BidOffer } from "interfaces/bidOffer";

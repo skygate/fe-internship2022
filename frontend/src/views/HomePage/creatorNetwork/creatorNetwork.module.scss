@@ -60,6 +60,13 @@ p.ethValue {
     color: $c-neutrals-1;
 }
 
+.noBids {
+    padding-top: $spacer-12;
+    color: $c-neutrals-4;
+    font-size: $font-size-caption;
+    font-weight: $font-weight-500;
+}
+
 p.dolarValue {
     font-family: $font-family-poppins;
     font-size: $font-size-body-1-bold;
