@@ -96,13 +96,11 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                             Highest bid
                             <span className={styles.highestBidValue}>{highestBid?.offer} ETH</span>
                         </span>
-                    ) : null}
-
-                    {isHotBid() ? (
-                        <span className={styles.newBid}>new bid 🔥</span>
                     ) : (
                         <span className={styles.newBid}>Be the first one to bid!</span>
                     )}
+
+                    {isHotBid() && <span className={styles.newBid}>new bid 🔥</span>}
                 </div>
             </div>
         </Link>
