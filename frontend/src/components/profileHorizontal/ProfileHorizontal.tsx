@@ -1,22 +1,32 @@
 import React from "react";
-import { ProfilePicture } from '../';
-import style from './profileHorizontal.module.scss';
+import { Link } from "react-router-dom";
+import { ProfilePicture } from "../";
+import style from "./profileHorizontal.module.scss";
 
 interface Props {
-  upperText?: string;
-  bottomText?: string;
-  imageWidth: string;
-  imageUrl?: string;
+    upperText?: string;
+    bottomText?: string;
+    imageWidth: string;
+    imageUrl?: string;
+    linkTo?: string;
 }
 
-export const ProfileHorizontal = ({upperText, bottomText, imageWidth, imageUrl}:Props) => {
-  return (
-    <div className={style.profile}>
-      <ProfilePicture width={imageWidth} url={imageUrl} />
-      <div className={style.userInfo}>
-        <p className={style.function}>{upperText ? upperText : 'default'}</p>
-        <p className={style.name}>{bottomText ? bottomText : 'default'}</p>            
-      </div>
-    </div>
-  )
-}
+export const ProfileHorizontal = ({
+    upperText,
+    bottomText,
+    imageWidth,
+    imageUrl,
+    linkTo,
+}: Props) => {
+    const content = () => (
+        <div className={style.profile}>
+            <ProfilePicture width={imageWidth} url={imageUrl} />
+            <div className={style.userInfo}>
+                <p className={style.function}>{upperText ? upperText : ""}</p>
+                <p className={style.name}>{bottomText ? bottomText : ""}</p>
+            </div>
+        </div>
+    );
+
+    return linkTo ? <Link to={linkTo}>{content()}</Link> : content();
+};

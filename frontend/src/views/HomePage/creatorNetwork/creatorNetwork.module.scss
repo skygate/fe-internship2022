@@ -108,6 +108,7 @@ div.buttons {
 }
 
 button.btnBid {
+    width: 100%;
     font-weight: $font-weight-700;
     font-size: $font-size-button-1;
     line-height: $line-height-button-1;
@@ -120,6 +121,7 @@ button.btnBid {
 }
 
 button.btnView {
+    width: 100%;
     border: 2px solid $c-neutrals-6;
     background-color: $c-neutrals-8;
     border-radius: 90px;
