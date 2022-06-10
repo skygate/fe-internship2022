@@ -59,9 +59,6 @@ export const CreatorNetwork = () => {
             return toast.update(placeBidToast, {
                 render: "Offer has to be higher than last bid",
                 type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
             });
         if (user.userID === auction?.profileID.userID)
             return toast.update(placeBidToast, {
