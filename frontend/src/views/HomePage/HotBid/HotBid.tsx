@@ -10,9 +10,7 @@ const AUCTIONS_PER_PAGE = 4;
 export function HotBid() {
     const auctions = useAppSelector((state) => state.auctions.auctions);
     const sortedAuctions = [...auctions];
-    sortedAuctions.sort((a, b) => {
-        return b.bidHistory.length - a.bidHistory.length;
-    });
+    sortedAuctions.sort((a, b) => b.bidHistory.length - a.bidHistory.length);
     const LAST_PAGE_INDEX = Math.ceil(auctions.length / AUCTIONS_PER_PAGE) - 1;
 
     const [activePage, setActivePage] = useState(0);
