@@ -44,6 +44,14 @@
     line-height: $line-height-caption;
     font-weight: $font-weight-500;
     color: $c-neutrals-2;
+    text-align: left;
+}
+
+.creatorAbout {
+    font-size: $font-size-caption;
+    line-height: $line-height-caption;
+    font-weight: $font-weight-500;
+    color: $c-neutrals-4;
 }
 
 .creatorNFTSValue {

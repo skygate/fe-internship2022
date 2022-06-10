@@ -14,6 +14,7 @@ import { ToolsOptions, ToolsItem, ModalsVisibilityState } from "./interfaces";
 import { toast } from "react-toastify";
 import { SocketContext } from "App";
 import style from "./auction.module.scss";
+import ButtonInterface from "components/horizontalSelectButtons/interface";
 
 const ethDolarExchange = (eth: number) => {
     const exchangeRate = 1800; //   1800 $ / eth
@@ -39,6 +40,7 @@ export const Auction = () => {
     const [dropdownVisibility, setdropdownVisibility] = useState(false);
     const [modalsVisibility, setModalsVisibility] = useState(DEFAULT_MODAL_VISIBILITY);
     const [visibleBids, setVisibleBids] = useState(DEFAULT_VISIBLE_BIDS);
+    const [selectedViewOption, setSelectedViewOption] = useState("info");
     const highestBid: Bid | undefined = auctionData?.bidHistory[auctionData.bidHistory.length - 1];
     const moreOptionsDropDownRef = useRef<HTMLDivElement>(null);
     const socket = useContext(SocketContext);
@@ -169,6 +171,25 @@ export const Auction = () => {
         setVisibleBids(0);
     };
 
+    enum ButtonTypes {
+        Info = "info",
+        Description = "description",
+        Owner = "owner",
+        Bids = "bids",
+    }
+
+    const menuButtons: ButtonInterface[] = [
+        { name: ButtonTypes.Info, label: "Info", id: "info" },
+        { name: ButtonTypes.Description, label: "Description", id: "description" },
+        { name: ButtonTypes.Owner, label: "Owner", id: "owner" },
+        { name: ButtonTypes.Bids, label: "Bids", id: "bids" },
+    ];
+
+    const onMenuButtonSelect = (e: React.MouseEvent) => {
+        const target = e.target as HTMLButtonElement;
+        setSelectedViewOption(target.id);
+    };
+
     return (
         <AuctionView
             auctionData={auctionData}
@@ -184,6 +205,9 @@ export const Auction = () => {
             placeBid={placeBid}
             visibleBids={visibleBids}
             showAllBids={showAllBids}
+            menuButtons={menuButtons}
+            onMenuButtonsSelect={onMenuButtonSelect}
+            selectedViewOption={selectedViewOption}
         />
     );
 };
