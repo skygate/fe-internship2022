@@ -27,7 +27,7 @@ const confirmUser = async (id: string, password: string) => {
 
 module.exports.confirmUser = async (req: Request, res: Response) => {
     res.setHeader("Access-Control-Allow-Credentials", "true");
-    if (req.user === undefined) return res.status(401).json({ message: "Not authenticated" });
+    if (!req.user) return res.status(401).json({ message: "Not authenticated" });
     const id = req.user.userID._id;
     const password = req.body.password;
     await confirmUser(id, password)

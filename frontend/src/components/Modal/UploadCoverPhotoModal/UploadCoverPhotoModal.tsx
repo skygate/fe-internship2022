@@ -2,10 +2,10 @@ import { ProfileInterface } from "interfaces";
 import { useState } from "react";
 import { UploadFile } from "components";
 import { InputFileChange } from "interfaces/file";
-import { toast } from "react-toastify";
 import { editProfile } from "API/UserService/editProfile";
 import { uploadFile } from "API/UserService/uploadFile";
 import styles from "./UploadCoverPhotoModal.module.scss";
+import { ErrorToast, LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
 
 interface UploadCoverPhoto {
     profile: ProfileInterface | null;
@@ -25,42 +25,22 @@ export const UploadCoverPhotoModal = ({
     });
 
     const onFormSubmit = async () => {
-        if (formState.formData === undefined || formState.imageUrl === "")
-            return toast.error("Something is wrong with image...", { autoClose: 2500 });
-        const uploadCoverPhotoToast = toast.loading("Uploading photo...");
+        if (!formState.formData || !formState.imageUrl)
+            return ErrorToast("Something is wrong with image...");
+        const uploadCoverPhotoToast = LoadingToast("Uploading photo...");
         const uploadImage = await uploadFile(file).catch(() =>
-            toast.update(uploadCoverPhotoToast, {
-                render: "Something is wrong with image!",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            })
+            UpdateToast(uploadCoverPhotoToast, "Something is wrong with image!", "error")
         );
         if (!uploadImage) return null;
         const newCoverPhoto = uploadImage.data.message;
         await editProfile({ coverPicture: newCoverPhoto }, profile?._id)
             .then(() => {
-                toast.update(uploadCoverPhotoToast, {
-                    render: "Cover photo is up to date",
-                    type: "success",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                });
+                UpdateToast(uploadCoverPhotoToast, "Cover photo is up to date", "success");
                 setFormState({ ...formState, imageUrl: profile?.coverPicture });
                 setProfile();
                 changeVisiblity();
             })
-            .catch(() =>
-                toast.update(uploadCoverPhotoToast, {
-                    render: "Something went wrong",
-                    type: "error",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            );
+            .catch(() => UpdateToast(uploadCoverPhotoToast, "Something went wrong", "error"));
     };
 
     const onImgSrcChange = (arg: InputFileChange) => {

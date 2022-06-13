@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { postUser } from "./helpers";
+import { RootState } from "./store";
 import { UserState } from "./types";
 
 const initialState: UserState = {
@@ -10,6 +11,8 @@ const initialState: UserState = {
 export const setUser = createAsyncThunk("user/setUser", () => {
     return postUser();
 });
+
+export const UserSelector = (state: RootState) => state.user;
 
 export const userSlice = createSlice({
     name: "user",

@@ -1,35 +1,18 @@
 import styles from "./NavbarDropDown.module.scss";
 import { useAppSelector } from "store/store";
 import { useState, useCallback, useEffect, useRef } from "react";
-import SignOutIcon from "../../assets/SignOutIcon.svg";
+import SignOutIcon from "assets/SignOutIcon.svg";
 import { logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
 import { setUser } from "store/user";
 import { changeActiveProfile } from "store/activeProfile";
-import { ProfilePicture } from "components";
-import ArrowDownSign from "../../assets/ArrowDownSign.svg";
-import profileIcon from "../../assets/profileIcon.svg";
-import plusIcon from "../../assets/plusIcon.svg";
+import { ProfilePicture, Modal } from "components";
+import ArrowDownSign from "assets/ArrowDownSign.svg";
+import profileIcon from "assets/profileIcon.svg";
+import plusIcon from "assets/plusIcon.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { Modal } from "components";
-import { ProfileModal } from "components/Modal/ProfileModal/ProfileModal";
-
-function useOutsideAlerter(
-    ref: any,
-    setActiveDropdownButton: React.Dispatch<React.SetStateAction<boolean>>
-) {
-    useEffect(() => {
-        function handleClickOutside(event: Event) {
-            if (ref.current && !ref.current.contains(event.target)) {
-                setActiveDropdownButton(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [ref]);
-}
+import { ProfileModal } from "components/Modal";
+import { useOutsideAlerter } from "hooks/useOutsideAlerter";
 
 export function NavbarDropDown() {
     const dispatch = useAppDispatch();

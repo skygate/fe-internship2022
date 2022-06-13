@@ -1,26 +1,21 @@
 import styles from "./Profile.module.scss";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ProfileInterface } from "../../interfaces/ProfileInterface";
-import { ProfileInfoPanel } from "../../components";
-import imageIcon from "../../assets/imageIcon.svg";
-import editIcon from "../../assets/editIcon.svg";
+import { ProfileInfoPanel, Modal, LoadingToast, UpdateToast } from "components";
+import imageIcon from "assets/imageIcon.svg";
+import editIcon from "assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
-import { Modal } from "components";
-import { ProfileModal } from "../../components";
-import { fetchUserProducts } from "store/userProducts";
+import { fetchUserProducts, UserProductsSelector } from "store/userProducts";
 import { CreatedItems } from "./CreatedItems/CreatedItems";
-import { getProfile } from "API/UserService/profile";
+import { getProfile, deleteProfile } from "API/UserService/profile";
 import { ProfileAuctions } from "./ProfileAuctions/ProfileAuctions";
-import { AuctionItem } from "interfaces";
+import { AuctionItem, ProfileInterface } from "interfaces";
 import { getUsersAuctions } from "API/UserService/auctions";
-import { UploadCoverPhotoModal } from "components/Modal/UploadCoverPhotoModal/UploadCoverPhotoModal";
-import { ConfirmModal } from "components/Modal/ConfirmModal/ConfirmModal";
-import { deleteProfile } from "../../API/UserService/profile";
-import { getProfilesForLoggedUser } from "store/profile";
-import { changeActiveProfile } from "store/activeProfile";
-import { toast } from "react-toastify";
+import { UploadCoverPhotoModal, ConfirmModal, ProfileModal } from "components/Modal";
+import { getProfilesForLoggedUser, UserProfilesSelector } from "store/profile";
+import { ActiveProfileSelector, changeActiveProfile } from "store/activeProfile";
 import { useNavigate } from "react-router-dom";
+import { UserSelector } from "store/user";
 
 const defaultCoverPicture =
     "https://galaktyczny.pl/wp-content/uploads/2021/08/windows-xp-wallpaper-tapeta.jpg";
@@ -43,19 +38,20 @@ export function Profile() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isUploadCoverPhotoModalVisible, setIsUploadCoverPhotoModalVisible] = useState(false);
     const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-    const user = useAppSelector((state) => state.user);
-    const activeProfile = useAppSelector((state) => state.activeProfile);
-    const usersProducts = useAppSelector((state) => state.userProducts.products);
-    const userProfiles = useAppSelector((state) => state.profiles.profiles);
+    const user = useAppSelector(UserSelector);
+    const activeProfile = useAppSelector(ActiveProfileSelector);
+    const usersProducts = useAppSelector(UserProductsSelector);
+    const userProfiles = useAppSelector(UserProfilesSelector);
     const navigate = useNavigate();
 
     useEffect(() => {
-        (async () => {
+        const getProfileStates = async () => {
             if (!profileID) return;
             setProfile(await getProfile(profileID));
             setAuctions(await getUsersAuctions(profileID));
             dispatch(fetchUserProducts(profileID));
-        })();
+        };
+        getProfileStates();
     }, [profileID]);
 
     const profileDisplay = (displayOption: string) => {
@@ -67,7 +63,7 @@ export function Profile() {
                         setAuctions={async () =>
                             profileID && setAuctions(await getUsersAuctions(profileID))
                         }
-                        profileID={profileID ? profileID : ""}
+                        profileID={profileID || ""}
                     />
                 );
             case "onsale":
@@ -76,17 +72,11 @@ export function Profile() {
     };
 
     const handleDelete = () => {
-        const deleteProfileToast = toast.loading("Deleting profile...");
+        const deleteProfileToast = LoadingToast("Deleting profile...");
         if (profileID)
             deleteProfile(profileID)
                 .then(() => {
-                    toast.update(deleteProfileToast, {
-                        render: "Profile deleted successfully",
-                        type: "success",
-                        isLoading: false,
-                        autoClose: 2500,
-                        closeOnClick: true,
-                    });
+                    UpdateToast(deleteProfileToast, "Profile deleted successfully", "success");
                     localStorage.setItem("activeAccount", JSON.stringify(""));
                     dispatch(getProfilesForLoggedUser(user.userID));
                     dispatch(
@@ -99,13 +89,7 @@ export function Profile() {
                     setIsConfirmModalVisible(false);
                 })
                 .catch((err: Error) => {
-                    toast.update(deleteProfileToast, {
-                        render: err.message,
-                        type: "error",
-                        isLoading: false,
-                        autoClose: 2500,
-                        closeOnClick: true,
-                    });
+                    UpdateToast(deleteProfileToast, err.message, "error");
                 });
     };
 
@@ -121,7 +105,7 @@ export function Profile() {
             <div className={styles.contentContainer}>
                 {profile && <ProfileInfoPanel profile={profile} />}
                 <div className={styles.mainContent}>
-                    {profileID === activeProfile.activeProfile?._id && user.userID !== "" ? (
+                    {profileID === activeProfile.activeProfile?._id && user.userID ? (
                         <div className={styles.settingsButtons}>
                             <button
                                 type="button"
@@ -223,13 +207,7 @@ export function Profile() {
                     title="Confirm profile delete"
                     description="Enter your account password"
                 >
-                    <ConfirmModal
-                        changeVisiblity={() => setIsConfirmModalVisible(false)}
-                        functionToConfirm={handleDelete}
-                        profileID={profileID}
-                        userID={user.userID}
-                        toastName={"deleteProfileToast"}
-                    />
+                    <ConfirmModal functionToConfirm={handleDelete} />
                 </Modal>
             )}
         </div>

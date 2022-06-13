@@ -1,6 +1,6 @@
 import styles from "./ProfileModal.module.scss";
 import { RenderInput } from "components";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import { addProfile } from "API/UserService/addProfile";
@@ -10,10 +10,10 @@ import { getProfilesForLoggedUser } from "store/profile";
 import { inputsArray } from "./InputsArray";
 import { ProfileModalProps } from "interfaces";
 import { AxiosResponse } from "axios";
-import { ProfilePicture } from "components/profilePicture/ProfilePicture";
+import { ProfilePicture } from "components";
 import { uploadFile } from "API/UserService/uploadFile";
-import { toast } from "react-toastify";
 import { fileType, InputFileChange } from "interfaces/file";
+import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
 
 export const ProfileModal = ({
     userID,
@@ -54,25 +54,27 @@ export const ProfileModal = ({
         }, 2000);
     };
 
-    const init = isNew
-        ? {
-              profileName: "",
-              profilePicture: defaultProfilePic,
-              about: "",
-              websiteUrl: "",
-              instagramUrl: "",
-              twitterUrl: "",
-              facebookUrl: "",
-          }
-        : {
-              profileName: profile?.profileName,
-              profilePicture: profile?.profilePicture,
-              about: profile?.about,
-              websiteUrl: profile?.websiteUrl,
-              instagramUrl: profile?.instagramUrl,
-              twitterUrl: profile?.twitterUrl,
-              facebookUrl: profile?.facebookUrl,
-          };
+    const defaultProfile = {
+        profileName: "",
+        profilePicture: defaultProfilePic,
+        about: "",
+        websiteUrl: "",
+        instagramUrl: "",
+        twitterUrl: "",
+        facebookUrl: "",
+    };
+
+    const currentProfile = {
+        profileName: profile?.profileName,
+        profilePicture: profile?.profilePicture,
+        about: profile?.about,
+        websiteUrl: profile?.websiteUrl,
+        instagramUrl: profile?.instagramUrl,
+        twitterUrl: profile?.twitterUrl,
+        facebookUrl: profile?.facebookUrl,
+    };
+
+    const init = isNew ? defaultProfile : currentProfile;
 
     const formik: FormikValues = useFormik({
         initialValues: init,
@@ -81,49 +83,26 @@ export const ProfileModal = ({
         onSubmit: async (values) => {
             setResponse(null);
             const updateProfile = !isNew
-                ? toast.loading("Updating profile...")
-                : toast.loading("Creating profile...");
-            isNew
-                ? await addProfile(values, userID)
-                      .then((data) => {
-                          toast.update(updateProfile, {
-                              render: "Profile created successfully!",
-                              type: "success",
-                              isLoading: false,
-                              autoClose: 2500,
-                              closeOnClick: true,
-                          });
-                          dispatch(getProfilesForLoggedUser(userID));
-                      })
-                      .catch((err) => {
-                          toast.update(updateProfile, {
-                              render: "Something is wrong with form!",
-                              type: "error",
-                              isLoading: false,
-                              autoClose: 2500,
-                              closeOnClick: true,
-                          });
-                      })
-                : await editProfile(values, profile?._id)
-                      .then((data) => {
-                          toast.update(updateProfile, {
-                              render: "Profile updated successfully!",
-                              type: "success",
-                              isLoading: false,
-                              autoClose: 2500,
-                              closeOnClick: true,
-                          });
-                          dispatch(getProfilesForLoggedUser(userID));
-                      })
-                      .catch((err) => {
-                          toast.update(updateProfile, {
-                              render: "Something is wrong with form!",
-                              type: "error",
-                              isLoading: false,
-                              autoClose: 2500,
-                              closeOnClick: true,
-                          });
-                      });
+                ? LoadingToast("Updating profile...")
+                : LoadingToast("Creating profile");
+            if (isNew)
+                await addProfile(values, userID)
+                    .then(() => {
+                        UpdateToast(updateProfile, "Profile created successfully", "success");
+                        dispatch(getProfilesForLoggedUser(userID));
+                    })
+                    .catch(() => {
+                        UpdateToast(updateProfile, "Something is wrong with form!", "error");
+                    });
+            if (!isNew)
+                await editProfile(values, profile?._id)
+                    .then(() => {
+                        UpdateToast(updateProfile, "Profile updated successfully!", "success");
+                        dispatch(getProfilesForLoggedUser(userID));
+                    })
+                    .catch(() => {
+                        UpdateToast(updateProfile, "Something is wrong with form!", "error");
+                    });
             hideMessage();
             changeVisiblity();
         },
@@ -133,7 +112,7 @@ export const ProfileModal = ({
         uploadProfilePhoto(arg.productFromData);
     };
 
-    const onFileSelect = (file: any) => {
+    const onFileSelect = (file: File) => {
         const foundItem = fileType.find((item) => item.label === file.type);
         if (!foundItem) return;
         if (file.size > MAX_FILE_SIZE) return;
@@ -142,31 +121,21 @@ export const ProfileModal = ({
         onImgSrcChange({ productImageUrl: URL.createObjectURL(file), productFromData: imageForm });
     };
 
-    const onFileInputChange = (e: any) => {
-        const fil = e.target.files[0];
-        onFileSelect(fil);
+    const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        file && onFileSelect(file);
     };
 
-    const uploadProfilePhoto = async (file: any) => {
-        const uploadCoverPhotoToast = toast.loading("Uploading photo...");
-        const uploadImage = await uploadFile(file).catch(() =>
-            toast.update(uploadCoverPhotoToast, {
-                render: "Something is wrong with image!",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
+    const uploadProfilePhoto = async (file: FormData) => {
+        const uploadCoverPhotoToast = LoadingToast("Uploading photo...");
+        await uploadFile(file)
+            .then((data) => {
+                UpdateToast(uploadCoverPhotoToast, "Photo uploaded successfully", "success");
+                formik.values.profilePicture = data.data.message;
             })
-        );
-        if (!uploadImage) return null;
-        toast.update(uploadCoverPhotoToast, {
-            render: "Photo uploaded successfully",
-            type: "success",
-            isLoading: false,
-            autoClose: 2500,
-            closeOnClick: true,
-        });
-        formik.values.profilePicture = uploadImage.data.message;
+            .catch(() =>
+                UpdateToast(uploadCoverPhotoToast, "Something is wrong with image!", "error")
+            );
     };
 
     return (
@@ -192,7 +161,7 @@ export const ProfileModal = ({
                 />
             ))}
             <div className={styles.profileButtons}>
-                {!isNew ? (
+                {!isNew && (
                     <button
                         type="button"
                         className={styles.deleteButton}
@@ -203,14 +172,12 @@ export const ProfileModal = ({
                     >
                         Delete
                     </button>
-                ) : (
-                    <></>
                 )}
                 <button type="submit" className={styles.submitButton}>
                     {isNew ? <span>Create new profile!</span> : <span>Update profile!</span>}
                 </button>
             </div>
-            {response ? <span className={styles.response}>{response}</span> : null}
+            {response && <span className={styles.response}>{response}</span>}
         </form>
     );
 };

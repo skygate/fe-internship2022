@@ -1,47 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./ConfirmModal.module.scss";
 import { confirmUser } from "../../../API/UserService/confirmUser";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "store/store";
-import { getProfilesForLoggedUser } from "store/profile";
-import { changeActiveProfile } from "store/activeProfile";
+import { ErrorToast } from "components";
 
 interface ConfirmModalProps {
-    profileID: string | undefined;
-    changeVisiblity: () => void;
-    userID: string;
     functionToConfirm: () => void;
-    toastName: string;
 }
 
-export const ConfirmModal = ({
-    changeVisiblity,
-    profileID,
-    userID,
-    functionToConfirm,
-    toastName,
-}: ConfirmModalProps) => {
+export const ConfirmModal = ({ functionToConfirm }: ConfirmModalProps) => {
     const [password, setPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState(" ");
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const userProfiles = useAppSelector((state) => state.profiles.profiles);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         await confirmUser(password)
             .then((data) => {
                 if (data) functionToConfirm();
             })
-            .catch((err) => {
+            .catch(() => {
                 setErrorMessage("Password is incorrect");
-                toast.error("Something gone wrong!", {
-                    type: "error",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                });
+                ErrorToast("Password is incorrect");
             });
     };
     return (
@@ -54,7 +31,13 @@ export const ConfirmModal = ({
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                 />
-                <button type="button" onClick={handleSubmit}>
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        handleSubmit();
+                    }}
+                >
                     Confirm
                 </button>
             </div>
