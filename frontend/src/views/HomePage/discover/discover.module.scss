@@ -19,10 +19,8 @@ section {
 }
 
 .topFilters {
-    // width: 100%;
     display: flex;
     justify-content: center;
-    // align-items: center;
     padding-bottom: $spacer-32;
     border-bottom: 1px solid $c-neutrals-6;
 }
@@ -184,6 +182,7 @@ input[type="range"]:active::-webkit-slider-thumb {
     margin-top: $spacer-32;
     display: flex;
     column-gap: 30px;
+    row-gap: 30px;
     justify-content: flex-start;
     flex-wrap: wrap;
 }
