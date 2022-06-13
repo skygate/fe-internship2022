@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./ConfirmModal.module.scss";
-import { confirmUser } from "../../../API/UserService/confirmUser";
+import { confirmUser } from "API/UserService/confirmUser";
 import { ErrorToast } from "components";
 
 interface ConfirmModalProps {
