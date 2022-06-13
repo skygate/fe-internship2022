@@ -1,12 +1,13 @@
 import style from "./purchaseModal.module.scss";
 import { Button } from "components";
 import { useAppSelector } from "store/store";
-import React, { useState } from "react";
+import { useState } from "react";
 import { ButtonTypes } from "interfaces";
 import { Navigate } from "react-router-dom";
 import { editProduct, deleteAuction } from "API/UserService";
 import { AuctionItem } from "interfaces/index";
-import { toast } from "react-toastify";
+import { ErrorToast, LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
+import { UserSelector } from "store/user";
 
 interface AddBidModalProps {
     onClose: () => void;
@@ -17,15 +18,15 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
     const [isPurchased, setIsPurchased] = useState(false);
     const [shouldRedirect, setShouldRedirect] = useState(false);
     const profile = useAppSelector((state) => state.profiles.profiles[0]);
-    const user = useAppSelector((state) => state.user);
+    const user = useAppSelector(UserSelector);
 
     const onPurchase = async () => {
         if (user.userID === auctionData.profileID.userID) {
-            toast.error("You can't buy from yourself");
+            ErrorToast("You can't buy from yourself");
             onClose();
             return;
         }
-        const purchasingToast = toast.loading("Purchasing...");
+        const purchasingToast = LoadingToast("Purchasing...");
         setIsPurchased(true);
         const soldProduct = {
             productID: auctionData.productID._id,
@@ -33,34 +34,10 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
         };
         await editProduct(soldProduct)
             .then()
-            .catch(() =>
-                toast.update(purchasingToast, {
-                    render: "Something gone wrong!",
-                    type: "error",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            );
+            .catch(() => UpdateToast(purchasingToast, "Something gone wrong!", "error"));
         await deleteAuction(auctionData._id)
-            .then(() =>
-                toast.update(purchasingToast, {
-                    render: "Successfully purchased!",
-                    type: "success",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            )
-            .catch(() =>
-                toast.update(purchasingToast, {
-                    render: "Something gone wrong!",
-                    type: "error",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            );
+            .then(() => () => UpdateToast(purchasingToast, "Successfully bought item!", "success"))
+            .catch(() => UpdateToast(purchasingToast, "Something gone wrong!", "error"));
         setTimeout(() => {
             setShouldRedirect(true);
         }, 2000);

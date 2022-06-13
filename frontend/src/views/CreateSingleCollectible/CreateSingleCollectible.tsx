@@ -6,7 +6,8 @@ import { uploadFile } from "API/UserService/uploadFile";
 import { addProduct } from "API/UserService/addProduct";
 import { InputFileChange } from "interfaces/file";
 import { useAppSelector } from "store/store";
-import { toast } from "react-toastify";
+import { ActiveProfileSelector } from "store/activeProfile";
+import { ErrorToast, LoadingToast, UpdateToast } from "components";
 
 const defaultItem: Product = {
     _id: "",
@@ -37,7 +38,7 @@ export const CreateSingleCollectible = () => {
     const [formState, setFormState] = useState(defaultFormState);
     const [item, setItem] = useState<Product>(defaultItem);
     const [file, setFile] = useState<FormData>(new FormData());
-    const activeProfile = useAppSelector((state) => state.activeProfile);
+    const activeProfile = useAppSelector(ActiveProfileSelector);
     useEffect(() => {
         if (activeProfile.activeProfile?._id) {
             setItem({ ...item, ownerID: activeProfile.activeProfile?._id });
@@ -87,43 +88,23 @@ export const CreateSingleCollectible = () => {
         e.preventDefault();
         const isFormFilled = checkIfFilledForm(formState);
         if (!isFormFilled) {
-            return toast.error("Form is not filled correctly...", { autoClose: 2500 });
+            return ErrorToast("Form is not filled correctly...");
         }
         if (formState.productFormData === undefined || formState.productImageUrl === "")
-            return toast.error("Something is wrong with image...", { autoClose: 2500 });
-        const createProductToast = toast.loading("Creating product...");
+            return ErrorToast("Something is wrong with image...");
+        const createProductToast = LoadingToast("Creating product...");
         const uploadImage = await uploadFile(file).catch(() =>
-            toast.update(createProductToast, {
-                render: "Something is wrong with image!",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            })
+            UpdateToast(createProductToast, "Something is wrong with image!", "error")
         );
         if (!uploadImage) return null;
         setItem({ ...item, productImageUrl: uploadImage.data.message });
         item.productImageUrl = uploadImage.data.message;
         await addProduct(item)
             .then(() => {
-                toast.update(createProductToast, {
-                    render: "Product created",
-                    type: "success",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                });
+                UpdateToast(createProductToast, "Product created successfully!", "success");
                 onClickClear();
             })
-            .catch(() =>
-                toast.update(createProductToast, {
-                    render: "Something went wrong",
-                    type: "error",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            );
+            .catch(() => UpdateToast(createProductToast, "Something went wrong", "error"));
     };
 
     return (

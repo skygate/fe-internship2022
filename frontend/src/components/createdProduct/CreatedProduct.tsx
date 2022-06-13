@@ -6,7 +6,9 @@ import { fetchUserProducts } from "store/userProducts";
 import { useState } from "react";
 import { Modal } from "components/Modal/Modal";
 import { AddAuctionModal } from "components/Modal/AddAuctionModal/AddAuctionModal";
-import { toast } from "react-toastify";
+import { UserSelector } from "store/user";
+import { ActiveProfileSelector } from "store/activeProfile";
+import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
 
 export interface CreatedProductProps {
     item: Product;
@@ -17,32 +19,16 @@ export interface CreatedProductProps {
 export const CreatedProduct = ({ item, profileID, setAuctions }: CreatedProductProps) => {
     const dispatch = useAppDispatch();
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const user = useAppSelector((state) => state.user);
-    const activeProfile = useAppSelector((state) => state.activeProfile.activeProfile?._id);
+    const user = useAppSelector(UserSelector);
+    const activeProfile = useAppSelector(ActiveProfileSelector).activeProfile?._id;
     const isOwner = activeProfile === item.ownerID;
 
     const handleDelete = async () => {
         if (!isOwner) return;
-        const deleteToast = toast.loading("Deleting product...");
+        const deleteToast = LoadingToast("Deleting product...");
         await deleteProduct(item._id)
-            .then(() =>
-                toast.update(deleteToast, {
-                    render: "Successfully deleted",
-                    type: "success",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            )
-            .catch((err) =>
-                toast.update(deleteToast, {
-                    render: "Something went wrong",
-                    type: "error",
-                    isLoading: false,
-                    autoClose: 2500,
-                    closeOnClick: true,
-                })
-            )
+            .then(() => UpdateToast(deleteToast, "Successfully deleted", "success"))
+            .catch(() => UpdateToast(deleteToast, "Something went wrong", "error"))
             .finally(() => dispatch(fetchUserProducts(profileID)));
     };
 

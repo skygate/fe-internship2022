@@ -4,11 +4,10 @@ import { useState } from "react";
 import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import { AddAuctionInputsArray } from "./AddAuctionInputsArray";
-import { AxiosResponse } from "axios";
 import { Product } from "interfaces/product";
 import { addAuction } from "API/UserService/auctions";
 import { ToggleInputs } from "components/toggleInputs/ToggleInputs";
-import { toast } from "react-toastify";
+import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
 
 interface AddAuctionModalProps {
     userID: string;
@@ -43,27 +42,15 @@ export const AddAuctionModal = ({
     };
 
     const AddAuctionWithToast = async (values: any) => {
-        const id = toast.loading("Starting new auction...");
+        const addAuctionToast = LoadingToast("starting new auction...");
         try {
             await addAuction(values);
             formik.resetForm();
             isVisible();
-            toast.update(id, {
-                render: "New auction started!",
-                type: "success",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            UpdateToast(addAuctionToast, "New auction started!", "success");
             setAuctions();
         } catch {
-            toast.update(id, {
-                render: "Something went wrong",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            UpdateToast(addAuctionToast, "Something went wrong", "error");
         }
     };
 
@@ -73,7 +60,6 @@ export const AddAuctionModal = ({
             .max(255, "You can use max 255 characters")
             .required("Required"),
         productID: Yup.string().min(3, "Must be min 3 characters"),
-        // amount: Yup.number().min(0.9, "You must set minimum 1 product"),
         price: Yup.number(),
         duration: Yup.number().min(0.9, "You must set minimum 1 hour duration"),
         putOnSale: Yup.boolean(),

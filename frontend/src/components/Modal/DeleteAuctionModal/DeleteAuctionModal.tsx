@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
-import { toast } from "react-toastify";
+import { ActiveProfileSelector } from "store/activeProfile";
+import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
 
 interface DeleteAuctionModalProps {
     onClose: () => void;
@@ -15,10 +16,11 @@ interface DeleteAuctionModalProps {
 export const DeleteAuctionModal = ({ onClose, auctionData }: DeleteAuctionModalProps) => {
     const [isDeleted, setIsDeleted] = useState(false);
     const [shouldNavigate, setShouldNavigate] = useState(false);
-    const profile = useAppSelector((state) => state.activeProfile.activeProfile);
+    const profile = useAppSelector(ActiveProfileSelector).activeProfile;
     const onCancel = () => onClose();
+
     const onAuctionDelete = async () => {
-        const deleteAuctionToast = toast.loading("Editing auction...");
+        const deleteAuctionToast = LoadingToast("Editing auction...");
         try {
             if (profile?._id !== auctionData.profileID._id) throw new Error();
             await deleteAuction(auctionData._id);
@@ -26,21 +28,9 @@ export const DeleteAuctionModal = ({ onClose, auctionData }: DeleteAuctionModalP
             setTimeout(() => {
                 setShouldNavigate(true);
             }, 2000);
-            toast.update(deleteAuctionToast, {
-                render: "Successfully deleted!",
-                type: "success",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            UpdateToast(deleteAuctionToast, "Successfully deleted!", "success");
         } catch (err) {
-            toast.update(deleteAuctionToast, {
-                render: "Something gone wrong!",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            UpdateToast(deleteAuctionToast, "Something gone wrong!", "success");
         }
     };
     return isDeleted ? (
