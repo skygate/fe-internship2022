@@ -12,6 +12,11 @@
     margin-top: $spacer-24;
 }
 
+.bidsContainer {
+    max-height: 288px;
+    overflow-y: auto;
+}
+
 .sectionContainer {
     width: 1220px;
     display: flex;
@@ -73,12 +78,15 @@
 }
 
 .auctionEndDate {
-    font-size: $font-size-button-2;
-    font-weight: $font-weight-500;
+    font-size: $font-size-button-1;
+    font-weight: $font-weight-700;
     line-height: $line-height-button-1;
     color: $c-neutrals-4;
     text-align: left;
     margin-bottom: $spacer-24;
+}
+.auctionEndsTitle {
+    padding-bottom: $spacer-8;
 }
 
 .productDescription {
@@ -95,6 +103,14 @@
     font-size: $font-size-headline-4;
     font-weight: $font-weight-700;
     line-height: $line-height-headline-4;
+    color: $c-neutrals-4;
+}
+
+.noBids {
+    text-align: center;
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-700;
+    line-height: $line-height-body-1-bold;
     color: $c-neutrals-4;
 }
 
@@ -143,20 +159,12 @@
 }
 
 .cashValues {
-    display: flex;
+    text-align: center;
     column-gap: $spacer-24;
     font-family: $font-family-poppins;
     font-size: $font-size-body-1-bold;
     font-weight: $font-weight-600;
     line-height: $line-height-body-1-bold;
-}
-
-.bidEthValue {
-    font-family: $font-family-poppins;
-    font-size: $font-size-body-1-bold;
-    font-weight: $font-weight-600;
-    line-height: $line-height-body-1-bold;
-    color: $c-neutrals-2;
 }
 
 .bidDolarValue {

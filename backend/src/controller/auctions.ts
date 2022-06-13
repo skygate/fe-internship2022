@@ -23,7 +23,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .find()
                 .populate({
                     path: "profileID",
-                    select: "userID",
+                    select: "userID about profilePicture profileName",
                 })
                 .populate({
                     path: "productID",
@@ -50,7 +50,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .find({ profileID: req.query.profileID })
                 .populate({
                     path: "profileID",
-                    select: "userID",
+                    select: "userID about profilePicture profileName",
                 })
                 .populate({
                     path: "productID",
@@ -88,7 +88,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 .findById(req.query.id)
                 .populate({
                     path: "profileID",
-                    select: "userID profileName profilePicture",
+                    select: "userID profileName profilePicture about",
                 })
                 .populate({
                     path: "productID",
@@ -137,6 +137,10 @@ export const getAllAuctions = (req: Request, res: Response) => {
                 })
                 .sort({ [sortBy]: [asc] })
                 .populate({
+                    path: "profileID",
+                    select: "userID about profilePicture profileName",
+                })
+                .populate({
                     path: "bidHistory.bid.profileID",
                     select: "profilePicture profileName",
                 })
@@ -174,7 +178,8 @@ export const getAllAuctions = (req: Request, res: Response) => {
 };
 
 export const addAuction = async (req: Request, res: Response) => {
-    const { profileID, productID, amount, price, putOnSale, instantSellPrice } = req.body;
+    const { profileID, productID, price, putOnSale, instantSellPrice } = req.body;
+    const amount = 1;
     res.setHeader("Access-Control-Allow-Credentials", "true");
     // Handling authentication on every fetch
     if (req.user === undefined) return res.status(401).json({ message: "Not authenticated" });

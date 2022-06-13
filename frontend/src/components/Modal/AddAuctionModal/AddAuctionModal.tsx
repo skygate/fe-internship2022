@@ -36,7 +36,6 @@ export const AddAuctionModal = ({
         userID: userID,
         profileID: activeProfile,
         productID: product._id,
-        amount: 0,
         price: 0,
         duration: 0,
         putOnSale: false,
@@ -74,7 +73,7 @@ export const AddAuctionModal = ({
             .max(255, "You can use max 255 characters")
             .required("Required"),
         productID: Yup.string().min(3, "Must be min 3 characters"),
-        amount: Yup.number().min(0.9, "You must set minimum 1 product"),
+        // amount: Yup.number().min(0.9, "You must set minimum 1 product"),
         price: Yup.number(),
         duration: Yup.number().min(0.9, "You must set minimum 1 hour duration"),
         putOnSale: Yup.boolean(),

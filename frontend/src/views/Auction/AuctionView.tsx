@@ -1,6 +1,12 @@
 import style from "./auction.module.scss";
 import { AuctionItem } from "interfaces/index";
-import { CreatorsListItem, ProfilePicture, RoundButton, Button } from "components";
+import {
+    CreatorsListItem,
+    ProfilePicture,
+    RoundButton,
+    Button,
+    HorizontalSelectButtons,
+} from "components";
 import { AiFillHeart } from "react-icons/ai";
 import { FiShare, FiMoreHorizontal } from "react-icons/fi";
 import { Toast } from "components";
@@ -10,6 +16,8 @@ import { BidOffer } from "interfaces/bidOffer";
 import { ToolsItem, ModalsVisibilityState } from "./interfaces";
 import { useAppSelector } from "store/store";
 import { format } from "date-fns";
+import React from "react";
+import ButtonInterface from "components/horizontalSelectButtons/interface";
 
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
@@ -25,6 +33,9 @@ interface AuctionViewProps {
     placeBid: (data: BidOffer) => void;
     visibleBids: number;
     showAllBids: () => void;
+    menuButtons: ButtonInterface[];
+    onMenuButtonsSelect: (e: React.MouseEvent) => void;
+    selectedViewOption: string;
 }
 
 export const AuctionView = ({
@@ -41,12 +52,70 @@ export const AuctionView = ({
     placeBid,
     visibleBids,
     showAllBids,
+    menuButtons,
+    onMenuButtonsSelect,
+    selectedViewOption,
 }: AuctionViewProps) => {
     const { productID, amount, bidHistory, instantSellPrice, price, profileID } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
     const profile = useAppSelector((state) => state.activeProfile.activeProfile);
+    const renderDisplayOption = () => {
+        if (!auctionData) return;
+        switch (selectedViewOption) {
+            case "info":
+                return (
+                    <div className={style.auctionEndDate}>
+                        {instantSellPrice && (
+                            <div className={style.priceInfo}>
+                                <p className={style.instantSellPrice}>Instant sell price:</p>
+                                <p className={style.dolarValue}>
+                                    ${price?.toLocaleString("en-US")}
+                                </p>
+                                <p className={style.stockValue}>{amount} in stock</p>
+                            </div>
+                        )}
+                        <p className={style.auctionEndsTitle}>Auction ends:</p>
+                        <p>{format(new Date(auctionData.endDate), "dd/MM/yyy HH:mm")}</p>
+                    </div>
+                );
+            case "description":
+                return <div className={style.productDescription}>{productDescription}</div>;
+            case "owner":
+                return (
+                    <div>
+                        <CreatorsListItem profile={auctionData.profileID} about={true} />
+                    </div>
+                );
+            case "bids":
+                return (
+                    <div>
+                        {bidHistory && bidHistory.length > 0 ? (
+                            <h4 className={style.bids}>Bids</h4>
+                        ) : (
+                            <p className={style.noBids}>Currenty there are no bids</p>
+                        )}
+                        <div className={style.bidsContainer}>
+                            {bidHistory?.slice(visibleBids * -1).map((item, index) => (
+                                <CreatorsListItem
+                                    profile={item.bid.profileID}
+                                    offer={item.bid.offer}
+                                    key={index}
+                                />
+                            ))}
+                        </div>
+                        {bidHistory &&
+                            bidHistory?.length > 3 &&
+                            (!visibleBids ? (
+                                <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
+                            ) : (
+                                <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
+                            ))}
+                    </div>
+                );
+        }
+    };
 
     return !auctionData ? (
         <div className={style.auctionNotFound}>Auction not found</div>
@@ -56,42 +125,8 @@ export const AuctionView = ({
                 <img src={productImageUrl} alt="productImage" className={style.productImage} />
                 <div className={style.productInfo}>
                     <h3 className={style.productName}>{productName}</h3>
-                    <div className={style.productDescription}>{productDescription}</div>
-                    <div>
-                        <CreatorsListItem profile={auctionData.profileID} />
-                    </div>
-                    {instantSellPrice && (
-                        <div className={style.priceInfo}>
-                            <p className={style.instantSellPrice}>Instant sell price:</p>
-                            <p className={style.dolarValue}>${price?.toLocaleString("en-US")}</p>
-                            <p className={style.stockValue}>{amount} in stock</p>
-                        </div>
-                    )}
-
-                    <div className={style.auctionEndDate}>
-                        <p>Koniec aukcji:</p>
-                        <p>{format(new Date(auctionData.endDate), "dd/MM/yyy HH:mm")}</p>
-                    </div>
-                    <div>
-                        {bidHistory && bidHistory.length > 0 && (
-                            <h4 className={style.bids}>Bids</h4>
-                        )}
-
-                        {bidHistory?.slice(visibleBids * -1).map((item, index) => (
-                            <CreatorsListItem
-                                profile={item.bid.profileID}
-                                offer={item.bid.offer}
-                                key={index}
-                            />
-                        ))}
-                        {bidHistory &&
-                            bidHistory?.length > 2 &&
-                            (!visibleBids ? (
-                                <Button text="Hide bids" id="showAllBids" onClick={showAllBids} />
-                            ) : (
-                                <Button text="Show all bids" id="hideBids" onClick={showAllBids} />
-                            ))}
-                    </div>
+                    <HorizontalSelectButtons buttons={menuButtons} onSelect={onMenuButtonsSelect} />
+                    {renderDisplayOption()}
                     <div
                         className={
                             bidHistory && bidHistory.length > 0
@@ -113,13 +148,7 @@ export const AuctionView = ({
                                         </span>
                                     </p>
                                     <div className={style.cashValues}>
-                                        <p className={style.bidEthValue}>
-                                            ETH
-                                            {highestBid.offer}
-                                        </p>
-                                        <p className={style.bidDolarValue}>
-                                            ${ethDolarExchange(highestBid?.offer)}
-                                        </p>
+                                        <p className={style.bidDolarValue}>${highestBid?.offer}</p>
                                     </div>
                                 </div>
                             </div>

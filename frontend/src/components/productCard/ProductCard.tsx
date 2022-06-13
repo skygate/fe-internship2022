@@ -1,6 +1,6 @@
 import { AuctionItem } from "interfaces";
 import styles from "./productCard.module.scss";
-import { GreenETHValue } from "components/greenETHValue/GreenETHValue";
+import { GreenETHValue, CreatorsListItem } from "components";
 import { ProfilePicture } from "..";
 import Heart from "assets/Heart.svg";
 import { Link } from "react-router-dom";
@@ -25,7 +25,6 @@ export const ProductCard = ({ item }: ProductCardProps) => {
     };
 
     const highestBid = item.bidHistory.slice(-1)[0]?.bid;
-
     return (
         <Link to={`/auction/${item._id}`}>
             <div className={styles.productCardContainer}>
@@ -68,16 +67,26 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                 </div>
                 <div className={styles.avatarsAndUnits}>
                     <div className={styles.avatars}>
-                        {item.bidHistory.slice(-3).map((item, index) => {
-                            return (
-                                <div className={styles.avatar} key={index}>
-                                    <ProfilePicture
-                                        url={item.bid.profileID.profilePicture}
-                                        width={"24px"}
-                                    />
-                                </div>
-                            );
-                        })}
+                        {item.bidHistory.length > 0 ? (
+                            item.bidHistory.slice(-3).map((item, index) => {
+                                return (
+                                    <div className={styles.avatar} key={index}>
+                                        <ProfilePicture
+                                            url={item.bid.profileID.profilePicture}
+                                            width={"24px"}
+                                        />
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className={styles.authorInfo}>
+                                <ProfilePicture
+                                    url={item.profileID.profilePicture}
+                                    width={"22px"}
+                                />
+                                <p className={styles.authorName}>{item.profileID.profileName}</p>
+                            </div>
+                        )}
                     </div>
                     <span className={styles.unitsInStock}>{item.amount} in stock</span>
                 </div>
@@ -87,9 +96,11 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                             Highest bid
                             <span className={styles.highestBidValue}>{highestBid?.offer} ETH</span>
                         </span>
-                    ) : null}
+                    ) : (
+                        <span className={styles.newBid}>Be the first one to bid!</span>
+                    )}
 
-                    {isHotBid() ? <span className={styles.newBid}>new bid 🔥</span> : null}
+                    {isHotBid() && <span className={styles.newBid}>new bid 🔥</span>}
                 </div>
             </div>
         </Link>

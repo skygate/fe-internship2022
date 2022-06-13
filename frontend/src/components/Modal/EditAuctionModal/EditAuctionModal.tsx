@@ -14,12 +14,6 @@ const inputs = [
         required: false,
     },
     {
-        id: "amount",
-        label: "Amount",
-        placeholder: "Amount",
-        required: false,
-    },
-    {
         id: "endDate",
         label: "End date",
         placeholder: "End date",
