@@ -146,24 +146,26 @@ export const Auction = () => {
                 autoClose: 2500,
                 closeOnClick: true,
             });
-        try {
-            await addBid(data, auctionID);
-            toast.update(placeBidToast, {
-                render: "Successfully placed bid!",
-                type: "success",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
-        } catch (err) {
-            toast.update(placeBidToast, {
-                render: "Something gone wrong!",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
-        }
+
+        await addBid(data, auctionID)
+            .then(() =>
+                toast.update(placeBidToast, {
+                    render: "Successfully placed bid!",
+                    type: "success",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            )
+            .catch(() =>
+                toast.update(placeBidToast, {
+                    render: "Something gone wrong!",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 2500,
+                    closeOnClick: true,
+                })
+            );
     };
 
     const showAllBids = () => {

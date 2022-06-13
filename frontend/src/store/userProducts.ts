@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { UsersProductsState } from "interfaces/product";
 import { getUserProducts } from "./helpers/productHelper";
+import { RootState } from "./store";
 
 const initialState: UsersProductsState = {
     status: "",
@@ -10,6 +11,8 @@ const initialState: UsersProductsState = {
 export const fetchUserProducts = createAsyncThunk("userProducts/setUserProducts", (id: string) => {
     return getUserProducts(id);
 });
+
+export const UserProductsSelector = (state: RootState) => state.userProducts.products;
 
 export const userProductsSlice = createSlice({
     name: "usersProducts",

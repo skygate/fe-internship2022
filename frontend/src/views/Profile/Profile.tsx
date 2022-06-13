@@ -1,19 +1,24 @@
 import styles from "./Profile.module.scss";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ProfileInterface } from "../../interfaces/ProfileInterface";
-import { ProfileInfoPanel } from "../../components";
-import imageIcon from "../../assets/imageIcon.svg";
-import editIcon from "../../assets/editIcon.svg";
+import { ProfileInfoPanel, Modal, LoadingToast, UpdateToast } from "components";
+import imageIcon from "assets/imageIcon.svg";
+import editIcon from "assets/editIcon.svg";
 import { useAppSelector, useAppDispatch } from "store/store";
-import { Modal } from "components";
-import { ProfileModal } from "../../components";
-import { fetchUserProducts } from "store/userProducts";
+import { fetchUserProducts, UserProductsSelector } from "store/userProducts";
 import { CreatedItems } from "./CreatedItems/CreatedItems";
-import { getProfile } from "API/UserService/profile";
+import { getProfile, deleteProfile } from "API/UserService/profile";
 import { ProfileAuctions } from "./ProfileAuctions/ProfileAuctions";
-import { AuctionItem } from "interfaces";
+import { AuctionItem, ProfileInterface } from "interfaces";
 import { getUsersAuctions } from "API/UserService/auctions";
+import { UploadCoverPhotoModal, ConfirmModal, ProfileModal } from "components/Modal";
+import { getProfilesForLoggedUser, UserProfilesSelector } from "store/profile";
+import { ActiveProfileSelector, changeActiveProfile } from "store/activeProfile";
+import { useNavigate } from "react-router-dom";
+import { UserSelector } from "store/user";
+
+const defaultCoverPicture =
+    "https://galaktyczny.pl/wp-content/uploads/2021/08/windows-xp-wallpaper-tapeta.jpg";
 
 const profileDisplayOptions = [
     { value: "onsale", label: "On Sale" },
@@ -31,18 +36,23 @@ export function Profile() {
     const [auctions, setAuctions] = useState<AuctionItem[]>([]);
     const [selectedProfileDisplay, setSelectedProfileDisplay] = useState<string>("onsale");
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const user = useAppSelector((state) => state.user);
-    const activeProfile = useAppSelector((state) => state.activeProfile);
-    const usersProducts = useAppSelector((state) => state.userProducts.products);
+    const [isUploadCoverPhotoModalVisible, setIsUploadCoverPhotoModalVisible] = useState(false);
+    const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
+    const user = useAppSelector(UserSelector);
+    const activeProfile = useAppSelector(ActiveProfileSelector);
+    const usersProducts = useAppSelector(UserProductsSelector);
+    const userProfiles = useAppSelector(UserProfilesSelector);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        (async () => {
+        const getProfileStates = async () => {
             if (!profileID) return;
             setProfile(await getProfile(profileID));
             setAuctions(await getUsersAuctions(profileID));
             dispatch(fetchUserProducts(profileID));
-        })();
-    }, [activeProfile, usersProducts]);
+        };
+        getProfileStates();
+    }, [profileID]);
 
     const profileDisplay = (displayOption: string) => {
         switch (displayOption) {
@@ -50,7 +60,10 @@ export function Profile() {
                 return (
                     <CreatedItems
                         usersProducts={usersProducts}
-                        profileID={profileID ? profileID : ""}
+                        setAuctions={async () =>
+                            profileID && setAuctions(await getUsersAuctions(profileID))
+                        }
+                        profileID={profileID || ""}
                     />
                 );
             case "onsale":
@@ -58,17 +71,47 @@ export function Profile() {
         }
     };
 
+    const handleDelete = () => {
+        const deleteProfileToast = LoadingToast("Deleting profile...");
+        if (profileID)
+            deleteProfile(profileID)
+                .then(() => {
+                    UpdateToast(deleteProfileToast, "Profile deleted successfully", "success");
+                    localStorage.setItem("activeAccount", JSON.stringify(""));
+                    dispatch(getProfilesForLoggedUser(user.userID));
+                    dispatch(
+                        changeActiveProfile({
+                            profiles: userProfiles,
+                            isAuto: true,
+                        })
+                    );
+                    navigate("/");
+                    setIsConfirmModalVisible(false);
+                })
+                .catch((err: Error) => {
+                    UpdateToast(deleteProfileToast, err.message, "error");
+                });
+    };
+
     return (
         <div className={styles.profileContainer}>
             <div className={styles.coverPhotoWrapper}>
-                <img className={styles.coverPhoto} alt="Cover" src={profile?.coverPicture} />
+                <img
+                    className={styles.coverPhoto}
+                    alt="Cover"
+                    src={profile?.coverPicture ? profile.coverPicture : defaultCoverPicture}
+                />
             </div>
             <div className={styles.contentContainer}>
                 {profile && <ProfileInfoPanel profile={profile} />}
                 <div className={styles.mainContent}>
-                    {profileID === activeProfile.activeProfile?._id && user.userID !== "" ? (
+                    {profileID === activeProfile.activeProfile?._id && user.userID ? (
                         <div className={styles.settingsButtons}>
-                            <button type="button" className={styles.buttonOnCoverPhoto}>
+                            <button
+                                type="button"
+                                className={styles.buttonOnCoverPhoto}
+                                onClick={() => setIsUploadCoverPhotoModalVisible(true)}
+                            >
                                 Edit cover photo
                                 <img
                                     className={styles.buttonIcon}
@@ -132,9 +175,39 @@ export function Profile() {
                     <ProfileModal
                         isNew={false}
                         userID={user.userID}
-                        activeProfile={activeProfile.activeProfile}
+                        profile={activeProfile.activeProfile}
                         changeVisiblity={() => setIsModalVisible(false)}
+                        openConfirmModal={() => setIsConfirmModalVisible(true)}
                     />
+                </Modal>
+            )}
+            {isUploadCoverPhotoModalVisible && (
+                <Modal
+                    visible={isUploadCoverPhotoModalVisible}
+                    onClose={() => {
+                        setIsUploadCoverPhotoModalVisible(false);
+                    }}
+                    title="Upload new cover photo!"
+                >
+                    <UploadCoverPhotoModal
+                        profile={profile}
+                        changeVisiblity={() => setIsUploadCoverPhotoModalVisible(false)}
+                        setProfile={async () =>
+                            profileID && setProfile(await getProfile(profileID))
+                        }
+                    />
+                </Modal>
+            )}
+            {isConfirmModalVisible && (
+                <Modal
+                    visible={isConfirmModalVisible}
+                    onClose={() => {
+                        setIsConfirmModalVisible(false);
+                    }}
+                    title="Confirm profile delete"
+                    description="Enter your account password"
+                >
+                    <ConfirmModal functionToConfirm={handleDelete} />
                 </Modal>
             )}
         </div>

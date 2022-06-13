@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getProfilesOfUser } from "./helpers/profileHelper";
 import { ProfileInterface } from "../interfaces";
+import { RootState } from "./store";
 
 const initialState = {
     status: "",
@@ -13,6 +14,8 @@ export const getProfilesForLoggedUser = createAsyncThunk(
         return getProfilesOfUser(userID);
     }
 );
+
+export const UserProfilesSelector = (state: RootState) => state.profiles.profiles;
 
 export const profilesSlice = createSlice({
     name: "profiles",

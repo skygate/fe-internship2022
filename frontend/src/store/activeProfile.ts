@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { setActiveProfileAuto } from "./helpers/profileHelper";
 import { setActiveProfile } from "./helpers/profileHelper";
-import { ProfileInterface } from "../interfaces";
 import { ChangeActiveProfilePayload, ActiveProfileState } from "../interfaces";
+import { RootState } from "./store";
 
 const initialState: ActiveProfileState = {
     status: "",
@@ -15,6 +15,8 @@ export const changeActiveProfile = createAsyncThunk(
         return isAuto ? setActiveProfileAuto(profiles) : setActiveProfile(profiles[0]);
     }
 );
+
+export const ActiveProfileSelector = (state: RootState) => state.activeProfile;
 
 export const activeProfileSlice = createSlice({
     name: "activeProfile",

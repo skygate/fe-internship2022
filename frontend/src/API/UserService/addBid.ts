@@ -6,5 +6,5 @@ interface DataInterface {
 }
 
 export const addBid = async (data: DataInterface, auctionID: string) => {
-    axiosInstance.post(`/auctions/${auctionID}/bid`, data);
+    return axiosInstance.post(`/auctions/${auctionID}/bid`, data);
 };

@@ -1,18 +1,18 @@
 import styles from "./NavbarDropDown.module.scss";
 import { useAppSelector } from "store/store";
-import { useState } from "react";
-import SignOutIcon from "../../assets/SignOutIcon.svg";
+import { useState, useCallback, useEffect, useRef } from "react";
+import SignOutIcon from "assets/SignOutIcon.svg";
 import { logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
 import { setUser } from "store/user";
 import { changeActiveProfile } from "store/activeProfile";
-import { ProfilePicture } from "components";
-import ArrowDownSign from "../../assets/ArrowDownSign.svg";
-import profileIcon from "../../assets/profileIcon.svg";
-import plusIcon from "../../assets/plusIcon.svg";
+import { ProfilePicture, Modal } from "components";
+import ArrowDownSign from "assets/ArrowDownSign.svg";
+import profileIcon from "assets/profileIcon.svg";
+import plusIcon from "assets/plusIcon.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { Modal } from "components";
-import { ProfileModal } from "components/Modal/ProfileModal/ProfileModal";
+import { ProfileModal } from "components/Modal";
+import { useOutsideAlerter } from "hooks/useOutsideAlerter";
 
 export function NavbarDropDown() {
     const dispatch = useAppDispatch();
@@ -22,9 +22,36 @@ export function NavbarDropDown() {
     const [activeDropdownButton, setActiveDropdownButton] = useState(false);
     const [activeProfileSwitchButton, setActiveProfileSwitchButton] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const wrapperRef = useRef(null);
+    useOutsideAlerter(wrapperRef, setActiveDropdownButton);
+
+    const escFunction = useCallback(
+        (e) => {
+            if (e.key === "Escape") {
+                setActiveDropdownButton(false);
+            }
+        },
+        [setActiveDropdownButton]
+    );
+
+    useEffect(() => {
+        if (activeDropdownButton) document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [activeDropdownButton]);
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, [escFunction]);
+
     const navigate = useNavigate();
     return (
-        <div className={styles.dropdownMenu}>
+        <div className={styles.dropdownMenu} ref={wrapperRef}>
             <button
                 type="button"
                 onClick={() => {
