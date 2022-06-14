@@ -7,7 +7,7 @@ import { AddAuctionInputsArray } from "./AddAuctionInputsArray";
 import { Product } from "interfaces/product";
 import { addAuction } from "API/UserService/auctions";
 import { ToggleInputs } from "components/toggleInputs/ToggleInputs";
-import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
+import { LoadingToast, UpdateToast } from "components";
 
 interface AddAuctionModalProps {
     userID: string;

@@ -6,7 +6,7 @@ import { Navigate } from "react-router-dom";
 import { useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
 import { ActiveProfileSelector } from "store/activeProfile";
-import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
+import { LoadingToast, UpdateToast } from "components";
 
 interface DeleteAuctionModalProps {
     onClose: () => void;

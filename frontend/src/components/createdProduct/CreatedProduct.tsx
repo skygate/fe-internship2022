@@ -8,7 +8,7 @@ import { Modal } from "components/Modal/Modal";
 import { AddAuctionModal } from "components/Modal/AddAuctionModal/AddAuctionModal";
 import { UserSelector } from "store/user";
 import { ActiveProfileSelector } from "store/activeProfile";
-import { LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
+import { LoadingToast, UpdateToast } from "components";
 
 export interface CreatedProductProps {
     item: Product;

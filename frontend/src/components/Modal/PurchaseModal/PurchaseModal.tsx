@@ -6,7 +6,7 @@ import { ButtonTypes } from "interfaces";
 import { Navigate } from "react-router-dom";
 import { editProduct, deleteAuction } from "API/UserService";
 import { AuctionItem } from "interfaces/index";
-import { ErrorToast, LoadingToast, UpdateToast } from "components/ToastWrapper/Toasts";
+import { ErrorToast, LoadingToast, UpdateToast } from "components";
 import { UserSelector } from "store/user";
 
 interface AddBidModalProps {
