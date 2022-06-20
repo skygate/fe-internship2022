@@ -5,6 +5,7 @@ export { MainNFT } from "./topBrands/MainNFT/MainNFT";
 export { ProfilePicture } from "./profilePicture/ProfilePicture";
 export { ProfileHorizontal } from "./profileHorizontal/ProfileHorizontal";
 export { PopularItem } from "./popularItem/PopularItem";
+export { PopularSeller } from "./popularSeller/PopularSeller";
 export { CreatorsListItem } from "./topBrands/CreatorsList/CreatorsListItem";
 export { NFTListItem } from "./topBrands/NFTListItem/NFTListItem";
 export { GreenETHValue } from "./greenETHValue/GreenETHValue";
