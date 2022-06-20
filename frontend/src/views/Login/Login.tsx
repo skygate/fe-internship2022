@@ -5,7 +5,7 @@ import { LoginInputType } from "interfaces/index";
 import { loginUser, logoutUser } from "API/UserService";
 import { useAppDispatch } from "store/store";
 import { setUser } from "store/user";
-import { toast } from "react-toastify";
+import { ErrorToast } from "components";
 import { useNavigate } from "react-router-dom";
 
 interface FormState {
@@ -65,12 +65,7 @@ export const Login = () => {
                 navigate("/");
             });
         } catch (err) {
-            return toast.error("Something gone wrong", {
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            return ErrorToast("Something went wrong");
         }
     };
 

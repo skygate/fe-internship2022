@@ -17,6 +17,7 @@ import { useAppSelector } from "store/store";
 import { format } from "date-fns";
 import React from "react";
 import ButtonInterface from "components/horizontalSelectButtons/interface";
+import { ActiveProfileSelector } from "store/activeProfile";
 
 interface AuctionViewProps {
     auctionData: AuctionItem | null;
@@ -59,7 +60,7 @@ export const AuctionView = ({
     const { productImageUrl, productName, productDescription } = productID || {};
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
-    const profile = useAppSelector((state) => state.activeProfile.activeProfile);
+    const profile = useAppSelector(ActiveProfileSelector).activeProfile;
     const renderDisplayOption = () => {
         if (!auctionData) return;
         switch (selectedViewOption) {
@@ -84,7 +85,7 @@ export const AuctionView = ({
             case "owner":
                 return (
                     <div>
-                        <CreatorsListItem profile={auctionData.profileID} about={true} />
+                        <CreatorsListItem profile={auctionData.profileID} />
                     </div>
                 );
             case "bids":

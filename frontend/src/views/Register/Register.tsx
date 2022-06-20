@@ -5,8 +5,8 @@ import { registerUser } from "API/UserService";
 import { FormikValues, useFormik } from "formik";
 import * as Yup from "yup";
 import { yupRegisterPasswordValidation } from "components/passwordInput/PasswordInput";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { LoadingToast, UpdateToast } from "components";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
@@ -42,10 +42,11 @@ export const Register = () => {
                 email: values.email.toLowerCase(),
             };
             await registerUser(data).then((data) => {
+                const registerToast = LoadingToast("Registering...");
                 setResponse(data.message);
                 if (data.message === "User added succesfully") {
                     formik.resetForm();
-                    toast.success("User added succesfully!");
+                    UpdateToast(registerToast, "Account registered successfully!", "success");
                     navigate("/");
                 }
             });
