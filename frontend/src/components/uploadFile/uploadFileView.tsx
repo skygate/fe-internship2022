@@ -26,12 +26,12 @@ export const UploadFileView = ({
                     type="file"
                     className={style.fileInput}
                     id="fileInput"
-                    accept=".png, .webp, .gif, .mp3, .mp4, .jpg, .jpeg"
+                    accept=".png, .webp, .gif, .jpg, .jpeg"
                     onChange={onFileInputChange}
                 />
 
                 <img src={icon} alt="upload icon" />
-                <p>PNG, JPG, JPEG, GIF, WEBP, MP4 or MP3. Max 1 Gb.</p>
+                <p>PNG, JPG, JPEG, GIF, WEBP. Max 1 Gb.</p>
             </label>
         </div>
     );

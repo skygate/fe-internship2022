@@ -5,3 +5,51 @@
 .form {
     width: 100%;
 }
+
+.uploadWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: $spacer-12 auto;
+}
+
+.fileInput {
+    display: none;
+}
+
+.profileButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submitButton,
+.deleteButton:hover {
+    cursor: pointer;
+}
+
+.updateButton {
+    font-family: $font-family-dm-sans;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    font-size: $font-size-button-2;
+    color: $c-neutrals-4;
+    border: 2px solid $c-neutrals-4;
+    background-color: transparent;
+    border-radius: 32px;
+    display: inline-flex;
+    padding: $spacer-8 $spacer-12;
+}
+
+.deleteButton {
+    font-family: $font-family-dm-sans;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    font-size: $font-size-button-2;
+    color: $c-neutrals-8;
+    background-color: $c-primary-3;
+    border-radius: 32px;
+    display: inline-flex;
+    padding: $spacer-8 $spacer-12;
+}

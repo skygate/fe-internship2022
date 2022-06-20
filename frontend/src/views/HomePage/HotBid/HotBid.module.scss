@@ -11,7 +11,7 @@
 
 .nftsContainer {
     display: flex;
-    justify-content: space-between;
+    column-gap: 30px;
 }
 
 .headerSection {
@@ -30,8 +30,6 @@
 
 .arrowButtons {
     display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .arrowButtons img {
@@ -39,14 +37,19 @@
 }
 
 .arrowButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: $c-neutrals-4;
     background-color: $c-neutrals-8;
     border: none;
     width: 30px;
     height: 30px;
+    border: 2px solid transparent;
 }
 
-.arrowButton:hover {
+.hoverButton:hover {
     border: 2px solid $c-neutrals-6;
     border-radius: 50%;
+    cursor: pointer;
 }

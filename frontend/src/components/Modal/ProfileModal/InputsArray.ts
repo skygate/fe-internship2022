@@ -9,20 +9,6 @@ export const inputsArray: ProfileInput[] = [
         type: "text",
     },
     {
-        name: ProfileInputType.ProfilePicture,
-        id: "profilePicture",
-        label: "Profile picture",
-        placeholder: "Profile picture URL",
-        type: "text",
-    },
-    {
-        name: ProfileInputType.CoverPicture,
-        id: "coverPicture",
-        label: "Cover picture",
-        placeholder: "Cover picture URL",
-        type: "text",
-    },
-    {
         name: ProfileInputType.About,
         id: "about",
         label: "About",

@@ -3,17 +3,17 @@ import arrowLeft from "assets/arrowLeft.svg";
 import arrowRight from "assets/arrowRight.svg";
 import style from "./creatorNetwork.module.scss";
 import exampleImage from "assets/exampleImage.png";
-import { Modal, ProfileHorizontal } from "components";
+import { ErrorToast, Modal, ProfileHorizontal, LoadingToast, UpdateToast } from "components";
 import { useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
 import { Link } from "react-router-dom";
 import { intervalToDuration } from "date-fns";
 import { AddBidModal } from "components/Modal";
 import { addBid } from "API/UserService";
-import { toast } from "react-toastify";
 import { BidOffer } from "interfaces";
 import { SocketContext } from "App";
 import { getAuction } from "API/UserService";
+import { UserSelector } from "store/user";
 
 export const CreatorNetwork = () => {
     const socket = useContext(SocketContext);
@@ -21,7 +21,7 @@ export const CreatorNetwork = () => {
     const [timeUntillAuctionEnds, setTimeUntillAuctionEnds] = useState<Duration>();
     const [bidModalVisibility, setBidModalVisibility] = useState(false);
     const lastBid = auction?.bidHistory[auction.bidHistory.length - 1]?.bid;
-    const user = useAppSelector((state) => state.user);
+    const user = useAppSelector(UserSelector);
 
     useEffect(() => {
         getAuction("62a07222a24e1df13264c9d0").then((res) => setAuction(res.data));
@@ -47,52 +47,25 @@ export const CreatorNetwork = () => {
     }, [socket]);
 
     const openModal = () => {
-        if (!user.userID) return toast.error("You have to be logged in");
+        if (!user.userID) return ErrorToast("You have to be logged in");
         setBidModalVisibility(true);
     };
 
     const placeBid = async (data: BidOffer) => {
-        if (!user.userID) return toast.error("You have to be logged in");
+        if (!user.userID) return ErrorToast("You have to be logged in");
         if (!auction) return;
-        const placeBidToast = toast.loading("Placing bid...");
+        const placeBidToast = LoadingToast("Placing bid...");
         if (lastBid && data.offer <= lastBid.offer)
-            return toast.update(placeBidToast, {
-                render: "Offer has to be higher than last bid",
-                type: "error",
-            });
+            return UpdateToast(placeBidToast, "Offer has to be higher than last bid", "error");
         if (user.userID === auction?.profileID.userID)
-            return toast.update(placeBidToast, {
-                render: "You cannot bid your own auction",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            return UpdateToast(placeBidToast, "You cannot bid your own auction", "error");
         if (data.profileID == lastBid?.profileID._id)
-            return toast.update(placeBidToast, {
-                render: "You cannot bid twice",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            return UpdateToast(placeBidToast, "You cannot bid twice", "error");
         try {
             await addBid(data, auction?._id);
-            toast.update(placeBidToast, {
-                render: "Successfully placed bid!",
-                type: "success",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            UpdateToast(placeBidToast, "Successfully placed bid!", "success");
         } catch (err) {
-            toast.update(placeBidToast, {
-                render: "Something gone wrong!",
-                type: "error",
-                isLoading: false,
-                autoClose: 2500,
-                closeOnClick: true,
-            });
+            UpdateToast(placeBidToast, "Something gone wrong!", "error");
         }
     };
 

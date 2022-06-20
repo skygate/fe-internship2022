@@ -56,6 +56,11 @@
     border-radius: 32px;
     display: inline-flex;
     padding: $spacer-8 $spacer-12;
+    background-color: rgba($color: #262626, $alpha: 0.3);
+}
+
+.buttonOnCoverPhoto:hover {
+    cursor: pointer;
 }
 
 .buttonIcon {
@@ -70,6 +75,10 @@
     margin-left: $spacer-64;
 }
 
+.fileInput {
+    display: none;
+}
+
 .profileDisplayLabel {
     font-family: $font-family-dm-sans;
     font-weight: $font-weight-700;
@@ -78,6 +87,9 @@
     text-align: center;
     color: $c-neutrals-4;
     margin-right: $spacer-24;
+}
+.profileDisplayLabel:hover {
+    cursor: pointer;
 }
 
 .selectedProfileDisplayLabel {

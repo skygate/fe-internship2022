@@ -13,6 +13,9 @@ interface ProfileInfoProp {
     profile: ProfileInterface;
 }
 
+const defaultProfilePicture =
+    "https://icon-library.com/images/default-profile-icon/default-profile-icon-24.jpg";
+
 export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const maxWebsiteUrlLength = 17;
@@ -21,7 +24,10 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile }) => {
     return (
         <div className={styles.profileContainer}>
             <div className={styles.profileAvatar}>
-                <ProfilePicture width={"160px"} url={profile.profilePicture} />
+                <ProfilePicture
+                    width={"160px"}
+                    url={profile.profilePicture ? profile.profilePicture : defaultProfilePicture}
+                />
             </div>
             <span className={styles.usernameText}>
                 {profile.profileName.slice(0, maxUsernameLength)}

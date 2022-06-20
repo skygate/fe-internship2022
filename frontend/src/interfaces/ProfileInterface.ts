@@ -30,8 +30,9 @@ export interface ActiveProfileState {
 export interface ProfileModalProps {
     userID: string;
     isNew: boolean;
-    activeProfile?: ProfileInterface | null;
+    profile?: ProfileInterface | null;
     changeVisiblity: () => void;
+    openConfirmModal?: () => void;
 }
 
 export enum ProfileInputType {

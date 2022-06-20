@@ -16,5 +16,6 @@ router.post(
 
 router.post("/login", user.loginUser);
 router.post("/logout", user.logoutUser);
+router.post("/confirm", user.confirmUser);
 
 module.exports = router;

@@ -6,7 +6,7 @@ import { uploadFile } from "API/UserService/uploadFile";
 import { addProduct } from "API/UserService/addProduct";
 import { InputFileChange } from "interfaces/file";
 import { useAppSelector } from "store/store";
-import { toast, useToast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const defaultItem: Product = {
     _id: "",

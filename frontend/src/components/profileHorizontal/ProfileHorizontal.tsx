@@ -22,8 +22,8 @@ export const ProfileHorizontal = ({
         <div className={style.profile}>
             <ProfilePicture width={imageWidth} url={imageUrl} />
             <div className={style.userInfo}>
-                <p className={style.function}>{upperText ? upperText : ""}</p>
-                <p className={style.name}>{bottomText ? bottomText : ""}</p>
+                <p className={style.function}>{upperText || ""}</p>
+                <p className={style.name}>{bottomText || ""}</p>
             </div>
         </div>
     );

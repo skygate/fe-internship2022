@@ -5,6 +5,18 @@
 .dropdownMenu {
     position: relative;
     display: inline-block;
+    z-index: 10;
+}
+.dropdownWrapper {
+    position: fixed;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba($color: #262626, $alpha: 0.7);
 }
 
 .dropdownButton {
