@@ -33,6 +33,7 @@ export interface ProfileModalProps {
     profile?: ProfileInterface | null;
     changeVisiblity: () => void;
     openConfirmModal?: () => void;
+    updateView?: () => void;
 }
 
 export enum ProfileInputType {
