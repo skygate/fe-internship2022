@@ -39,6 +39,7 @@ export const ProductCard = ({ item }: ProductCardProps) => {
                             <div className={styles.purchasingAndIcon}>
                                 <span className={styles.purchasing}>PURCHASING !</span>
                                 <button type="button" className={styles.iconContainer}>
+                                    <span className={styles.likesCounter}>{item.likes.length}</span>
                                     <img src={Heart} className={styles.heartIcon} alt="heart" />
                                 </button>
                             </div>

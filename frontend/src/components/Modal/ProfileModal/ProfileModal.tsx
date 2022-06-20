@@ -21,6 +21,7 @@ export const ProfileModal = ({
     profile,
     changeVisiblity,
     openConfirmModal,
+    updateView,
 }: ProfileModalProps) => {
     const [response, setResponse] = useState<string | null>(null);
     const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
@@ -79,7 +80,7 @@ export const ProfileModal = ({
     const formik: FormikValues = useFormik({
         initialValues: init,
         validationSchema,
-        validateOnChange: false,
+        validateOnChange: true,
         onSubmit: async (values) => {
             setResponse(null);
             const updateProfile = !isNew
@@ -99,6 +100,7 @@ export const ProfileModal = ({
                     .then(() => {
                         UpdateToast(updateProfile, "Profile updated successfully!", "success");
                         dispatch(getProfilesForLoggedUser(userID));
+                        updateView && updateView();
                     })
                     .catch(() => {
                         UpdateToast(updateProfile, "Something is wrong with form!", "error");
@@ -130,8 +132,8 @@ export const ProfileModal = ({
         const uploadCoverPhotoToast = LoadingToast("Uploading photo...");
         await uploadFile(file)
             .then((data) => {
+                formik.setFieldValue("profilePicture", data.data.message);
                 UpdateToast(uploadCoverPhotoToast, "Photo uploaded successfully", "success");
-                formik.values.profilePicture = data.data.message;
             })
             .catch(() =>
                 UpdateToast(uploadCoverPhotoToast, "Something is wrong with image!", "error")
