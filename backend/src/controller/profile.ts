@@ -102,3 +102,49 @@ module.exports.deleteProfile = async (req: Request, res: Response) => {
         res.status(404).send("not working");
     }
 };
+
+module.exports.follow = async (req: Request, res: Response) => {
+    const activeProfileID = req.body.id;
+    const followingProfileID = req.params.id;
+
+    try {
+        const followingProfile = await profile.findById(followingProfileID);
+        if (followingProfile.followers.find((element: string) => element === activeProfileID))
+            throw new Error("You are already following this profile");
+        followingProfile.followers.push(activeProfileID);
+        const activeProfile = await profile.findById(activeProfileID);
+        if (activeProfile.following.find((element: string) => element === followingProfileID))
+            throw new Error("You are already following this profile");
+        activeProfile.following.push(followingProfileID);
+        followingProfile.save();
+        activeProfile.save();
+        res.status(200).send("Followed");
+    } catch (error: any) {
+        res.status(400).send(error.message);
+    }
+};
+
+module.exports.unfollow = async (req: Request, res: Response) => {
+    const activeProfileID = req.body.id;
+    const followingProfileID = req.params.id;
+
+    try {
+        const followingProfile = await profile.findById(followingProfileID);
+        if (!followingProfile.followers.find((element: string) => element === activeProfileID))
+            throw new Error("You are not following this profile yet");
+        followingProfile.followers = followingProfile.followers.filter(
+            (id: string) => id !== activeProfileID
+        );
+        const activeProfile = await profile.findById(activeProfileID);
+        if (!activeProfile.following.find((element: string) => element === followingProfileID))
+            throw new Error("You are not following this profile yet");
+        activeProfile.following = activeProfile.following.filter(
+            (id: string) => id !== followingProfileID
+        );
+        followingProfile.save();
+        activeProfile.save();
+        res.status(200).send("Unfollowed");
+    } catch (error: any) {
+        res.status(404).send(error.message);
+    }
+};

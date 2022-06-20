@@ -15,3 +15,17 @@ export const deleteProfile = async (profileID: string) => {
     );
     return response.data;
 };
+
+export const followProfile = async (activeProfileID: string, followingProfileID: string) => {
+    const response = await axiosInstance.post(`/profiles/follow/${followingProfileID}`, {
+        id: activeProfileID,
+    });
+    return response.data;
+};
+
+export const unfollowProfile = async (activeProfileID: string, followingProfileID: string) => {
+    const response = await axiosInstance.post(`/profiles/unfollow/${followingProfileID}`, {
+        id: activeProfileID,
+    });
+    return response.data;
+};
