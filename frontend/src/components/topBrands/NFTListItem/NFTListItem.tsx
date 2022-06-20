@@ -1,32 +1,36 @@
 import { FC } from "react";
 import styles from "./NFTListItem.module.scss";
 import { ProfilePicture, GreenETHValue } from "components";
-import { NFTItem } from "interfaces";
+import { AuctionItem, NFTItem } from "interfaces";
+import { Link } from "react-router-dom";
 
-interface Props {
-    nft: NFTItem;
+interface NFTListItemProps {
+    auction: AuctionItem;
 }
 
-export const NFTListItem: FC<Props> = ({ nft }) => {
+export const NFTListItem = ({ auction }: NFTListItemProps) => {
     return (
-        <div className={styles.nftContainer}>
-            <div className={styles.pictureWrapper}>
-                <img
-                    src={nft.NFTS[0].nftUrl}
-                    alt={`${nft.NFTS[0].title} nft`}
-                    className={styles.nftImage}
-                />
-            </div>
-            <div className={styles.bidMenuContainer}>
-                <span className={styles.nftTitle}>{nft.NFTS[0].title}</span>
-                <div className={styles.bidInfo}>
-                    <ProfilePicture width={"24px"} url={nft.profilePic} />
-                    <GreenETHValue ETHValue={nft.NFTS[0].price} />
-                    <span className={styles.authorStoreLenght}>1 of {nft.NFTS.length}</span>
+        <Link to={`auction/${auction._id}`}>
+            <div className={styles.nftContainer}>
+                <div className={styles.pictureWrapper}>
+                    <img
+                        src={auction.productID.productImageUrl}
+                        alt={`${auction.productID.productName} nft`}
+                        className={styles.nftImage}
+                    />
                 </div>
-                <button className={styles.bidButton}>Place a bid</button>
+                <div className={styles.bidMenuContainer}>
+                    <span className={styles.nftTitle}>{auction.productID.productName}</span>
+                    <div className={styles.bidInfo}>
+                        <ProfilePicture width="24px" url={auction.profileID.profilePicture} />
+                        <GreenETHValue
+                            ETHValue={auction.bidHistory[auction.bidHistory.length - 1].bid.offer}
+                        />
+                    </div>
+                    <button className={styles.bidButton}>Place a bid</button>
+                </div>
             </div>
-        </div>
+        </Link>
     );
 };
 export default NFTListItem;

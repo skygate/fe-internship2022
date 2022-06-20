@@ -1,38 +1,41 @@
 import React from "react";
 import styles from "./MainNFT.module.scss";
 import { ProfilePicture } from "components";
-import profilePicture from "assets/profilePicture.png";
 import GreenETHValue from "components/greenETHValue/GreenETHValue";
+import { AuctionItem } from "interfaces";
+import { Link } from "react-router-dom";
 
-export function MainNFT() {
-    const unitsInStock = 4;
-    const nftTitle = "NFT TITLE";
-    const highestBidETH = 100.1;
-    const nftImage =
-        "https://image.shutterstock.com/z/stock-photo-funny-cat-in-round-sunglasses-close-up-1158137110.jpg";
+interface MainNFTProps {
+    auction: AuctionItem;
+}
+
+export const MainNFT = ({ auction }: MainNFTProps) => {
     return (
-        <div className="mainNFT">
-            <div className={styles.mainImageWrapper}>
-                <img
-                    src={nftImage}
-                    alt="NFT"
-                    className={styles.mainImage}
-                    /*replace it with nft img component*/
-                />
-            </div>
-            <div className={styles.mainBidInfo}>
-                <div className={styles.nftInfo}>
-                    <ProfilePicture width={"48px"} url={profilePicture} />
-                    <div className={styles.productInfo}>
-                        <span className={styles.NFTTitle}>{nftTitle}</span>
-                        <span className={styles.units}>{unitsInStock} in stock</span>
+        <Link to={`/auction/${auction._id}`}>
+            <div className="mainNFT">
+                <div className={styles.mainImageWrapper}>
+                    <img
+                        src={auction.productID.productImageUrl}
+                        alt="NFT"
+                        className={styles.mainImage}
+                    />
+                </div>
+                <div className={styles.mainBidInfo}>
+                    <div className={styles.nftInfo}>
+                        <ProfilePicture width={"48px"} url={auction.profileID.profilePicture} />
+                        <div className={styles.productInfo}>
+                            <span className={styles.NFTTitle}>{auction.productID.productName}</span>
+                            <span className={styles.units}>{auction.amount} in stock</span>
+                        </div>
+                    </div>
+                    <div className={styles.currentBid}>
+                        <span className={styles.highestBid}>Highest bid</span>
+                        <GreenETHValue
+                            ETHValue={auction.bidHistory[auction.bidHistory.length - 1].bid.offer}
+                        />
                     </div>
                 </div>
-                <div className={styles.currentBid}>
-                    <span className={styles.highestBid}>Highest bid</span>
-                    <GreenETHValue ETHValue={highestBidETH} />
-                </div>
             </div>
-        </div>
+        </Link>
     );
-}
+};

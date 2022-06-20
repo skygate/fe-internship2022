@@ -14,9 +14,11 @@ import { BidOffer } from "interfaces";
 import { SocketContext } from "App";
 import { getAuction } from "API/UserService";
 import { UserSelector } from "store/user";
+import { getAllAuctions } from "API/UserService/auctions";
 
 export const CreatorNetwork = () => {
     const socket = useContext(SocketContext);
+    const [allAuctions, setAllAuctions] = useState<AuctionItem[]>();
     const [auction, setAuction] = useState<AuctionItem>();
     const [timeUntillAuctionEnds, setTimeUntillAuctionEnds] = useState<Duration>();
     const [bidModalVisibility, setBidModalVisibility] = useState(false);
@@ -24,8 +26,19 @@ export const CreatorNetwork = () => {
     const user = useAppSelector(UserSelector);
 
     useEffect(() => {
-        getAuction("62a07222a24e1df13264c9d0").then((res) => setAuction(res.data));
+        getAllAuctions().then((res) => setAllAuctions(res));
     }, []);
+
+    useEffect(() => {
+        if (!allAuctions) return;
+        const mostLikedAuction = allAuctions
+            .filter((item) => item.bidHistory.length > 0)
+            .sort((a, b) => {
+                return a.likes.length - b.likes.length;
+            })
+            .slice(0, 1);
+        setAuction(mostLikedAuction[0]);
+    }, [allAuctions]);
 
     useEffect(() => {
         if (!auction) return;
