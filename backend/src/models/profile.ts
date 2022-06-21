@@ -10,8 +10,28 @@ const profileSchema = new mongoose.Schema({
     instagramUrl: String,
     twitterUrl: String,
     facebookUrl: String,
-    following: [],
-    followers: [],
+    following: [
+        {
+            following: {
+                profileID: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: false,
+                    ref: "Profiles",
+                },
+            },
+        },
+    ],
+    followers: [
+        {
+            follower: {
+                profileID: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: false,
+                    ref: "Profiles",
+                },
+            },
+        },
+    ],
     joinDate: Date,
 });
 

@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
 import profile from "../models/profile";
 
+interface Following {
+    following: { profileID: Object };
+}
+
+interface Follower {
+    follower: { profileID: Object };
+}
+
 module.exports.getProfiles = async (req: Request, res: Response) => {
     try {
         const profiles = await profile.find();
@@ -16,7 +24,16 @@ module.exports.getProfile = async (req: Request, res: Response) => {
     // if (req.user === undefined) return res.status(401).json({message: "Not authenticated"});
     const { id } = req.params;
     try {
-        const foundProfile = await profile.findById(id);
+        const foundProfile = await profile
+            .findById(id)
+            .populate({
+                path: "followers.follower.profileID",
+                select: "profilePicture profileName",
+            })
+            .populate({
+                path: "following.following.profileID",
+                select: "profilePicture profileName",
+            });
         res.status(200).json(foundProfile);
     } catch (error: any) {
         res.status(404).json({ message: error.message });
@@ -104,18 +121,30 @@ module.exports.deleteProfile = async (req: Request, res: Response) => {
 };
 
 module.exports.follow = async (req: Request, res: Response) => {
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     const activeProfileID = req.body.id;
     const followingProfileID = req.params.id;
 
     try {
         const followingProfile = await profile.findById(followingProfileID);
-        if (followingProfile.followers.find((element: string) => element === activeProfileID))
+        if (
+            followingProfile.followers.find(
+                (element: Follower) => element.follower.profileID.toString() === activeProfileID
+            )
+        )
             throw new Error("You are already following this profile");
-        followingProfile.followers.push(activeProfileID);
+        const newFollowersProfile = { follower: { profileID: activeProfileID } };
+        followingProfile.followers.push(newFollowersProfile);
         const activeProfile = await profile.findById(activeProfileID);
-        if (activeProfile.following.find((element: string) => element === followingProfileID))
+        if (
+            activeProfile.following.find(
+                (element: Following) =>
+                    element.following.profileID.toString() === followingProfileID
+            )
+        )
             throw new Error("You are already following this profile");
-        activeProfile.following.push(followingProfileID);
+        const newFollowingProfile = { following: { profileID: followingProfileID } };
+        activeProfile.following.push(newFollowingProfile);
         followingProfile.save();
         activeProfile.save();
         res.status(200).send("Followed");
@@ -125,24 +154,35 @@ module.exports.follow = async (req: Request, res: Response) => {
 };
 
 module.exports.unfollow = async (req: Request, res: Response) => {
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     const activeProfileID = req.body.id;
     const followingProfileID = req.params.id;
 
     try {
         const followingProfile = await profile.findById(followingProfileID);
-        if (!followingProfile.followers.find((element: string) => element === activeProfileID))
-            throw new Error("You are not following this profile yet");
+        if (
+            !followingProfile.followers.find(
+                (element: Follower) => element.follower.profileID.toString() === activeProfileID
+            )
+        )
+            return new Error("You are not following this profile yet");
         followingProfile.followers = followingProfile.followers.filter(
-            (id: string) => id !== activeProfileID
+            (element: Follower) => element.follower.profileID.toString() !== activeProfileID
         );
+        await followingProfile.save();
         const activeProfile = await profile.findById(activeProfileID);
-        if (!activeProfile.following.find((element: string) => element === followingProfileID))
-            throw new Error("You are not following this profile yet");
+        if (
+            !activeProfile.following.find(
+                (element: Following) =>
+                    element.following.profileID.toString() === followingProfileID
+            )
+        )
+            return new Error("You are not following this profile yet");
         activeProfile.following = activeProfile.following.filter(
-            (id: string) => id !== followingProfileID
+            (element: Following) => element.following.profileID.toString() !== followingProfileID
         );
-        followingProfile.save();
-        activeProfile.save();
+
+        await activeProfile.save();
         res.status(200).send("Unfollowed");
     } catch (error: any) {
         res.status(404).send(error.message);

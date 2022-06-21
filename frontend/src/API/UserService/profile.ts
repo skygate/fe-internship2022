@@ -16,9 +16,9 @@ export const deleteProfile = async (profileID: string) => {
     return response.data;
 };
 
-export const followProfile = async (activeProfileID: string, followingProfileID: string) => {
+export const followProfile = async (activeProfile: string, followingProfileID: string) => {
     const response = await axiosInstance.post(`/profiles/follow/${followingProfileID}`, {
-        id: activeProfileID,
+        id: activeProfile,
     });
     return response.data;
 };

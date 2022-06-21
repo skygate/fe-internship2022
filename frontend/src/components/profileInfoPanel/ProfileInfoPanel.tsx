@@ -13,7 +13,6 @@ import { unfollowProfile } from "API/UserService/profile";
 import { useAppSelector } from "store/store";
 import { ActiveProfileSelector } from "store/activeProfile";
 import { ErrorToast } from "components/ToastWrapper/Toasts";
-import { setActiveProfile } from "store/helpers/profileHelper";
 
 interface ProfileInfoProp {
     profile: ProfileInterface;
@@ -37,7 +36,9 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile, setProfile }) =
     const checkIsFollowing = () => {
         if (
             profile.followers &&
-            profile.followers.find((follower) => follower === activeProfile.activeProfile?._id)
+            profile.followers.find(
+                (follower) => follower.follower.profileID._id === activeProfile.activeProfile?._id
+            )
         ) {
             setIsFollower(true);
         } else {
@@ -74,7 +75,7 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile, setProfile }) =
                         : profile.websiteUrl}
                 </a>
             </div>
-            {activeProfile.activeProfile?._id && (
+            {activeProfile.activeProfile?._id && activeProfile.activeProfile?._id !== profile._id && (
                 <div>
                     {!isFollower ? (
                         <button

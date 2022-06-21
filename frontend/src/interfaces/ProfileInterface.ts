@@ -10,8 +10,28 @@ export interface ProfileInterface {
     instagramUrl?: string;
     twitterUrl?: string;
     facebookUrl?: string;
-    following?: string[];
-    followers?: string[];
+    following?: [
+        {
+            following: {
+                profileID: {
+                    profileName: string;
+                    profilePicture: string;
+                    _id: string;
+                };
+            };
+        }
+    ];
+    followers?: [
+        {
+            follower: {
+                profileID: {
+                    profileName: string;
+                    profilePicture: string;
+                    _id: string;
+                };
+            };
+        }
+    ];
     joinDate?: Date;
     badge?: number;
     totalEthValue?: number;
