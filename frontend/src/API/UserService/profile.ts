@@ -15,3 +15,8 @@ export const deleteProfile = async (profileID: string) => {
     );
     return response.data;
 };
+
+export const getAllProfiles = async () => {
+    const response = await axiosInstance.get("/profiles");
+    return response.data;
+};
