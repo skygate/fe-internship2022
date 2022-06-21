@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "./TopBrandsView.module.scss";
-import { MainNFT } from "../../../components";
-import { CreatorsListItem, NFTListItem } from "../../../components";
-import { ExampleNFTList } from "../../../constant/ExampleNFTList";
-import arrowRightdark from "../../../assets/arrowRightdark.svg";
+import { CreatorsListItem, NFTListItem, MainNFT } from "components";
+import arrowRightdark from "assets/arrowRightdark.svg";
 import { getAllAuctions } from "API/UserService/auctions";
 import { AuctionItem } from "interfaces";
-import { getTime } from "date-fns";
-import { Link } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 
 const AUCTIONS_IN_COLUMN = 3;
 const PROFILES_IN_COLUMN = 4;
-
 export function TopBrandsView() {
     const [allAuctions, setAllAuctions] = useState<AuctionItem[]>();
     const [mostLikedAuctions, setMostLikedAuctions] = useState<AuctionItem[]>();
@@ -25,8 +21,8 @@ export function TopBrandsView() {
         const auctionSortedByLikes = allAuctions
             .filter((item) => item.bidHistory.length > 0)
             .sort((a, b) => a.likes.length - b.likes.length);
-        setMostLikedAuctions(auctionSortedByLikes);
 
+        setMostLikedAuctions(auctionSortedByLikes);
         const auctionsSortedByDate = allAuctions?.sort((a, b) => {
             return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
         });
@@ -69,10 +65,16 @@ export function TopBrandsView() {
                             .map((item) => (
                                 <CreatorsListItem key={item._id} profile={item.profileID} />
                             ))}
-                    <button className={styles.discoverButton}>
-                        <span className={styles.discoverButtonText}>Discover more</span>
-                        <img className={styles.arrowRight} src={arrowRightdark} alt="arrow right" />
-                    </button>
+                    <HashLink to="/#discover">
+                        <button className={styles.discoverButton}>
+                            <span className={styles.discoverButtonText}>Discover more</span>
+                            <img
+                                className={styles.arrowRight}
+                                src={arrowRightdark}
+                                alt="arrow right"
+                            />
+                        </button>
+                    </HashLink>
                 </div>
             </div>
         </div>
