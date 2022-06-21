@@ -34,9 +34,8 @@ export function TopBrandsView() {
                 !auctionsSortedByDateAndFiltered.find(
                     (el: AuctionItem) => el.profileID._id === item.profileID._id
                 )
-            ) {
+            )
                 return auctionsSortedByDateAndFiltered.push(item);
-            }
         });
 
         setNewestAuction(auctionsSortedByDateAndFiltered);
