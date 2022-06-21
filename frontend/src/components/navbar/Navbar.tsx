@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import style from "./navbar.module.scss";
 import logo from "assets/logo.svg";
 import { NavbarDropDown } from "components";
@@ -7,14 +7,16 @@ import { useAppSelector } from "store/store";
 
 export const Navbar = () => {
     const user = useAppSelector((state) => state.user);
-
+    const navigate = useNavigate();
+    const checkLink = () => {
+        if (window.location.search) return;
+        return navigate("/");
+    };
     return (
         <header>
-            <Link to="/">
-                <div className={style.logo}>
-                    <img src={logo} alt="logo" />
-                </div>
-            </Link>
+            <div className={style.logo} onClick={() => checkLink()}>
+                <img src={logo} alt="logo" />
+            </div>
             <div className={style.searchInput}>
                 <label htmlFor="search" className={style.label}>
                     <img src={magnifierIcon} alt="Magnifier icon" />
