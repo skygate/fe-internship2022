@@ -4,6 +4,7 @@ import logo from "assets/logo.svg";
 import { NavbarDropDown } from "components";
 import magnifierIcon from "assets/magnifier.svg";
 import { useAppSelector } from "store/store";
+import { HashLink } from "react-router-hash-link";
 
 export const Navbar = () => {
     const user = useAppSelector((state) => state.user);
@@ -30,7 +31,9 @@ export const Navbar = () => {
             <nav>
                 <ul>
                     <li className={style.navItem}>
-                        <a href="/">Discover</a>
+                        <HashLink to="/#discover">
+                            <a href="/#discover">Discover</a>
+                        </HashLink>
                     </li>
                     <li className={style.navItem}>
                         <a href="/">Activity</a>
