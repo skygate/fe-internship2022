@@ -27,7 +27,7 @@ function App() {
     }, [user.userID]);
 
     useEffect(() => {
-        dispatch(getAuctions(false));
+        dispatch(getAuctions(true));
     }, []);
 
     useEffect(() => {

@@ -20,7 +20,7 @@ export function TopBrandsView() {
         if (!allAuctions) return;
         const auctionSortedByLikes = allAuctions
             .filter((item) => item.bidHistory.length > 0)
-            .sort((a, b) => a.likes.length - b.likes.length);
+            .sort((a, b) => b.likes.length - a.likes.length);
 
         setMostLikedAuctions(auctionSortedByLikes);
         const auctionsSortedByDate = allAuctions?.sort((a, b) => {

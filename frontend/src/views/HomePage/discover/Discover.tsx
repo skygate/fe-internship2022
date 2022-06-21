@@ -3,7 +3,7 @@ import { DiscoverView } from "./DiscoverView";
 import { useAppDispatch, useAppSelector } from "store/store";
 import { AuctionItem } from "interfaces";
 import { getAuctions } from "store/auctions";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DiscoverFormState } from "interfaces";
 
 const PRICE_GAP = 50;
@@ -27,6 +27,7 @@ const PRICE_STATE_DEFAULT = {
     priceMin: FORM_STATE_DEFAULT.priceMin,
     priceMax: FORM_STATE_DEFAULT.priceMax,
 };
+const DEFAULT_URL = "/?time=ever&sort=startDate&ascending=-1&category=all&priceMin=0&priceMax=2000";
 
 const calculatePercentage = (nominator: number, denominator: number) =>
     (nominator / denominator) * 100;
@@ -41,6 +42,11 @@ export const Discover = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!window.location.search) navigate(DEFAULT_URL);
+    });
 
     useEffect(() => {
         const queryString = window.location.search;

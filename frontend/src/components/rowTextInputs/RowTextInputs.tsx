@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import style from "./rowTextInputs.module.scss";
-
+import { getAllCategories } from "API/UserService/categories";
+import { Category } from "interfaces";
 interface RowTextInputsProps {
     onInputChange: (e: React.ChangeEvent) => void;
 }
@@ -9,6 +10,11 @@ interface RowTextInputsProps {
 const categoryOptions = ["PNG", "GIF", "WEBP", "MP4", "MP3"];
 
 export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
+    const [categories, setCategories] = useState<Category[]>();
+    useEffect(() => {
+        getAllCategories().then((res) => setCategories(res));
+    }, []);
+
     return (
         <div className={style.row}>
             <div className={style.selectContainer}>
@@ -21,13 +27,16 @@ export const RowTextInputs = ({ onInputChange }: RowTextInputsProps) => {
                     onChange={onInputChange}
                     className={style.select}
                 >
-                    {categoryOptions.map((item) => {
-                        return (
-                            <option value={item} key={item} className={style.option}>
-                                {item}
+                    {categories &&
+                        categories.map((item) => (
+                            <option
+                                value={item.id}
+                                key={item.categoryName}
+                                className={style.option}
+                            >
+                                {item.categoryName}
                             </option>
-                        );
-                    })}
+                        ))}
                 </select>
             </div>
         </div>
