@@ -30,11 +30,9 @@ export const Navbar = () => {
             </div>
             <nav>
                 <ul>
-                    <li className={style.navItem}>
-                        <HashLink to="/#discover">
-                            <a href="/#discover">Discover</a>
-                        </HashLink>
-                    </li>
+                    <HashLink to="/#discover">
+                        <li className={style.navItem}>Discover</li>
+                    </HashLink>
                     <li className={style.navItem}>
                         <a href="/">Activity</a>
                     </li>

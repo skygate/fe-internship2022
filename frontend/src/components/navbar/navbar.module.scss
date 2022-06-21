@@ -75,6 +75,8 @@ nav ul {
 
 .navItem {
     line-height: $line-height-button-2;
+    text-decoration: none;
+    color: $c-neutrals-4;
 }
 
 .navItem a {
