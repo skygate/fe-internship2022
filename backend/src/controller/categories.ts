@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import categories from "../models/categories";
 
 export const addCategory = async (req: Request, res: Response) => {
-    const { categoryName } = req.body;
+    const { categoryName, id } = req.body;
     const newCategory = new categories({
         categoryName: categoryName,
+        id: id,
     });
     try {
         await newCategory.save();

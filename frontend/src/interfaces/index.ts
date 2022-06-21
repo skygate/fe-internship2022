@@ -13,3 +13,4 @@ export * from "./auctionStoreState";
 export * from "./discoverFormState";
 export * from "./bidOffer";
 export * from "./buttonTypes";
+export * from "./category";
