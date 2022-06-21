@@ -21,3 +21,8 @@ export const addAuction = async (item: NewAuction) => {
     const response = await axiosInstance.post(`/auctions`, JSON.stringify(item));
     return response;
 };
+
+export const getAllAuctions = async () => {
+    const response: AxiosResponse<AuctionItem[]> = await axiosInstance.get("/auctions/?full=true");
+    return response.data;
+};
