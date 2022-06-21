@@ -82,72 +82,74 @@ export const CreatorNetwork = () => {
 
     return (
         <section className={style.creatorNetwork}>
-            <div className={style.sectionContainer}>
-                <div>
-                    <img
-                        src={auction?.productID.productImageUrl}
-                        alt="Creator Network"
-                        className={style.mainImage}
-                    />
-                </div>
-                {auction && (
+            {auction && (
+                <div className={style.sectionContainer}>
                     <div>
-                        <h2>the creator network&#174;</h2>
-                        <div className={style.container}>
-                            <ProfileHorizontal
-                                upperText={auction.profileID.profileName}
-                                bottomText="Creator"
-                                imageWidth="50px"
-                                imageUrl={auction.profileID.profilePicture}
-                                linkTo={`/profile/${auction.profileID._id}`}
-                            />
-                            <ProfileHorizontal
-                                upperText="Instant price"
-                                bottomText={`${auction.price}$`}
-                                imageWidth="50px"
-                                imageUrl={exampleImage}
-                            />
-                        </div>
-                        <div className={style.currentBid}>
-                            <p className={style.currentBidTitle}>Current Bid</p>
-                            {lastBid ? (
-                                <p className={style.ethValue}>{lastBid.offer}$</p>
-                            ) : (
-                                <p className={style.noBids}>Currently no bids</p>
-                            )}
-                            <p className={style.endTime}>Auction ending in</p>
-                            <div className={style.countdown}>
-                                <div>
-                                    <p className={style.timeValue}>
-                                        {timeUntillAuctionEnds?.hours || "0"}
-                                    </p>
-                                    <p className={style.timeLabel}>Hrs</p>
-                                </div>
-                                <div>
-                                    <p className={style.timeValue}>
-                                        {timeUntillAuctionEnds?.minutes || "0"}
-                                    </p>
-                                    <p className={style.timeLabel}>mins</p>
-                                </div>
-                                <div>
-                                    <p className={style.timeValue}>
-                                        {timeUntillAuctionEnds?.seconds || "0"}
-                                    </p>
-                                    <p className={style.timeLabel}>secs</p>
+                        <img
+                            src={auction?.productID.productImageUrl}
+                            alt="Creator Network"
+                            className={style.mainImage}
+                        />
+                    </div>
+                    {auction && (
+                        <div>
+                            <h2 className={style.header}>the creator network&#174;</h2>
+                            <div className={style.container}>
+                                <ProfileHorizontal
+                                    upperText={auction.profileID.profileName}
+                                    bottomText="Creator"
+                                    imageWidth="50px"
+                                    imageUrl={auction.profileID.profilePicture}
+                                    linkTo={`/profile/${auction.profileID._id}`}
+                                />
+                                <ProfileHorizontal
+                                    upperText="Instant price"
+                                    bottomText={`${auction.price}$`}
+                                    imageWidth="50px"
+                                    imageUrl={exampleImage}
+                                />
+                            </div>
+                            <div className={style.currentBid}>
+                                <p className={style.currentBidTitle}>Current Bid</p>
+                                {lastBid ? (
+                                    <p className={style.ethValue}>{lastBid.offer}$</p>
+                                ) : (
+                                    <p className={style.noBids}>Currently no bids</p>
+                                )}
+                                <p className={style.endTime}>Auction ending in</p>
+                                <div className={style.countdown}>
+                                    <div>
+                                        <p className={style.timeValue}>
+                                            {timeUntillAuctionEnds?.hours || "0"}
+                                        </p>
+                                        <p className={style.timeLabel}>Hrs</p>
+                                    </div>
+                                    <div>
+                                        <p className={style.timeValue}>
+                                            {timeUntillAuctionEnds?.minutes || "0"}
+                                        </p>
+                                        <p className={style.timeLabel}>mins</p>
+                                    </div>
+                                    <div>
+                                        <p className={style.timeValue}>
+                                            {timeUntillAuctionEnds?.seconds || "0"}
+                                        </p>
+                                        <p className={style.timeLabel}>secs</p>
+                                    </div>
                                 </div>
                             </div>
+                            <div className={style.buttons}>
+                                <button className={style.btnBid} onClick={openModal}>
+                                    Place a bid
+                                </button>
+                                <Link to={`auction/${auction._id}`}>
+                                    <button className={style.btnView}>View item</button>
+                                </Link>
+                            </div>
                         </div>
-                        <div className={style.buttons}>
-                            <button className={style.btnBid} onClick={openModal}>
-                                Place a bid
-                            </button>
-                            <Link to={`auction/${auction._id}`}>
-                                <button className={style.btnView}>View item</button>
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
             <Modal
                 visible={bidModalVisibility}
                 title="Place bid"
