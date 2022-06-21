@@ -1,27 +1,29 @@
-@import "../../../theme/lightThemeColors.scss";
-@import "../../../theme/spacers.scss";
-@import "../../../theme/typography.scss";
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
 
-section.creatorNetwork {
-    width: 100vw;
+.creatorNetwork {
+    width: 100%;
     padding-top: 8rem;
 }
 
-div.sectionContainer {
+.sectionContainer {
     width: 1120px;
     display: flex;
-    justify-content: center;
-    column-gap: 8rem;
+    justify-content: space-between;
+    column-gap: $spacer-128;
     background-color: $c-neutrals-8;
     margin: auto;
 }
 
-img.mainImage {
+.mainImage {
     width: 640px;
-    box-sizing: content-box;
+    height: 750px;
+    object-fit: cover;
     border-radius: 20px;
 }
-section.creatorNetwork h2 {
+
+.creatorNetwork h2 {
     font-size: $font-size-headline-1;
     font-weight: $font-weight-700;
     line-height: $line-height-headline-1;
@@ -31,19 +33,19 @@ section.creatorNetwork h2 {
     margin-bottom: $spacer-20;
 }
 
-div.container {
+.container {
     display: flex;
     justify-content: space-between;
 }
 
-div.currentBid {
+.currentBid {
     border: 2px solid $c-neutrals-6;
     border-radius: 24px;
     padding: $spacer-32 0;
     margin-top: 2.5rem;
 }
 
-p.currentBidTitle {
+.currentBidTitle {
     font-family: $font-family-poppins;
     font-size: $font-size-body-1;
     font-weight: $font-weight-500;
@@ -52,7 +54,7 @@ p.currentBidTitle {
     color: $c-neutrals-2;
 }
 
-p.ethValue {
+.ethValue {
     font-size: $font-size-headline-2;
     font-weight: $font-weight-700;
     line-height: $line-height-headline-2;
@@ -67,7 +69,7 @@ p.ethValue {
     font-weight: $font-weight-500;
 }
 
-p.dolarValue {
+.dolarValue {
     font-family: $font-family-poppins;
     font-size: $font-size-body-1-bold;
     font-weight: $font-weight-600;
@@ -76,7 +78,7 @@ p.dolarValue {
     color: $c-neutrals-4;
 }
 
-p.endTime {
+.endTime {
     font-family: $font-family-poppins;
     font-size: $font-size-body-2-bold;
     font-weight: $font-weight-500;
@@ -86,21 +88,21 @@ p.endTime {
     margin-top: $spacer-24;
 }
 
-div.countdown {
+.countdown {
     display: flex;
     justify-content: center;
     padding-top: $spacer-8;
     column-gap: 19px;
 }
 
-p.timeValue {
+.timeValue {
     font-size: $font-size-headline-4;
     font-weight: $font-weight-700;
     line-height: $line-height-headline-4;
     color: $c-neutrals-1;
 }
 
-p.timeLabel {
+.timeLabel {
     font-family: $font-family-poppins;
     font-size: $font-size-body-2-bold;
     font-weight: $font-weight-500;
@@ -109,12 +111,12 @@ p.timeLabel {
     color: $c-neutrals-4;
 }
 
-div.buttons {
+.buttons {
     display: flex;
     flex-direction: column;
 }
 
-button.btnBid {
+.btnBid {
     width: 100%;
     font-weight: $font-weight-700;
     font-size: $font-size-button-1;
@@ -127,7 +129,7 @@ button.btnBid {
     margin-top: 2.5rem;
 }
 
-button.btnView {
+.btnView {
     width: 100%;
     border: 2px solid $c-neutrals-6;
     background-color: $c-neutrals-8;
@@ -139,30 +141,7 @@ button.btnView {
     margin-top: $spacer-8;
 }
 
-div.arrowButtons {
-    display: flex;
-    column-gap: 10px;
-    text-align: left;
-    margin-top: $spacer-48;
-}
-
-div.arrowButtons img {
-    width: 14px;
-}
-
-button.arrowButton {
-    color: $c-neutrals-4;
-    background-color: $c-neutrals-8;
-    border: none;
-    width: 30px;
-    height: 30px;
-}
-
-button:hover {
+.btnBid:hover,
+.btnView:hover {
     cursor: pointer;
-}
-
-button.arrowButton:hover {
-    border: 2px solid $c-neutrals-6;
-    border-radius: 50%;
 }

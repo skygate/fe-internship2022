@@ -1,0 +1,117 @@
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+@import "theme/lightThemeColors.scss";
+
+.popularItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    background-color: $c-neutrals-8;
+    border-radius: 16px;
+    padding: $spacer-24 0;
+    transform: translateY(0);
+    max-height: 209px;
+    max-width: 200px;
+}
+
+.popularItem:hover {
+    cursor: pointer;
+}
+
+@keyframes animation {
+    from {
+        max-height: 209px;
+        box-shadow: 0;
+    }
+    to {
+        max-height: 1200px;
+        box-shadow: 0px 15px 20px 0 rgba(66, 68, 90, 0.6);
+    }
+}
+
+.animation {
+    max-height: 1200px;
+    box-shadow: 0px 15px 20px 0 rgba(66, 68, 90, 0.6);
+    animation: animation 2s linear;
+}
+
+.hidden {
+    display: none;
+}
+
+.show {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    padding-bottom: $spacer-24;
+    align-items: center;
+    border-bottom: 2px solid $c-neutrals-6;
+}
+
+.badge {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 5px;
+    background-color: $c-primary-2;
+    padding: $spacer-2 $spacer-8;
+    border-radius: 24px;
+}
+
+.icon {
+    width: 13px;
+}
+
+.badge p {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    font-weight: $font-weight-600;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-8;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    height: 100%;
+}
+
+.plusIcon {
+    padding: $spacer-2;
+    border: 2px solid $c-neutrals-5;
+    border-radius: 6px;
+}
+
+.plusIcon:hover,
+.arrowIcon:hover {
+    cursor: pointer;
+}
+
+.primaryInfo {
+    padding: 0 $spacer-64;
+    margin-top: $spacer-24;
+}
+
+.name {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-2;
+    margin-top: $spacer-24;
+}
+
+.followers {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    line-height: $line-height-caption-2;
+    font-weight: $font-weight-400;
+    color: $c-neutrals-3;
+}
+
+.followersNumber {
+    font-weight: $font-weight-600;
+    padding-right: $spacer-4;
+}

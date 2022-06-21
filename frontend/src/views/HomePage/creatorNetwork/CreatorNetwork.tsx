@@ -14,9 +14,11 @@ import { BidOffer } from "interfaces";
 import { SocketContext } from "App";
 import { getAuction } from "API/UserService";
 import { UserSelector } from "store/user";
+import { getAllAuctions } from "API/UserService/auctions";
 
 export const CreatorNetwork = () => {
     const socket = useContext(SocketContext);
+    const [allAuctions, setAllAuctions] = useState<AuctionItem[]>();
     const [auction, setAuction] = useState<AuctionItem>();
     const [timeUntillAuctionEnds, setTimeUntillAuctionEnds] = useState<Duration>();
     const [bidModalVisibility, setBidModalVisibility] = useState(false);
@@ -24,8 +26,17 @@ export const CreatorNetwork = () => {
     const user = useAppSelector(UserSelector);
 
     useEffect(() => {
-        getAuction("62a07222a24e1df13264c9d0").then((res) => setAuction(res.data));
+        getAllAuctions().then((res) => setAllAuctions(res));
     }, []);
+
+    useEffect(() => {
+        if (!allAuctions) return;
+        const mostLikedAuction = allAuctions
+            .filter((item) => item.bidHistory.length > 0)
+            .sort((a, b) => b.likes.length - a.likes.length)
+            .slice(0, 1);
+        setAuction(mostLikedAuction[0]);
+    }, [allAuctions]);
 
     useEffect(() => {
         if (!auction) return;
@@ -72,11 +83,13 @@ export const CreatorNetwork = () => {
     return (
         <section className={style.creatorNetwork}>
             <div className={style.sectionContainer}>
-                <img
-                    src={auction?.productID.productImageUrl}
-                    alt="Creator Network"
-                    className={style.mainImage}
-                />
+                <div>
+                    <img
+                        src={auction?.productID.productImageUrl}
+                        alt="Creator Network"
+                        className={style.mainImage}
+                    />
+                </div>
                 {auction && (
                     <div>
                         <h2>the creator network&#174;</h2>
@@ -131,14 +144,6 @@ export const CreatorNetwork = () => {
                             <Link to={`auction/${auction._id}`}>
                                 <button className={style.btnView}>View item</button>
                             </Link>
-                        </div>
-                        <div className={style.arrowButtons}>
-                            <button className={style.arrowButton}>
-                                <img src={arrowLeft} alt="left arrow" />
-                            </button>
-                            <button className={style.arrowButton}>
-                                <img src={arrowRight} alt="right arrow" />
-                            </button>
                         </div>
                     </div>
                 )}

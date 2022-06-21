@@ -4,7 +4,6 @@ import { TopBrandsView } from "./";
 import { Popular } from "./";
 import { Discover } from "./";
 import { HotBid } from "./";
-import { HotCollections } from "./";
 
 export const HomePage = () => {
     return (
@@ -14,7 +13,6 @@ export const HomePage = () => {
             <TopBrandsView />
             <Popular />
             <HotBid />
-            <HotCollections />
             <Discover />
         </>
     );
