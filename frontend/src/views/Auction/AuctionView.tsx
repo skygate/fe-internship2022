@@ -40,7 +40,6 @@ interface AuctionViewProps {
 
 export const AuctionView = ({
     auctionData,
-    ethDolarExchange,
     onLikeButtonClick,
     onShareButtonClick,
     onMoreInfoButtonClick,

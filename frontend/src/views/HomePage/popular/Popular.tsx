@@ -1,72 +1,56 @@
 import style from "./popular.module.scss";
 import arrowLeft from "assets/arrowLeft.svg";
 import arrowRight from "assets/arrowRight.svg";
-import { PopularItem } from "components";
-import profilePicture from "assets/profilePicture.png";
+import { PopularSeller } from "components";
+import { useEffect, useState } from "react";
+import { getAllProfiles } from "API/UserService/profile";
+import { ProfileInterface } from "interfaces";
+import { PopularView } from "./PopularView";
+
+const ITEMS_PER_PAGE = 5;
 
 export const Popular = () => {
-    return (
-        <section className={style.popular}>
-            <div className={style.container}>
-                <div className={style.categoriesAndFilters}>
-                    <div className={style.leftSide}>
-                        <p className={style.title}>Popular</p>
-                        <select name="category" id="category" className={style.categorySelect}>
-                            <option value="sellers">Sellers</option>
-                            <option value="tokens">Tokens</option>
-                            <option value="example1">Example1</option>
-                            <option value="example2">Example2</option>
-                        </select>
-                    </div>
-                    <select name="filter" id="filter" className={style.filterSelect}>
-                        <option value="sellers">Today</option>
-                        <option value="tokens">Week</option>
-                        <option value="example1">Month</option>
-                        <option value="example2">Ever</option>
-                    </select>
-                </div>
+    const [allSellers, setAllSellers] = useState<ProfileInterface[]>([]);
+    const [visibleSellers, setVisibleSellers] = useState<ProfileInterface[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const LAST_PAGE_INDEX = Math.ceil(allSellers.length / ITEMS_PER_PAGE) - 1;
+    useEffect(() => {
+        getAllProfiles().then((res) =>
+            setAllSellers(
+                res.sort((a: ProfileInterface, b: ProfileInterface) => {
+                    if (!a.followers || !b.followers) return;
+                    return b.followers.length - a.followers.length;
+                })
+            )
+        );
+    }, []);
 
-                <div className={style.popularItems}>
-                    <div className={style.swipeLeft}>
-                        <img src={arrowLeft} alt="swipe left" />
-                    </div>
-                    <div className={style.items}>
-                        <PopularItem
-                            imageUrl={profilePicture}
-                            name="Edd Harris"
-                            ethValue={2.456}
-                            rangingNumber={1}
-                        />
-                        <PopularItem
-                            imageUrl={profilePicture}
-                            name="Edd Harris"
-                            ethValue={2.456}
-                            rangingNumber={2}
-                        />
-                        <PopularItem
-                            imageUrl={profilePicture}
-                            name="Edd Harris"
-                            ethValue={2.456}
-                            rangingNumber={3}
-                        />
-                        <PopularItem
-                            imageUrl={profilePicture}
-                            name="Edd Harris"
-                            ethValue={2.456}
-                            rangingNumber={4}
-                        />
-                        <PopularItem
-                            imageUrl={profilePicture}
-                            name="Edd Harris"
-                            ethValue={2.456}
-                            rangingNumber={5}
-                        />
-                    </div>
-                    <div className={style.swipeRight}>
-                        <img src={arrowRight} alt="swipe left" />
-                    </div>
-                </div>
-            </div>
-        </section>
+    useEffect(() => {
+        setVisibleSellers(allSellers.slice(0, ITEMS_PER_PAGE));
+    }, [allSellers]);
+
+    useEffect(() => {
+        setVisibleSellers(
+            allSellers.slice(
+                currentPage * ITEMS_PER_PAGE,
+                currentPage * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+            )
+        );
+    }, [currentPage]);
+
+    const changePage = (side: string) => {
+        if (side === "left" && currentPage > 0) setCurrentPage((currentPage) => currentPage - 1);
+        if (side === "right" && currentPage < LAST_PAGE_INDEX)
+            setCurrentPage((currentPage) => currentPage + 1);
+    };
+
+    return (
+        <PopularView
+            visibleSellers={visibleSellers}
+            currentPage={currentPage}
+            lastPageIndex={LAST_PAGE_INDEX}
+            itemsPerPage={ITEMS_PER_PAGE}
+            changePage={changePage}
+        />
     );
 };

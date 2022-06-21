@@ -28,11 +28,11 @@ module.exports.getProfile = async (req: Request, res: Response) => {
             .findById(id)
             .populate({
                 path: "followers.follower.profileID",
-                select: "profilePicture profileName",
+                select: "profilePicture profileName followers following",
             })
             .populate({
                 path: "following.following.profileID",
-                select: "profilePicture profileName",
+                select: "profilePicture profileName followers following",
             });
         res.status(200).json(foundProfile);
     } catch (error: any) {

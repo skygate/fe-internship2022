@@ -35,23 +35,13 @@
     text-align: left;
 }
 
-.categorySelect {
+.sellersHeader {
     color: $c-neutrals-2;
     background-color: $c-neutrals-7;
     font-weight: $font-weight-700;
     font-size: $font-size-headline-3;
     line-height: $line-height-headline-3;
     letter-spacing: $letter-spacing--01em;
-    border: none;
-    outline: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
-    background-image: url("../../../assets/arrowDown.svg");
-    background-repeat: no-repeat;
-    background-position-x: 100%;
-    background-position-y: 50%;
 }
 
 .categorySelect option {
@@ -92,7 +82,7 @@
 .items {
     display: flex;
     width: 100%;
-    justify-content: space-between;
+    column-gap: 32px;
 }
 
 .swipeLeft,
@@ -100,9 +90,18 @@
     position: absolute;
     display: flex;
     align-items: center;
-    height: 100%;
-    max-height: 209px;
+    justify-content: center;
     left: -5%;
+    top: 80px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid transparent;
+}
+
+.arrowHover:hover {
+    border: 2px solid $c-neutrals-6;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 .swipeRight {

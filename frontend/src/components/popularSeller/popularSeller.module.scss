@@ -13,6 +13,11 @@
     padding: $spacer-24 0;
     transform: translateY(0);
     max-height: 209px;
+    max-width: 200px;
+}
+
+.popularItem:hover {
+    cursor: pointer;
 }
 
 @keyframes animation {
@@ -98,7 +103,7 @@
     margin-top: $spacer-24;
 }
 
-.ethValue {
+.followers {
     font-family: $font-family-poppins;
     font-size: $font-size-caption-2;
     line-height: $line-height-caption-2;
@@ -106,6 +111,7 @@
     color: $c-neutrals-3;
 }
 
-.ethValueBold {
+.followersNumber {
     font-weight: $font-weight-600;
+    padding-right: $spacer-4;
 }

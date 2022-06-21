@@ -1,5 +1,5 @@
 import styles from "./Profile.module.scss";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ProfileInfoPanel, Modal, LoadingToast, UpdateToast } from "components";
 import imageIcon from "assets/imageIcon.svg";
@@ -14,8 +14,8 @@ import { getUsersAuctions } from "API/UserService/auctions";
 import { UploadCoverPhotoModal, ConfirmModal, ProfileModal } from "components/Modal";
 import { getProfilesForLoggedUser, UserProfilesSelector } from "store/profile";
 import { ActiveProfileSelector, changeActiveProfile } from "store/activeProfile";
-import { useNavigate } from "react-router-dom";
 import { UserSelector } from "store/user";
+import { ProfileFollowList } from "views";
 
 const defaultCoverPicture =
     "https://galaktyczny.pl/wp-content/uploads/2021/08/windows-xp-wallpaper-tapeta.jpg";
@@ -77,9 +77,27 @@ export function Profile() {
                     />
                 );
             case "following":
-                return;
+                return (
+                    profile?.following && (
+                        <ProfileFollowList
+                            followers={false}
+                            profiles={profile?.following?.map(
+                                (following) => following.following.profileID
+                            )}
+                        />
+                    )
+                );
             case "followers":
-                return;
+                return (
+                    profile?.followers && (
+                        <ProfileFollowList
+                            followers={true}
+                            profiles={profile?.followers?.map(
+                                (follower) => follower.follower.profileID
+                            )}
+                        />
+                    )
+                );
         }
     };
 
