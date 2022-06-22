@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { UploadFileView } from "./uploadFileView";
 import { UploadFileProps, fileType } from "interfaces/file";
-import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
+import { FormContext } from "views";
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
 

@@ -106,9 +106,8 @@ export const CreateSingleCollectible = () => {
         e.preventDefault();
         if (!activeProfile.activeProfile) return ErrorToast("You are not logged in");
         const isFormFilled = checkIfFilledForm();
-        if (!isFormFilled) {
-            return ErrorToast("Form is not filled correctly...");
-        }
+        if (!isFormFilled) return ErrorToast("Form is not filled correctly...");
+
         if (!formState.productFormData || !formState.productImageUrl)
             return ErrorToast("Something is wrong with image...");
 
