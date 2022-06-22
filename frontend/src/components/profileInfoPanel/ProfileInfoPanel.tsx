@@ -34,15 +34,29 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile, setProfile }) =
     }, [profile, activeProfile.activeProfile]);
 
     const checkIsFollowing = () => {
-        if (
+        const result =
             profile.followers &&
             profile.followers.find(
                 (follower) => follower.follower.profileID._id === activeProfile.activeProfile?._id
-            )
-        ) {
-            setIsFollower(true);
-        } else {
-            setIsFollower(false);
+            );
+        setIsFollower(!!result);
+    };
+
+    const follow = async () => {
+        if (activeProfile.activeProfile?._id) {
+            await followProfile(activeProfile.activeProfile._id, profile._id).catch((response) =>
+                ErrorToast(response.response.data)
+            );
+            setProfile();
+        }
+    };
+
+    const unfollow = async () => {
+        if (activeProfile.activeProfile?._id) {
+            await unfollowProfile(activeProfile.activeProfile._id, profile._id).catch((response) =>
+                ErrorToast(response.response.data)
+            );
+            setProfile();
         }
     };
 
@@ -78,35 +92,11 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile, setProfile }) =
             {activeProfile.activeProfile?._id && activeProfile.activeProfile?._id !== profile._id && (
                 <div>
                     {!isFollower ? (
-                        <button
-                            type="button"
-                            className={styles.followButton}
-                            onClick={async () => {
-                                if (activeProfile.activeProfile?._id) {
-                                    await followProfile(
-                                        activeProfile.activeProfile._id,
-                                        profile._id
-                                    ).catch((response) => ErrorToast(response.response.data));
-                                    setProfile();
-                                }
-                            }}
-                        >
+                        <button type="button" className={styles.followButton} onClick={follow}>
                             Follow
                         </button>
                     ) : (
-                        <button
-                            type="button"
-                            className={styles.followButton}
-                            onClick={async () => {
-                                if (activeProfile.activeProfile?._id) {
-                                    await unfollowProfile(
-                                        activeProfile.activeProfile._id,
-                                        profile._id
-                                    ).catch((response) => ErrorToast(response.response.data));
-                                    setProfile();
-                                }
-                            }}
-                        >
+                        <button type="button" className={styles.followButton} onClick={unfollow}>
                             Unfollow
                         </button>
                     )}

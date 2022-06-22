@@ -19,6 +19,19 @@ export const ProfileFollowList: FC<ProfileList> = ({ profiles, followers }) => {
     const navigate = useNavigate();
     const itemsPerPage = 3;
     const listIsNotEmpty = profiles.length > 0;
+
+    const previousPage = () =>
+        setCreatedPageNumber({
+            firstItem: createdPageNumber.firstItem - itemsPerPage,
+            lastItem: createdPageNumber.lastItem - itemsPerPage,
+        });
+
+    const nextPage = () =>
+        setCreatedPageNumber({
+            firstItem: createdPageNumber.firstItem + itemsPerPage,
+            lastItem: createdPageNumber.lastItem + itemsPerPage,
+        });
+
     return (
         <div className={styles.createdListContainer}>
             {listIsNotEmpty ? (
@@ -30,9 +43,7 @@ export const ProfileFollowList: FC<ProfileList> = ({ profiles, followers }) => {
                                 <div
                                     key={index}
                                     className={styles.profileCard}
-                                    onClick={() => {
-                                        navigate(`/profile/${profile._id}`);
-                                    }}
+                                    onClick={() => navigate(`/profile/${profile._id}`)}
                                 >
                                     <PopularSeller profile={profile} />
                                 </div>
@@ -46,12 +57,7 @@ export const ProfileFollowList: FC<ProfileList> = ({ profiles, followers }) => {
                                     alt="arrow left"
                                     className={styles.arrow}
                                     id="prevPage"
-                                    onClick={() =>
-                                        setCreatedPageNumber({
-                                            firstItem: createdPageNumber.firstItem - itemsPerPage,
-                                            lastItem: createdPageNumber.lastItem - itemsPerPage,
-                                        })
-                                    }
+                                    onClick={previousPage}
                                 />
                             )}
                         </div>
@@ -62,12 +68,7 @@ export const ProfileFollowList: FC<ProfileList> = ({ profiles, followers }) => {
                                     alt="arrow right"
                                     className={styles.arrow}
                                     id="nextPage"
-                                    onClick={() =>
-                                        setCreatedPageNumber({
-                                            firstItem: createdPageNumber.firstItem + itemsPerPage,
-                                            lastItem: createdPageNumber.lastItem + itemsPerPage,
-                                        })
-                                    }
+                                    onClick={nextPage}
                                 />
                             )}
                         </div>
