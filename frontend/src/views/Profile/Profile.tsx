@@ -1,5 +1,5 @@
 import styles from "./Profile.module.scss";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ProfileInfoPanel, Modal, LoadingToast, UpdateToast } from "components";
 import imageIcon from "assets/imageIcon.svg";
@@ -14,15 +14,14 @@ import { getUsersAuctions } from "API/UserService/auctions";
 import { UploadCoverPhotoModal, ConfirmModal, ProfileModal } from "components/Modal";
 import { getProfilesForLoggedUser, UserProfilesSelector } from "store/profile";
 import { ActiveProfileSelector, changeActiveProfile } from "store/activeProfile";
-import { useNavigate } from "react-router-dom";
 import { UserSelector } from "store/user";
+import { ProfileFollowList } from "views";
 
 const defaultCoverPicture =
     "https://galaktyczny.pl/wp-content/uploads/2021/08/windows-xp-wallpaper-tapeta.jpg";
 
 const profileDisplayOptions = [
     { value: "onsale", label: "On Sale" },
-    { value: "collectibles", label: "Collectibles" },
     { value: "created", label: "Created" },
     { value: "likes", label: "Likes" },
     { value: "following", label: "Following" },
@@ -43,14 +42,14 @@ export function Profile() {
     const usersProducts = useAppSelector(UserProductsSelector);
     const userProfiles = useAppSelector(UserProfilesSelector);
     const navigate = useNavigate();
+    const getProfileStates = async () => {
+        if (!profileID) return;
+        setProfile(await getProfile(profileID));
+        setAuctions(await getUsersAuctions(profileID));
+        dispatch(fetchUserProducts(profileID));
+    };
 
     useEffect(() => {
-        const getProfileStates = async () => {
-            if (!profileID) return;
-            setProfile(await getProfile(profileID));
-            setAuctions(await getUsersAuctions(profileID));
-            dispatch(fetchUserProducts(profileID));
-        };
         getProfileStates();
     }, [profileID]);
 
@@ -68,6 +67,37 @@ export function Profile() {
                 );
             case "onsale":
                 return <ProfileAuctions usersAuctions={auctions} />;
+
+            case "likes":
+                return (
+                    <ProfileAuctions
+                        usersAuctions={[...auctions].sort(
+                            (a: AuctionItem, b: AuctionItem) => b.likes.length - a.likes.length
+                        )}
+                    />
+                );
+            case "following":
+                return (
+                    profile?.following && (
+                        <ProfileFollowList
+                            followers={false}
+                            profiles={profile?.following?.map(
+                                (following) => following.following.profileID
+                            )}
+                        />
+                    )
+                );
+            case "followers":
+                return (
+                    profile?.followers && (
+                        <ProfileFollowList
+                            followers={true}
+                            profiles={profile?.followers?.map(
+                                (follower) => follower.follower.profileID
+                            )}
+                        />
+                    )
+                );
         }
     };
 
@@ -103,7 +133,14 @@ export function Profile() {
                 />
             </div>
             <div className={styles.contentContainer}>
-                {profile && <ProfileInfoPanel profile={profile} />}
+                {profile && (
+                    <ProfileInfoPanel
+                        profile={profile}
+                        setProfile={async () =>
+                            profileID && setProfile(await getProfile(profileID))
+                        }
+                    />
+                )}
                 <div className={styles.mainContent}>
                     {profileID === activeProfile.activeProfile?._id && user.userID ? (
                         <div className={styles.settingsButtons}>
@@ -176,6 +213,7 @@ export function Profile() {
                         isNew={false}
                         userID={user.userID}
                         profile={activeProfile.activeProfile}
+                        updateView={getProfileStates}
                         changeVisiblity={() => setIsModalVisible(false)}
                         openConfirmModal={() => setIsConfirmModalVisible(true)}
                     />

@@ -32,6 +32,7 @@ export const activeProfileSlice = createSlice({
         });
         builder.addCase(changeActiveProfile.rejected, (state, action) => {
             state.status = "failed";
+            state.activeProfile = null;
         });
     },
 });

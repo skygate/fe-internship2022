@@ -19,7 +19,7 @@ export const Popular = () => {
             setAllSellers(
                 res.sort((a: ProfileInterface, b: ProfileInterface) => {
                     if (!a.followers || !b.followers) return;
-                    return a.followers.length - b.followers.length;
+                    return b.followers.length - a.followers.length;
                 })
             )
         );
