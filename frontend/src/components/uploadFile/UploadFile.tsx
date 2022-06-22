@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { UploadFileView } from "./uploadFileView";
-import { UploadFileProps, fileType } from "../../interfaces/file";
+import { UploadFileProps, fileType } from "interfaces/file";
+import { FormContext } from "views/CreateSingleCollectible/CreateSingleCollectible";
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024;
 
 export const UploadFile = ({ onImgSrcChange }: UploadFileProps) => {
     const [active, setActive] = useState(false);
+    const formState = useContext(FormContext);
 
-    const onFileSelect = (file: any) => {
+    const onFileSelect = (file: File, value: string) => {
         const foundItem = fileType.find((item) => item.label === file.type);
 
         if (!foundItem) return;
@@ -16,13 +18,19 @@ export const UploadFile = ({ onImgSrcChange }: UploadFileProps) => {
 
         const imageForm = new FormData();
         imageForm.append("file", file);
-        onImgSrcChange({ productImageUrl: URL.createObjectURL(file), productFromData: imageForm });
+        onImgSrcChange({
+            productImageUrl: URL.createObjectURL(file),
+            productFromData: imageForm,
+            inputValue: value,
+        });
     };
 
     const onDrop = (e: React.DragEvent) => {
         onSetInactive(e);
         const file = e.dataTransfer.files[0];
-        onFileSelect(file);
+        const target = e.target as HTMLInputElement;
+        const value = target.value;
+        onFileSelect(file, value);
     };
 
     const onSetActive = (e: React.DragEvent) => {
@@ -39,9 +47,12 @@ export const UploadFile = ({ onImgSrcChange }: UploadFileProps) => {
     const onDragOver = (e: React.DragEvent) => onSetActive(e);
     const onDragLeave = (e: React.DragEvent) => onSetInactive(e);
 
-    const onFileInputChange = (e: any) => {
-        const file = e.target.files[0];
-        onFileSelect(file);
+    const onFileInputChange = (e: React.ChangeEvent) => {
+        const target = e.target as HTMLInputElement;
+        if (!target.files) return;
+        const file = target.files[0];
+        const value = target.value;
+        onFileSelect(file, value);
     };
 
     return (
@@ -52,6 +63,7 @@ export const UploadFile = ({ onImgSrcChange }: UploadFileProps) => {
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onFileInputChange={onFileInputChange}
+            value={formState.fileInputValue}
         />
     );
 };

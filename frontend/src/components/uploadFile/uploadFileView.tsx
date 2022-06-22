@@ -9,6 +9,7 @@ export const UploadFileView = ({
     onDragOver,
     onDragLeave,
     onFileInputChange,
+    value,
 }: UploadFileViewProps) => {
     return (
         <div className={style.uploadContainer}>
@@ -28,6 +29,7 @@ export const UploadFileView = ({
                     id="fileInput"
                     accept=".png, .webp, .gif, .jpg, .jpeg"
                     onChange={onFileInputChange}
+                    value={value}
                 />
 
                 <img src={icon} alt="upload icon" />

@@ -1,21 +1,24 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext, useEffect, useRef } from "react";
 import { CreateSingleCollectibleView } from "./CreateSingleCollectibleView";
 import { Product } from "interfaces/product";
 import { createFormState } from "interfaces/createFormState";
 import { uploadFile } from "API/UserService/uploadFile";
 import { addProduct } from "API/UserService/addProduct";
+import { addAuction } from "API/UserService/auctions";
 import { InputFileChange } from "interfaces/file";
 import { useAppSelector } from "store/store";
 import { ActiveProfileSelector } from "store/activeProfile";
-import { ErrorToast, LoadingToast, UpdateToast } from "components";
+import { ErrorToast, LoadingToast, Toast, UpdateToast } from "components";
+import { UserSelector } from "store/user";
 
 const defaultItem: Product = {
     _id: "",
     ownerID: "",
     productName: "Example Name",
     productDescription: "Example description",
-    productImageUrl: "https://picsum.photos/id/99/200",
-    productCategory: "PNG",
+    productImageUrl:
+        "https://career-lunch-storage.s3.eu-central-1.amazonaws.com/v2/blog/articles/linkedin-title-picture.jpg",
+    productCategory: "art",
 };
 
 const defaultFormState: createFormState = {
@@ -23,13 +26,14 @@ const defaultFormState: createFormState = {
     productName: "",
     productDescription: "",
     productImageUrl: "",
+    fileInputValue: "",
     productFormData: new FormData(),
-    productCategory: "PNG",
-    productSize: "",
-    productProperties: "",
+    productCategory: "art",
+    createAuction: false,
     putOnSale: false,
     instantSellPrice: false,
-    unlockOncePurchased: false,
+    price: 0,
+    duration: 0,
 };
 
 export const FormContext = createContext(defaultFormState);
@@ -37,8 +41,12 @@ export const FormContext = createContext(defaultFormState);
 export const CreateSingleCollectible = () => {
     const [formState, setFormState] = useState(defaultFormState);
     const [item, setItem] = useState<Product>(defaultItem);
+    const [productId, setProductId] = useState<string>();
     const [file, setFile] = useState<FormData>(new FormData());
     const activeProfile = useAppSelector(ActiveProfileSelector);
+    const activeUser = useAppSelector(UserSelector);
+    const isMounted = useRef(false);
+
     useEffect(() => {
         if (activeProfile.activeProfile?._id) {
             setItem({ ...item, ownerID: activeProfile.activeProfile?._id });
@@ -47,10 +55,12 @@ export const CreateSingleCollectible = () => {
     }, [file]);
 
     const onImgSrcChange = (arg: InputFileChange) => {
+        if (!arg.inputValue) return;
         setFormState({
             ...formState,
             productImageUrl: arg.productImageUrl,
             productFormData: arg.productFromData,
+            fileInputValue: arg.inputValue,
         });
         setItem({
             ...item,
@@ -74,24 +84,38 @@ export const CreateSingleCollectible = () => {
     const onClickClear = () => {
         setItem(defaultItem);
         setFormState(defaultFormState);
+        setFile(new FormData());
     };
 
-    const checkIfFilledForm = (formState: createFormState) => {
-        if (formState.ownerID === "") return false;
-        if (formState.productName === "") return false;
-        if (formState.productDescription === "") return false;
-        if (formState.productCategory === "") return false;
+    const checkIfFilledForm = () => {
+        if (!formState.ownerID) return false;
+        if (!formState.productName) return false;
+        if (!formState.productDescription) return false;
+        if (!formState.productCategory) return false;
+        return true;
+    };
+
+    const checkIfAuctionFormFilled = () => {
+        if (!formState.duration) return false;
+        if (!formState.putOnSale && !formState.instantSellPrice) return false;
+        if (formState.instantSellPrice && !formState.price) return false;
         return true;
     };
 
     const onFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const isFormFilled = checkIfFilledForm(formState);
+        if (!activeProfile.activeProfile) return ErrorToast("You are not logged in");
+        const isFormFilled = checkIfFilledForm();
         if (!isFormFilled) {
             return ErrorToast("Form is not filled correctly...");
         }
-        if (formState.productFormData === undefined || formState.productImageUrl === "")
+        if (!formState.productFormData || !formState.productImageUrl)
             return ErrorToast("Something is wrong with image...");
+
+        const isAuctionFormFilled = checkIfAuctionFormFilled();
+        if (formState.createAuction && !isAuctionFormFilled)
+            return ErrorToast("Create Auction form is not filled correctly");
+
         const createProductToast = LoadingToast("Creating product...");
         const uploadImage = await uploadFile(file).catch(() =>
             UpdateToast(createProductToast, "Something is wrong with image!", "error")
@@ -99,13 +123,61 @@ export const CreateSingleCollectible = () => {
         if (!uploadImage) return null;
         setItem({ ...item, productImageUrl: uploadImage.data.message });
         item.productImageUrl = uploadImage.data.message;
+
+        if (!formState.createAuction) {
+            await addProduct(item)
+                .then(() => {
+                    UpdateToast(createProductToast, "Product created successfully!", "success");
+                    onClickClear();
+                })
+                .catch(() => UpdateToast(createProductToast, "Something went wrong", "error"));
+            onClickClear();
+            return;
+        }
+
         await addProduct(item)
-            .then(() => {
-                UpdateToast(createProductToast, "Product created successfully!", "success");
-                onClickClear();
+            .then((res) => {
+                setProductId(res.data._id);
+                UpdateToast(createProductToast, "Product added successfully", "success");
             })
-            .catch(() => UpdateToast(createProductToast, "Something went wrong", "error"));
+            .catch(() =>
+                UpdateToast(
+                    createProductToast,
+                    "Something went wrong with creating product",
+                    "error"
+                )
+            );
     };
+
+    useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true;
+            return;
+        }
+
+        if (!productId || !activeProfile.activeProfile)
+            return ErrorToast("Something went wrong with creating aution");
+        const createAuctionToast = LoadingToast("Creating auction...");
+
+        const auction = {
+            userID: activeUser.userID,
+            profileID: activeProfile.activeProfile._id,
+            productID: productId,
+            price: formState.price,
+            duration: formState.duration,
+        };
+
+        addAuction(auction)
+            .then(() => UpdateToast(createAuctionToast, "Auction added successfully", "success"))
+            .catch(() =>
+                UpdateToast(
+                    createAuctionToast,
+                    "Something went wrong with creating auction",
+                    "error"
+                )
+            );
+        onClickClear();
+    }, [productId]);
 
     return (
         <FormContext.Provider value={formState}>
