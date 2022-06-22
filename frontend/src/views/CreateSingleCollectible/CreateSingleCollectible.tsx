@@ -107,14 +107,11 @@ export const CreateSingleCollectible = () => {
         if (!activeProfile.activeProfile) return ErrorToast("You are not logged in");
         const isFormFilled = checkIfFilledForm();
         if (!isFormFilled) return ErrorToast("Form is not filled correctly...");
-
         if (!formState.productFormData || !formState.productImageUrl)
             return ErrorToast("Something is wrong with image...");
-
         const isAuctionFormFilled = checkIfAuctionFormFilled();
         if (formState.createAuction && !isAuctionFormFilled)
             return ErrorToast("Create Auction form is not filled correctly");
-
         const createProductToast = LoadingToast("Creating product...");
         const uploadImage = await uploadFile(file).catch(() =>
             UpdateToast(createProductToast, "Something is wrong with image!", "error")
