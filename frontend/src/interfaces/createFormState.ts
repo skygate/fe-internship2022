@@ -3,11 +3,12 @@ export interface createFormState {
     productName: string;
     productDescription: string;
     productImageUrl: string;
+    fileInputValue: string;
     productFormData: FormData;
     productCategory: string;
-    productSize: string;
-    productProperties: string;
+    createAuction: boolean;
     putOnSale: boolean;
     instantSellPrice: boolean;
-    unlockOncePurchased: boolean;
+    price: number;
+    duration: number;
 }

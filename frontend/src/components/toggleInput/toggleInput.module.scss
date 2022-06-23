@@ -1,0 +1,80 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.toggleSwitchInput {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacer-32;
+}
+
+.switchName {
+    font-family: $font-family-poppins;
+    font-size: $font-size-body-2-bold;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2-bold;
+    color: $c-neutrals-2;
+    text-align: left;
+}
+
+.switchInfo {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption-2;
+    font-weight: $font-weight-400;
+    line-height: $line-height-caption-2;
+    color: $c-neutrals-4;
+    text-align: left;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $c-neutrals-6;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 34px;
+    border: none;
+    outline: none;
+}
+
+.toggle:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: $c-primary-1;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle {
+    background-color: $c-primary-1;
+}
+
+input:checked + .toggle:before {
+    -webkit-transform: translateX(24px);
+    -ms-transform: translateX(24px);
+    transform: translateX(24px);
+    background-color: $c-neutrals-8;
+}

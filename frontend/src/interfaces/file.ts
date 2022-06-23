@@ -1,6 +1,7 @@
 export interface InputFileChange {
     productImageUrl: string;
     productFromData: FormData;
+    inputValue?: string;
 }
 
 export interface UploadFileProps {
@@ -39,4 +40,5 @@ export interface UploadFileViewProps {
     onDragOver: (e: React.DragEvent) => void;
     onDragLeave: (e: React.DragEvent) => void;
     onFileInputChange: (e: React.ChangeEvent) => void;
+    value: string;
 }

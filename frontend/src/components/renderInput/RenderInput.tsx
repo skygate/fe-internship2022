@@ -14,7 +14,7 @@ interface RenderInputProps {
     item: ObjectType;
     onInputChange: (e: React.ChangeEvent) => void;
     width?: string;
-    value: string;
+    value: string | number;
     error?: string;
 }
 
