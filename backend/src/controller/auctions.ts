@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import auctions from "../models/auctions";
+import actions from "../models/actions";
+import { fullInfoActions } from "./actions";
 
 interface Like {
     like: {
@@ -238,6 +240,15 @@ export const addBid = async (req: Request, res: Response) => {
         };
         foundAuction.bidHistory.push(newBid);
         foundAuction.save();
+        const newAction = new actions({
+            profileID: profileID,
+            date: new Date(),
+            verb: "bid",
+            objectID: foundAuction._id,
+            objectModel: "Auctions",
+        });
+        await newAction.save();
+        fullInfoActions();
         return res.status(200).json({ errorMessage: "Succesfully placed a bid" });
     } catch (error: any) {
         res.status(404).json({ message: error.message });
