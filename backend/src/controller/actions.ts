@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import actions from "../models/actions";
 
-export const fullInfoActions = async () => {
+export const getAllActions = async (req: Request, res: Response) => {
     try {
         const actionsWithInfo = await actions
             .find()
@@ -9,11 +9,13 @@ export const fullInfoActions = async () => {
                 path: "profileID",
                 select: "profilePicture profileName",
             })
-            .populate("objectID")
-            .populate({ path: "objectID.productID" });
-        console.log(actionsWithInfo);
-        // res.status(200).json(actionsWithInfo);
+            .populate({
+                path: "objectID",
+                populate: [{ path: "_id" }],
+            });
+
+        res.status(200).json(actionsWithInfo);
     } catch (error: any) {
-        // res.status(404).json({ message: error.message });
+        res.status(404).json({ message: error.message });
     }
 };
