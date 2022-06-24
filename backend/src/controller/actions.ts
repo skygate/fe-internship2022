@@ -10,7 +10,7 @@ export const fullInfoActions = async () => {
                 select: "profilePicture profileName",
             })
             .populate("objectID")
-            .populate("objectID.productID");
+            .populate({ path: "objectID.productID" });
         console.log(actionsWithInfo);
         // res.status(200).json(actionsWithInfo);
     } catch (error: any) {
