@@ -8,6 +8,8 @@ interface NewAuction {
     productID: string;
     price: number;
     duration: number;
+    putOnSale: boolean;
+    instantSellPrice: boolean;
 }
 
 export const getUsersAuctions = async (profileID: string): Promise<AuctionItem[]> => {
