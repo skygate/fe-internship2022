@@ -37,7 +37,7 @@ export const DiscoverView = ({
     setFormPrice,
 }: DiscoverProps) => {
     return (
-        <section id="discover">
+        <section id="discover" className={style.discover}>
             <h3 className={style.h3}>Discover</h3>
             <form className={style.filters}>
                 <div className={style.topFilters}>
@@ -55,7 +55,9 @@ export const DiscoverView = ({
                     <div className={style.selectFilters}>
                         <SelectFilters onFieldSelect={onFilterSelect} formState={formState} />
                         <div className={style.priceRange}>
-                            <label htmlFor="priceRange">PRICE RANGE</label>
+                            <label htmlFor="priceRange" className={style.label}>
+                                PRICE RANGE
+                            </label>
                             <div className={style.priceRangeContainer}>
                                 <div
                                     className={style.sliderTrack}
