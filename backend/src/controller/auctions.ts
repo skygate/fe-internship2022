@@ -11,7 +11,7 @@ interface Like {
 export const getAllAuctions = (req: Request, res: Response) => {
     const defaultAuctions = async () => {
         try {
-            const auctionsList = await auctions.find();
+            const auctionsList = await auctions.find({ isActive: "true" });
             res.status(200).json(auctionsList);
         } catch (error: any) {
             res.status(404).json({ message: error.message });
@@ -21,7 +21,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
     const fullInfoAuctions = async () => {
         try {
             const auctionsWithInfo = await auctions
-                .find()
+                .find({ isActive: "true" })
                 .populate({
                     path: "profileID",
                     select: "userID about profilePicture profileName",
@@ -48,7 +48,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
     const fullInfoAuctionsOfUser = async () => {
         try {
             const auctionsWithInfo = await auctions
-                .find({ profileID: req.query.profileID })
+                .find({ profileID: req.query.profileID, isActive: "true" })
                 .populate({
                     path: "profileID",
                     select: "userID about profilePicture profileName",
@@ -134,6 +134,7 @@ export const getAllAuctions = (req: Request, res: Response) => {
                         { startDate: { $gte: minDate } },
                         { price: { $gte: priceMin } },
                         { price: { $lte: priceMax } },
+                        { isActive: "true" },
                     ],
                 })
                 .sort({ [sortBy]: [asc] })
@@ -191,6 +192,7 @@ export const addAuction = async (req: Request, res: Response) => {
         price,
         putOnSale,
         instantSellPrice,
+        isActive: true,
         bidHistory: new Array(),
         startDate: new Date(),
         endDate: new Date(new Date().setHours(new Date().getHours() + req.body.duration)),
@@ -198,6 +200,14 @@ export const addAuction = async (req: Request, res: Response) => {
     });
     try {
         await newAuction.save();
+        const newAction = new actions({
+            profileID: profileID,
+            date: new Date(),
+            verb: "startAuction",
+            objectID: newAuction._id,
+            objectModel: "Auctions",
+        });
+        await newAction.save();
         res.status(201).json(newAuction);
     } catch (error: any) {
         res.status(409).json({ message: error.message });
@@ -242,11 +252,21 @@ export const addBid = async (req: Request, res: Response) => {
         const newAction = new actions({
             profileID: profileID,
             date: new Date(),
-            verb: "bid",
+            offer: offer,
+            verb: "addBid",
             objectID: foundAuction._id,
             objectModel: "Auctions",
         });
         await newAction.save();
+        const secondAction = new actions({
+            profileID: foundAuction.profileID,
+            date: new Date(),
+            verb: "receiveBid",
+            offer: offer,
+            objectID: foundAuction._id,
+            objectModel: "Auctions",
+        });
+        await secondAction.save();
         return res.status(200).json({ errorMessage: "Succesfully placed a bid" });
     } catch (error: any) {
         res.status(404).json({ message: error.message });
@@ -270,7 +290,9 @@ export const editAuction = async (req: Request, res: Response) => {
 
 export const deleteAuction = async (req: Request, res: Response) => {
     try {
-        auctions.findByIdAndDelete(req.params.id).exec();
+        const foundAuction = await auctions.findById(req.params.id);
+        if (foundAuction) foundAuction.isActive = false;
+        foundAuction.save();
         res.status(200).json({ message: "Auction was succesfully deleted" });
     } catch (error: any) {
         res.status(404).json({ message: error.message });
@@ -302,6 +324,14 @@ export const addRemoveLike = async (req: Request, res: Response) => {
         }
         foundAuction.likes.push(newLike);
         foundAuction.save();
+        const newAction = new actions({
+            profileID: foundAuction.profileID,
+            date: new Date(),
+            verb: "like",
+            objectID: foundAuction._id,
+            objectModel: "Auctions",
+        });
+        await newAction.save();
         return res.status(200).json({ errorMessage: "Succesfully liked an auction" });
     } catch (error) {
         return res.status(400).json({ errorMessage: "Something gone wrong" });

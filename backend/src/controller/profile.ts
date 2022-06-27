@@ -150,10 +150,10 @@ module.exports.follow = async (req: Request, res: Response) => {
         activeProfile.save();
 
         const newAction = new actions({
-            profileID: activeProfileID,
+            profileID: followingProfile._id,
             date: new Date(),
-            verb: "follow",
-            objectID: followingProfile._id,
+            verb: "receivedFollow",
+            objectID: activeProfileID,
             objectModel: "Profiles",
         });
         await newAction.save();

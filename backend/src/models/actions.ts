@@ -8,6 +8,7 @@ const actionsSchema = new mongoose.Schema({
     },
     date: String,
     verb: String,
+    offer: Number,
     objectID: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: "objectModel" },
     objectModel: {
         type: String,
