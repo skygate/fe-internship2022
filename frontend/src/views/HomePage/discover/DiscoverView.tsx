@@ -67,7 +67,7 @@ export const DiscoverView = ({
                                     type="range"
                                     min="0"
                                     max={formState.priceRangeMax}
-                                    step="1"
+                                    step="10"
                                     value={priceState.priceMin}
                                     id="priceMin"
                                     onChange={(e) => onPriceChange(e)}
@@ -77,7 +77,7 @@ export const DiscoverView = ({
                                     type="range"
                                     min="0"
                                     max={formState.priceRangeMax}
-                                    step="1"
+                                    step="10"
                                     value={priceState.priceMax}
                                     id="priceMax"
                                     onChange={(e) => onPriceChange(e)}
