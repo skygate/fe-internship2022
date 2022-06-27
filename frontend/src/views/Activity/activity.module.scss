@@ -1,0 +1,59 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.activity {
+    display: flex;
+    width: 1120px;
+    justify-content: space-between;
+    margin: 169px auto 0;
+    align-items: flex-start;
+}
+
+.leftColumn {
+    width: 50%;
+}
+
+.titleWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    font-size: $font-size-headline-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-headline-2;
+    color: $c-neutrals-2;
+}
+
+.button {
+    padding: 0 $spacer-24;
+    font-size: $font-size-button-2;
+    font-weight: $font-weight-700;
+    line-height: $line-height-button-2;
+    color: $c-neutrals-2;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 30px;
+    height: 40px;
+}
+
+.filtersWrapper {
+    border: 2px solid $c-neutrals-7;
+    border-radius: 20px;
+    padding: $spacer-48;
+    text-align: left;
+}
+
+.filtersTitle {
+    font-size: $font-size-body-1-bold;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-2;
+    text-align: left;
+    margin-bottom: $spacer-32;
+}
+
+.buttons {
+    margin-top: $spacer-48;
+}

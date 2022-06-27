@@ -6,3 +6,4 @@ export { Login } from "./Login/Login";
 export { Register } from "./Register/Register";
 export { Auction } from "./Auction/Auction";
 export { ProfileFollowList } from "./Profile/ProfileFollowList/ProfileFollowList";
+export { Activity } from "./Activity/Activity";

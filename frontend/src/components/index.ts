@@ -31,3 +31,5 @@ export { ErrorToast, LoadingToast, UpdateToast } from "./ToastWrapper/Toasts";
 export { HorizontalSelectButtons } from "./horizontalSelectButtons/HorizontalSelectButtons";
 export { AddAuctionForm } from "./addAuctionForm/AddAuctionForm";
 export { ToggleInput } from "./toggleInput/ToggleInput";
+export { CheckboxInput } from "./checkboxInput/CheckboxInput";
+export { Notification } from "./notification/Notification";
