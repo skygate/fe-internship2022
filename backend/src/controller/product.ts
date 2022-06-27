@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import product from "../models/product";
+import actions from "../models/actions";
 
 let productsArray = new Array(20);
 
@@ -86,11 +87,32 @@ module.exports.deleteProduct = async (req: Request, res: Response) => {
 module.exports.editProduct = async (req: Request, res: Response) => {
     try {
         const foundProduct = await product.findById(req.body.productID);
+        const purchaseAction = new actions({
+            profileID: req.body.ownerID,
+            date: new Date(),
+            offer: req.body.offer,
+            verb: "purchased",
+            objectID: foundProduct._id,
+            objectModel: "Products",
+        });
+        const sellAction = new actions({
+            profileID: foundProduct.ownerID,
+            date: new Date(),
+            offer: req.body.offer,
+            verb: "sold",
+            objectID: foundProduct._id,
+            objectModel: "Products",
+        });
+        const isPurchase = req.body.ownerID !== foundProduct.ownerID;
 
         for (const key in foundProduct) {
             foundProduct[key] = req.body[key] || foundProduct[key];
         }
-        foundProduct.save();
+        await foundProduct.save();
+        if (isPurchase) {
+            await purchaseAction.save();
+            await sellAction.save();
+        }
         res.status(200).json({ errorMessage: "Succesfully changed product" });
     } catch (error) {
         res.status(400).json({ errorMessage: "Rosources not found" });
