@@ -3,5 +3,5 @@ export interface NotificationObject {
     title: string;
     imageURL: string;
     date: string;
-    objectURL: string;
+    linkTo: string;
 }

@@ -29,7 +29,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "Bid placed",
                     imageURL: action.objectID.productID.productImageUrl,
                     date: action.date,
-                    linkTo: `auction/${action.objectID._id}`,
+                    linkTo: `/auction/${action.objectID._id}`,
                 };
             }
             if (action.verb === "receiveBid") {
@@ -38,7 +38,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "New bid!",
                     imageURL: action.objectID.productID.productImageUrl,
                     date: action.date,
-                    linkTo: `auction/${action.objectID._id}`,
+                    linkTo: `/auction/${action.objectID._id}`,
                 };
             }
 
@@ -48,7 +48,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "New like!",
                     imageURL: action.objectID.productID.productImageUrl,
                     date: action.date,
-                    linkTo: `auction/${action.objectID._id}`,
+                    linkTo: `/auction/${action.objectID._id}`,
                 };
             }
 
@@ -58,7 +58,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "New follower!",
                     imageURL: action.objectID.profilePicture,
                     date: action.date,
-                    linkTo: `profile/${action.objectID._id}`,
+                    linkTo: `/profile/${action.objectID._id}`,
                 };
             }
 
@@ -68,7 +68,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "New auction started!",
                     imageURL: action.objectID.productID.productImageUrl,
                     date: action.date,
-                    linkTo: `auction/${action.objectID._id}`,
+                    linkTo: `/auction/${action.objectID._id}`,
                 };
             }
 
@@ -78,7 +78,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "Item sold!",
                     imageURL: action.objectID.productID.productImageUrl,
                     date: action.date,
-                    linkTo: `profiles/${action.objectID.productID.ownerID}`,
+                    linkTo: `/profiles/${action.objectID.productID.ownerID}`,
                 };
             }
 
@@ -88,7 +88,7 @@ export const getAllActions = async (req: Request, res: Response) => {
                     title: "Item purchased!",
                     imageURL: action.objectID.productID.productImageUrl,
                     date: action.date,
-                    linkTo: `profiles/${action.objectID.productID.ownerID}`,
+                    linkTo: `/profiles/${action.objectID.productID.ownerID}`,
                 };
             }
         });

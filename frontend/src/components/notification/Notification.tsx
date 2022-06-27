@@ -21,7 +21,7 @@ export const Notification = ({ object }: NotificationProps) => {
     };
 
     return (
-        <Link to={object.objectURL}>
+        <Link to={object.linkTo}>
             <div className={styles.notification}>
                 <div className={styles.wrapper}>
                     <img src={object.imageURL} alt="object image" className={styles.img} />
