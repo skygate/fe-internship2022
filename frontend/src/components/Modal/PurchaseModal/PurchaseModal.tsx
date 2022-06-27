@@ -31,6 +31,7 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
         const soldProduct = {
             productID: auctionData.productID._id,
             ownerID: profile._id,
+            offer: auctionData.price,
         };
         await editProduct(soldProduct)
             .then()
@@ -53,7 +54,7 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
     ) : (
         <div>
             <p className={style.titleQuestion}>Are you sure you want to purchase this item for</p>
-            <p className={style.value}>{auctionData.price} ETH ?</p>
+            <p className={style.value}>{auctionData.price} $?</p>
             <div className={style.buttons}>
                 <Button text="Cancel" onClick={onClose} />
                 <Button

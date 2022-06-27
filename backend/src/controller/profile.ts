@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import actions from "../models/actions";
 import profile from "../models/profile";
 
 interface Following {
@@ -147,6 +148,15 @@ module.exports.follow = async (req: Request, res: Response) => {
         activeProfile.following.push(newFollowingProfile);
         followingProfile.save();
         activeProfile.save();
+
+        const newAction = new actions({
+            profileID: followingProfile._id,
+            date: new Date(),
+            verb: "receivedFollow",
+            objectID: activeProfileID,
+            objectModel: "Profiles",
+        });
+        await newAction.save();
         res.status(200).send("Followed");
     } catch (error: any) {
         res.status(400).send(error.message);

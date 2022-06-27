@@ -161,6 +161,8 @@ export const CreateSingleCollectible = () => {
             productID: productId,
             price: formState.price,
             duration: formState.duration,
+            putOnSale: formState.putOnSale,
+            instantSellPrice: formState.instantSellPrice,
         };
 
         addAuction(auction)

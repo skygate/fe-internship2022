@@ -65,6 +65,7 @@ const profileRoute = require("./routes/profile");
 const categoriesRoute = require("./routes/categories");
 const userProfilesRoute = require("./routes/userProfiles");
 const uploadRoute = require("./routes/upload");
+const actionsRoute = require("./routes/actions");
 
 // USE ROUTES
 app.use("/products", productRoute);
@@ -74,6 +75,7 @@ app.use("/profiles", profileRoute);
 app.use("/categories", categoriesRoute);
 app.use("/userProfiles", userProfilesRoute);
 app.use("/upload", uploadRoute);
+app.use("/actions", actionsRoute);
 
 // CONNECT MONGO
 
