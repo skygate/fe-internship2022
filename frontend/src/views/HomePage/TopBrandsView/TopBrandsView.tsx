@@ -45,7 +45,7 @@ export function TopBrandsView() {
 
     return (
         <div className={styles.topBrandsContainer}>
-            {mostLikedAuctions?.length !== 0 && newestAuctions?.length !== 0 && (
+            {mostLikedAuctions && mostLikedAuctions?.length > 2 && newestAuctions?.length !== 0 && (
                 <div className={styles.innerWrapper}>
                     <span className={styles.headerText}>Top Brands and Creators</span>
                     <div className={styles.listsContainer}>
