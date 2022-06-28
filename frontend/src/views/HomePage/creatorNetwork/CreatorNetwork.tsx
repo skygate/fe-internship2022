@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import arrowLeft from "assets/arrowLeft.svg";
 import arrowRight from "assets/arrowRight.svg";
 import style from "./creatorNetwork.module.scss";
@@ -24,7 +24,7 @@ export const CreatorNetwork = () => {
     const [bidModalVisibility, setBidModalVisibility] = useState(false);
     const lastBid = auction?.bidHistory[auction.bidHistory.length - 1]?.bid;
     const user = useAppSelector(UserSelector);
-
+    const auctionID = useRef<string>();
     useEffect(() => {
         getAllAuctions().then((res) => setAllAuctions(res));
     }, []);
@@ -36,9 +36,11 @@ export const CreatorNetwork = () => {
             .sort((a, b) => b.likes.length - a.likes.length)
             .slice(0, 1);
         setAuction(mostLikedAuction[0]);
+        auctionID.current = mostLikedAuction[0]._id;
     }, [allAuctions]);
 
     useEffect(() => {
+        console.log("test");
         if (!auction) return;
         const clockInterval = setInterval(() => {
             const duration = intervalToDuration({
@@ -52,8 +54,8 @@ export const CreatorNetwork = () => {
 
     useEffect(() => {
         socket.on("auction-change", () => {
-            if (!auction) return;
-            getAuction(auction._id).then((res) => setAuction(res.data));
+            if (!auctionID.current) return;
+            getAuction(auctionID.current).then((res) => setAuction(res.data));
         });
     }, [socket]);
 
