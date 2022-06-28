@@ -52,7 +52,7 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "Bid placed",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
-                linkTo: `auction/${action.objectID._id}`,
+                linkTo: `/auction/${action.objectID._id}`,
             };
         }
         if (action.verb === "receiveBid") {
@@ -61,7 +61,7 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "New bid!",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
-                linkTo: `auction/${action.objectID._id}`,
+                linkTo: `/auction/${action.objectID._id}`,
             };
         }
 
@@ -71,7 +71,7 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "New like!",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
-                linkTo: `auction/${action.objectID._id}`,
+                linkTo: `/auction/${action.objectID._id}`,
             };
         }
 
@@ -81,7 +81,7 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "New follower!",
                 imageURL: action.objectID.profilePicture,
                 date: action.date,
-                linkTo: `profile/${action.objectID._id}`,
+                linkTo: `/profile/${action.objectID._id}`,
             };
         }
 
@@ -91,7 +91,7 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "New auction started!",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
-                linkTo: `auction/${action.objectID._id}`,
+                linkTo: `/auction/${action.objectID._id}`,
             };
         }
 
@@ -101,7 +101,7 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "Item sold!",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
-                linkTo: `profiles/${action.objectID.productID.ownerID}`,
+                linkTo: `/profile/${action.objectID.productID.ownerID}`,
             };
         }
 
@@ -111,31 +111,34 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
                 title: "Item purchased!",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
-                linkTo: `profiles/${action.objectID.productID.ownerID}`,
+                linkTo: `/profile/${action.objectID.productID.ownerID}`,
             };
         }
     });
 
 export const getAllActions = async (req: Request, res: Response) => {
     try {
-        const actionsWithInfo = await actions.find<Action>().populate<Action>([
-            {
-                path: "profileID",
-                select: "profilePicture profileName",
-                strictPopulate: false,
-            },
-            {
-                path: "objectID",
-                select: "profileID productID startDate endDate profileName profilePicture likes",
-                strictPopulate: false,
-                populate: {
-                    path: "productID",
-                    select: "productName productImageUrl ownerID",
-                    model: "Products",
+        const actionsWithInfo = await actions
+            .find<Action>()
+            .populate<Action>([
+                {
+                    path: "profileID",
+                    select: "profilePicture profileName",
                     strictPopulate: false,
                 },
-            },
-        ]);
+                {
+                    path: "objectID",
+                    select: "profileID productID startDate endDate profileName profilePicture likes",
+                    strictPopulate: false,
+                    populate: {
+                        path: "productID",
+                        select: "productName productImageUrl ownerID",
+                        model: "Products",
+                        strictPopulate: false,
+                    },
+                },
+            ])
+            .sort({ date: -1 });
         res.status(200).json(flatActions(actionsWithInfo));
     } catch (error: any) {
         res.status(404).json({ message: error.message });
@@ -164,7 +167,8 @@ export const getProfileActions = async (req: Request, res: Response) => {
                         strictPopulate: false,
                     },
                 },
-            ]);
+            ])
+            .sort({ date: -1 });
 
         res.status(200).json(flatActions(actionsWithInfo));
     } catch (error: any) {
@@ -197,7 +201,8 @@ export const getFollowingProfilesActions = async (req: Request, res: Response) =
                         strictPopulate: false,
                     },
                 },
-            ]);
+            ])
+            .sort({ date: -1 });
 
         res.status(200).json(flatActions(actionsWithInfo));
     } catch (error: any) {
