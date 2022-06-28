@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getAllActionsForProfile } from "API/UserService/notifications";
+import {
+    getProfileActions,
+    getFollowingProfilesActions,
+    getAllActions,
+} from "API/UserService/notifications";
 import { useAppSelector } from "store/store";
 import { NotificationObject } from "interfaces";
 import { FilterStateInterface } from "./interfaces";
@@ -13,19 +17,30 @@ const DEFAULT_FILTER_STATE: FilterStateInterface = {
 };
 
 export const Activity = () => {
-    const [selectedCategory, setSelectedCategory] = useState("myActivity");
     const [selectedFilters, setSelectedFilters] = useState(DEFAULT_FILTER_STATE);
     const [allNotifications, setAllNotifications] = useState<NotificationObject[]>([]);
+    const [profileNotifications, setProfileNotifications] = useState<NotificationObject[]>([]);
+    const [followingNotifications, setFollowingNotifications] = useState<NotificationObject[]>([]);
+    const [notifications, setNotifications] = useState<NotificationObject[]>([]);
     const activeProfile = useAppSelector((state) => state.activeProfile.activeProfile);
 
     useEffect(() => {
         if (!activeProfile) return;
-        getAllActionsForProfile(activeProfile?._id).then((data) => setAllNotifications(data));
-    }, []);
+        getProfileActions(activeProfile?._id).then((data) => {
+            setProfileNotifications(data);
+            setNotifications(data);
+        });
+        getFollowingProfilesActions(activeProfile?._id).then((data) =>
+            setFollowingNotifications(data)
+        );
+        getAllActions().then((data) => setAllNotifications(data));
+    }, [activeProfile]);
 
     const onCategorySelect = (e: React.MouseEvent) => {
         const target = e.target as HTMLButtonElement;
-        setSelectedCategory(target.id);
+        if (target.id === "myActivity") setNotifications(profileNotifications);
+        if (target.id === "following") setNotifications(followingNotifications);
+        if (target.id === "allActivity") setNotifications(allNotifications);
     };
 
     const onFilterSelect = (e: React.ChangeEvent) => {
@@ -51,7 +66,7 @@ export const Activity = () => {
 
     return (
         <ActivityView
-            allNotifications={allNotifications}
+            allNotifications={notifications}
             onCategorySelect={onCategorySelect}
             onFilterSelect={onFilterSelect}
             selectedFilters={selectedFilters}
