@@ -10,10 +10,12 @@ import { FilterStateInterface } from "./interfaces";
 import { ActivityView } from "./ActivityView";
 
 const DEFAULT_FILTER_STATE: FilterStateInterface = {
-    sales: false,
-    purchase: false,
-    bids: false,
-    likes: false,
+    sales: true,
+    purchases: true,
+    bids: true,
+    likes: true,
+    follows: true,
+    startedAuctions: true,
 };
 
 export const Activity = () => {
@@ -26,15 +28,27 @@ export const Activity = () => {
 
     useEffect(() => {
         if (!activeProfile) return;
-        getProfileActions(activeProfile?._id).then((data) => {
+        getProfileActions(activeProfile?._id, DEFAULT_FILTER_STATE).then((data) => {
             setProfileNotifications(data);
             setNotifications(data);
         });
-        getFollowingProfilesActions(activeProfile?._id).then((data) =>
+        getFollowingProfilesActions(activeProfile?._id, DEFAULT_FILTER_STATE).then((data) =>
             setFollowingNotifications(data)
         );
-        getAllActions().then((data) => setAllNotifications(data));
+        getAllActions(DEFAULT_FILTER_STATE).then((data) => setAllNotifications(data));
     }, [activeProfile]);
+
+    useEffect(() => {
+        if (!activeProfile) return;
+        getProfileActions(activeProfile?._id, selectedFilters).then((data) => {
+            setProfileNotifications(data);
+            setNotifications(data);
+        });
+        getFollowingProfilesActions(activeProfile?._id, selectedFilters).then((data) =>
+            setFollowingNotifications(data)
+        );
+        getAllActions(selectedFilters).then((data) => setAllNotifications(data));
+    }, [selectedFilters]);
 
     const onCategorySelect = (e: React.MouseEvent) => {
         const target = e.target as HTMLButtonElement;
@@ -52,21 +66,23 @@ export const Activity = () => {
     };
 
     const onSelectAll = () => {
-        setSelectedFilters({
-            sales: true,
-            purchase: true,
-            bids: true,
-            likes: true,
-        });
+        setSelectedFilters(DEFAULT_FILTER_STATE);
     };
 
     const onUnselectAll = () => {
-        setSelectedFilters(DEFAULT_FILTER_STATE);
+        setSelectedFilters({
+            sales: false,
+            purchases: false,
+            bids: false,
+            likes: false,
+            follows: false,
+            startedAuctions: false,
+        });
     };
 
     return (
         <ActivityView
-            allNotifications={notifications}
+            notifications={notifications}
             onCategorySelect={onCategorySelect}
             onFilterSelect={onFilterSelect}
             selectedFilters={selectedFilters}

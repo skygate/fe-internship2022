@@ -19,8 +19,8 @@ export const menuButtons = [
 export const filterOptions = [
     { id: "sales", label: "Sales" },
     {
-        id: "purchase",
-        label: "Purchase",
+        id: "purchases",
+        label: "Purchases",
     },
     {
         id: "bids",
@@ -29,5 +29,13 @@ export const filterOptions = [
     {
         id: "likes",
         label: "Likes",
+    },
+    {
+        id: "follows",
+        label: "Follows",
+    },
+    {
+        id: "startedAuctions",
+        label: "Started Auctions",
     },
 ];
