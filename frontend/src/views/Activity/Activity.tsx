@@ -8,6 +8,7 @@ import { useAppSelector } from "store/store";
 import { NotificationObject } from "interfaces";
 import { FilterStateInterface } from "./interfaces";
 import { ActivityView } from "./ActivityView";
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_FILTER_STATE: FilterStateInterface = {
     sales: true,
@@ -25,9 +26,9 @@ export const Activity = () => {
     const [followingNotifications, setFollowingNotifications] = useState<NotificationObject[]>([]);
     const [notifications, setNotifications] = useState<NotificationObject[]>([]);
     const activeProfile = useAppSelector((state) => state.activeProfile.activeProfile);
-
+    const navigate = useNavigate();
     useEffect(() => {
-        if (!activeProfile) return;
+        if (!activeProfile) return navigate("/login");
         getProfileActions(activeProfile?._id, DEFAULT_FILTER_STATE).then((data) => {
             setProfileNotifications(data);
             setNotifications(data);
