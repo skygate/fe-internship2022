@@ -2,6 +2,15 @@ import { Request, Response } from "express";
 import actions from "../models/actions";
 import profile from "../models/profile";
 
+interface ActionFilter {
+    bids: boolean;
+    likes: boolean;
+    purchases: boolean;
+    sales: boolean;
+    follows: boolean;
+    startedAuctions: boolean;
+}
+
 interface Product {
     productName: string;
     productImageUrl: string;
@@ -44,12 +53,23 @@ interface Action {
     objectModel: string;
 }
 
+const applyFilters = (filters: ActionFilter) => {
+    const filterVerbs = [];
+    if (filters.bids === true) filterVerbs.push("addBid", "receiveBid");
+    if (filters.likes === true) filterVerbs.push("like");
+    if (filters.follows === true) filterVerbs.push("receivedFollow");
+    if (filters.purchases === true) filterVerbs.push("purchased");
+    if (filters.sales === true) filterVerbs.push("sold");
+    if (filters.startedAuctions === true) filterVerbs.push("startAuction");
+    return filterVerbs;
+};
+
 const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
     actionsWithInfo.map((action) => {
         if (action.verb === "addBid") {
             return {
                 message: `You placed a ${action.offer}$ bid!`,
-                title: "Bid placed",
+                title: "Bid placed!",
                 imageURL: action.objectID.productID.productImageUrl,
                 date: action.date,
                 linkTo: `/auction/${action.objectID._id}`,
@@ -117,9 +137,10 @@ const flatActions = (actionsWithInfo: Omit<Action, keyof Action> & Action[]) =>
     });
 
 export const getAllActions = async (req: Request, res: Response) => {
+    const filters: ActionFilter = req.body;
     try {
         const actionsWithInfo = await actions
-            .find<Action>()
+            .find<Action>({ verb: { $in: applyFilters(filters) } })
             .populate<Action>([
                 {
                     path: "profileID",
@@ -147,9 +168,10 @@ export const getAllActions = async (req: Request, res: Response) => {
 
 export const getProfileActions = async (req: Request, res: Response) => {
     const profileID = req.params.id;
+    const filters: ActionFilter = req.body;
     try {
         const actionsWithInfo = await actions
-            .find<Action>({ profileID: profileID })
+            .find<Action>({ profileID: profileID, verb: { $in: applyFilters(filters) } })
             .populate<Action>([
                 {
                     path: "profileID",
@@ -178,12 +200,16 @@ export const getProfileActions = async (req: Request, res: Response) => {
 
 export const getFollowingProfilesActions = async (req: Request, res: Response) => {
     const profileID = req.params.id;
+    const filters: ActionFilter = req.body;
     const foundProfile = await profile
         .findById<Profile>(profileID)
         .then((data) => data?.following.map((following) => following.following.profileID));
     try {
         const actionsWithInfo = await actions
-            .find<Action>({ profileID: { $in: foundProfile } })
+            .find<Action>({
+                profileID: { $in: foundProfile },
+                verb: { $in: applyFilters(filters) },
+            })
             .populate<Action>([
                 {
                     path: "profileID",

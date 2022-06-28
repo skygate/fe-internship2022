@@ -16,5 +16,5 @@ const actionsSchema = new mongoose.Schema({
         enum: ["Auctions", "Profiles", "Products"],
     },
 });
-const auctions = mongoose.model("Actions", actionsSchema);
-export default auctions;
+const actions = mongoose.model("Actions", actionsSchema);
+export default actions;
