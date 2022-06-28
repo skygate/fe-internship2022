@@ -20,5 +20,6 @@ export interface AuctionItem {
     startDate: string;
     endDate: string;
     likes: Like[];
+    isActive: boolean;
     __v: number;
 }

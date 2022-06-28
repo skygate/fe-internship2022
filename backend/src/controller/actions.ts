@@ -136,7 +136,6 @@ export const getAllActions = async (req: Request, res: Response) => {
                 },
             },
         ]);
-
         res.status(200).json(flatActions(actionsWithInfo));
     } catch (error: any) {
         res.status(404).json({ message: error.message });
