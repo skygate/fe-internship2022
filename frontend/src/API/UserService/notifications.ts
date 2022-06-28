@@ -1,16 +1,25 @@
 import axiosInstance from "services/axios";
 
-export const getAllActions = async () => {
-    const response = await axiosInstance.get(`/actions`);
+interface Filters {
+    sales: boolean;
+    purchases: boolean;
+    bids: boolean;
+    likes: boolean;
+    startedAuctions: boolean;
+    follows: boolean;
+}
+
+export const getAllActions = async (filters: Filters) => {
+    const response = await axiosInstance.post(`/actions`, filters);
     return response.data;
 };
 
-export const getProfileActions = async (profileID: string) => {
-    const response = await axiosInstance.get(`/actions/${profileID}`);
+export const getProfileActions = async (profileID: string, filters: Filters) => {
+    const response = await axiosInstance.post(`/actions/${profileID}`, filters);
     return response.data;
 };
 
-export const getFollowingProfilesActions = async (profileID: string) => {
-    const response = await axiosInstance.get(`/actions/following/${profileID}`);
+export const getFollowingProfilesActions = async (profileID: string, filters: Filters) => {
+    const response = await axiosInstance.post(`/actions/following/${profileID}`, filters);
     return response.data;
 };
