@@ -1,6 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Footer, Navbar } from "components";
-import { HomePage, CreateSingleCollectible, Profile, Login, Register, Auction } from "views";
+import {
+    HomePage,
+    CreateSingleCollectible,
+    Profile,
+    Login,
+    Register,
+    Auction,
+    Activity,
+} from "views";
 
 function Router() {
     return (
@@ -14,6 +22,7 @@ function Router() {
                 <Route path="/create" element={<CreateSingleCollectible />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/activity" element={<Activity />} />
             </Routes>
             <Footer />
         </BrowserRouter>

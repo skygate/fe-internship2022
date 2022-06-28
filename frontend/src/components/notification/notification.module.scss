@@ -1,0 +1,65 @@
+@import "theme/typography.scss";
+@import "theme/spacers.scss";
+@import "theme/lightThemeColors.scss";
+
+.notification {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: $spacer-16;
+    align-items: center;
+    padding: $spacer-16 $spacer-20 $spacer-16;
+}
+
+.notification:hover {
+    cursor: pointer;
+    background-color: $c-neutrals-7;
+    border-radius: $spacer-20;
+}
+
+.notification:hover .action {
+    display: block;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    column-gap: $spacer-24;
+}
+
+.img {
+    height: 96px;
+    width: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.title {
+    font-size: $font-size-body-1-bold;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-600;
+    line-height: $line-height-body-1-bold;
+    color: $c-neutrals-1;
+    text-align: left;
+}
+
+.message {
+    font-size: $font-size-body-2;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-400;
+    line-height: $line-height-body-2;
+    color: $c-neutrals-3;
+    text-align: left;
+}
+
+.time {
+    font-size: $font-size-caption-2-bold;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-600;
+    line-height: $line-height-caption-2-bold;
+    color: $c-neutrals-4;
+    text-align: left;
+}
+
+.action {
+    display: none;
+}

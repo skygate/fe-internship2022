@@ -37,7 +37,7 @@ export const PurchaseModal = ({ onClose, auctionData }: AddBidModalProps) => {
             .then()
             .catch(() => UpdateToast(purchasingToast, "Something gone wrong!", "error"));
         await deleteAuction(auctionData._id)
-            .then(() => () => UpdateToast(purchasingToast, "Successfully bought item!", "success"))
+            .then(() => UpdateToast(purchasingToast, "Successfully bought item!", "success"))
             .catch(() => UpdateToast(purchasingToast, "Something gone wrong!", "error"));
         setTimeout(() => {
             setShouldRedirect(true);

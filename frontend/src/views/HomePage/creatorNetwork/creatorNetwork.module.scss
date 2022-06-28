@@ -4,11 +4,11 @@
 
 .creatorNetwork {
     width: 100%;
-    padding-top: 8rem;
 }
 
 .sectionContainer {
     width: 1120px;
+    padding-top: $spacer-128;
     display: flex;
     justify-content: space-between;
     column-gap: $spacer-128;

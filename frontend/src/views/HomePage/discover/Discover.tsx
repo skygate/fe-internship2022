@@ -126,18 +126,22 @@ export const Discover = () => {
         setFormState({ ...formState, category: target.id });
     };
 
-    const checkGap = (priceMin: number, priceMax: number, gap: number) =>
-        priceMax - priceMin >= gap ? true : false;
-
     const onPriceChange = (e: React.ChangeEvent) => {
         const target = e.target as HTMLInputElement;
-        const check = checkGap(priceState.priceMin, priceState.priceMax, PRICE_GAP);
 
-        return check
-            ? setPriceState({ ...priceState, [target.id]: Number(target.value) })
-            : target.id === "priceMin"
-            ? setPriceState({ ...priceState, priceMin: formState.priceMax - PRICE_GAP })
-            : setPriceState({ ...priceState, priceMax: formState.priceMin + PRICE_GAP });
+        if (target.id === "priceMin") {
+            return setPriceState({
+                ...priceState,
+                priceMin: Math.min(Number(target.value), formState.priceMax - PRICE_GAP),
+            });
+        }
+
+        if (target.id === "priceMax") {
+            return setPriceState({
+                ...priceState,
+                priceMax: Math.max(Number(target.value), formState.priceMin + PRICE_GAP),
+            });
+        }
     };
 
     const setFormPrice = () => {
@@ -180,6 +184,7 @@ export const Discover = () => {
 
     const clearFilters = (e: React.MouseEvent) => {
         setFormState(FORM_STATE_DEFAULT);
+        setPriceState(PRICE_STATE_DEFAULT);
     };
 
     return (

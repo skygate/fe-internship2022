@@ -1,0 +1,41 @@
+@import "theme/lightThemeColors.scss";
+@import "theme/spacers.scss";
+@import "theme/typography.scss";
+
+.wrapper {
+    position: relative;
+    display: flex;
+    column-gap: $spacer-12;
+    margin-top: $spacer-24;
+}
+
+.input {
+    height: 24px;
+    width: 24px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    border: 2px solid $c-neutrals-6;
+    border-radius: 4px;
+    outline: none;
+    transition-duration: 0.3s;
+    cursor: pointer;
+}
+
+.input:checked {
+    background-color: $c-primary-1;
+    border: 2px solid $c-primary-1;
+    background-image: url("../../assets/check.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.label {
+    font-size: $font-size-caption-bold;
+    font-family: $font-family-poppins;
+    font-weight: $font-weight-500;
+    line-height: $line-height-caption-bold;
+    color: $c-neutrals-1;
+    padding: 0;
+}
