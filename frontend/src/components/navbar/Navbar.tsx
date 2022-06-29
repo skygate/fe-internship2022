@@ -7,6 +7,7 @@ import { useAppSelector } from "store/store";
 import { HashLink } from "react-router-hash-link";
 import { getSearchResults } from "API/UserService";
 import { useEffect, useRef, useState } from "react";
+import { debounce } from "lodash";
 
 export const Navbar = () => {
     const user = useAppSelector((state) => state.user);
@@ -38,8 +39,12 @@ export const Navbar = () => {
         getSearchResults({ searchText: searchText }).then((data) => setResults(data));
     }, [searchText]);
 
+    const debouncedSearch = debounce(async (data) => {
+        setSearchText(data);
+    }, 500);
+
     const onSearch = (e: { target: HTMLInputElement }) => {
-        setSearchText(e.target.value);
+        debouncedSearch(e.target.value);
     };
 
     return (
