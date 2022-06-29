@@ -35,6 +35,7 @@ export const CreatorNetwork = () => {
             .filter((item) => item.bidHistory.length > 0)
             .sort((a, b) => b.likes.length - a.likes.length)
             .slice(0, 1);
+        if (!mostLikedAuction[0]) return;
         setAuction(mostLikedAuction[0]);
         if (!mostLikedAuction[0]) return;
         auctionID.current = mostLikedAuction[0]._id;
