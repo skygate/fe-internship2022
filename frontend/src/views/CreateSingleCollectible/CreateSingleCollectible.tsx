@@ -12,7 +12,6 @@ import { ErrorToast, LoadingToast, Toast, UpdateToast } from "components";
 import { UserSelector } from "store/user";
 
 const defaultItem: Product = {
-    _id: "",
     ownerID: "",
     productName: "Example Name",
     productDescription: "Example description",

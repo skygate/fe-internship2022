@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useEffect, useRef } from "react";
 import "./App.css";
 import Router from "./routes";
 import { setUser } from "store/user";
@@ -15,7 +15,7 @@ export const SocketContext = createContext(socket);
 
 function App() {
     const dispatch = useAppDispatch();
-    const user = useAppSelector((state) => state.user);
+    const userID = useAppSelector((state) => state.user.userID);
     const { profiles } = useAppSelector((state) => state.profiles);
 
     useEffect(() => {
@@ -23,14 +23,16 @@ function App() {
     }, []);
 
     useEffect(() => {
-        dispatch(getProfilesForLoggedUser(user.userID));
-    }, [user.userID]);
+        if (!userID) return;
+        dispatch(getProfilesForLoggedUser(userID));
+    }, [userID]);
 
     useEffect(() => {
         dispatch(getAuctions(true));
     }, []);
 
     useEffect(() => {
+        if (profiles.length === 0) return;
         dispatch(changeActiveProfile({ profiles: profiles, isAuto: true }));
     }, [profiles]);
 

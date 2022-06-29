@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     getProfileActions,
     getFollowingProfilesActions,
@@ -9,6 +9,7 @@ import { NotificationObject } from "interfaces";
 import { FilterStateInterface } from "./interfaces";
 import { ActivityView } from "./ActivityView";
 import { useNavigate } from "react-router-dom";
+import { ProfileInterface } from "interfaces";
 
 const DEFAULT_FILTER_STATE: FilterStateInterface = {
     sales: true,
@@ -25,28 +26,35 @@ export const Activity = () => {
     const [profileNotifications, setProfileNotifications] = useState<NotificationObject[]>([]);
     const [followingNotifications, setFollowingNotifications] = useState<NotificationObject[]>([]);
     const [notifications, setNotifications] = useState<NotificationObject[]>([]);
-    const activeProfile = useAppSelector((state) => state.activeProfile.activeProfile);
+    const userStatus = useAppSelector((state) => state.user.status);
+    const activeProfile = useAppSelector((state) => state.activeProfile);
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!activeProfile) return navigate("/login");
-        getProfileActions(activeProfile?._id, DEFAULT_FILTER_STATE).then((data) => {
-            setProfileNotifications(data);
-            setNotifications(data);
-        });
-        getFollowingProfilesActions(activeProfile?._id, DEFAULT_FILTER_STATE).then((data) =>
-            setFollowingNotifications(data)
-        );
-        getAllActions(DEFAULT_FILTER_STATE).then((data) => setAllNotifications(data));
-    }, [activeProfile]);
 
     useEffect(() => {
-        if (!activeProfile) return;
-        getProfileActions(activeProfile?._id, selectedFilters).then((data) => {
+        if (userStatus === "failed") return navigate("/login");
+    }, [userStatus]);
+
+    useEffect(() => {
+        if (!activeProfile.activeProfile) return;
+        getProfileActions(activeProfile?.activeProfile._id, DEFAULT_FILTER_STATE).then((data) => {
             setProfileNotifications(data);
             setNotifications(data);
         });
-        getFollowingProfilesActions(activeProfile?._id, selectedFilters).then((data) =>
-            setFollowingNotifications(data)
+        getFollowingProfilesActions(activeProfile?.activeProfile._id, DEFAULT_FILTER_STATE).then(
+            (data) => setFollowingNotifications(data)
+        );
+        getAllActions(DEFAULT_FILTER_STATE).then((data) => setAllNotifications(data));
+        return;
+    }, [activeProfile.status]);
+
+    useEffect(() => {
+        if (!activeProfile.activeProfile) return;
+        getProfileActions(activeProfile?.activeProfile._id, selectedFilters).then((data) => {
+            setProfileNotifications(data);
+            setNotifications(data);
+        });
+        getFollowingProfilesActions(activeProfile?.activeProfile._id, selectedFilters).then(
+            (data) => setFollowingNotifications(data)
         );
         getAllActions(selectedFilters).then((data) => setAllNotifications(data));
     }, [selectedFilters]);

@@ -36,11 +36,11 @@ export const CreatorNetwork = () => {
             .sort((a, b) => b.likes.length - a.likes.length)
             .slice(0, 1);
         setAuction(mostLikedAuction[0]);
+        if (!mostLikedAuction[0]) return;
         auctionID.current = mostLikedAuction[0]._id;
     }, [allAuctions]);
 
     useEffect(() => {
-        console.log("test");
         if (!auction) return;
         const clockInterval = setInterval(() => {
             const duration = intervalToDuration({
