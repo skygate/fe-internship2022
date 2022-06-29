@@ -37,11 +37,11 @@ export const CreatorNetwork = () => {
             .slice(0, 1);
         if (!mostLikedAuction[0]) return;
         setAuction(mostLikedAuction[0]);
+        if (!mostLikedAuction[0]) return;
         auctionID.current = mostLikedAuction[0]._id;
     }, [allAuctions]);
 
     useEffect(() => {
-        console.log("test");
         if (!auction) return;
         const clockInterval = setInterval(() => {
             const duration = intervalToDuration({

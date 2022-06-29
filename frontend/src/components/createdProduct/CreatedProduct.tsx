@@ -26,6 +26,7 @@ export const CreatedProduct = ({ item, profileID, setAuctions }: CreatedProductP
     const handleDelete = async () => {
         if (!isOwner) return;
         const deleteToast = LoadingToast("Deleting product...");
+        if (!item._id) return;
         await deleteProduct(item._id)
             .then(() => UpdateToast(deleteToast, "Successfully deleted", "success"))
             .catch(() => UpdateToast(deleteToast, "Something went wrong", "error"))
