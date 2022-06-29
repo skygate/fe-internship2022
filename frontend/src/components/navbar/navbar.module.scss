@@ -32,7 +32,7 @@ header {
 
 .searchInput {
     position: relative;
-    padding-right: $spacer-24;
+    margin-right: $spacer-24;
 }
 
 .label {
@@ -47,7 +47,7 @@ header {
     height: 15px;
 }
 
-.searchInput input {
+.input {
     width: 427px;
     padding: $spacer-12 $spacer-12 $spacer-12 $spacer-48;
     background-color: $c-neutrals-7;
@@ -55,8 +55,37 @@ header {
     border: none;
 }
 
-.searchInput input:focus {
+.input:focus {
     outline: none;
+}
+
+.input:focus + .results {
+    display: flex;
+}
+
+.results:hover {
+    display: flex;
+}
+
+.results {
+    display: none;
+    flex-direction: column;
+    row-gap: $spacer-24;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    background-color: $c-neutrals-7;
+    padding: $spacer-48 $spacer-24 $spacer-24;
+    border-radius: 0 0 20px 20px;
+    z-index: -1;
+}
+
+.results p {
+    font-family: $font-family-poppins;
+    font-size: $font-size-caption;
+    font-weight: $font-weight-400;
+    line-height: $line-height-caption;
+    color: $c-neutrals-1;
 }
 
 nav {
