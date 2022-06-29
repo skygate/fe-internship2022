@@ -7,3 +7,4 @@ export { addBid } from "./addBid";
 export { editProduct } from "./editProduct";
 export { deleteAuction } from "./deleteAuction";
 export { editAuction } from "./editAuction";
+export { getSearchResults } from "./search";
