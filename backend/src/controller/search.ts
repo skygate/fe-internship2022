@@ -27,7 +27,7 @@ module.exports.getSearchResults = async (req: Request, res: Response) => {
             })
         );
 
-        const foundAuctions = await auctions.find().populate({
+        const foundAuctions = await auctions.find({ isActive: true }).populate({
             path: "productID",
             match: { productName: { $regex: searchText, $options: "i" } },
             select: "productName productImageUrl",
