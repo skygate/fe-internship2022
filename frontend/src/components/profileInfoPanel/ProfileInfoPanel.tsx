@@ -71,24 +71,30 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile, setProfile }) =
             <span className={styles.usernameText}>
                 {profile.profileName.slice(0, maxUsernameLength)}
             </span>
-            <div className={isExpanded ? styles.aboutExpanded : styles.aboutWrapper}>
-                <span className={styles.aboutText} onClick={() => setIsExpanded(!isExpanded)}>
-                    {profile.about}
-                </span>
+            <div
+                className={isExpanded ? styles.aboutExpanded : styles.aboutWrapper}
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                <span className={styles.aboutText}>{profile.about}</span>
             </div>
-            <div className={styles.website}>
-                <img src={Globe} alt="globe" />
-                <a
-                    href={`http://${profile.websiteUrl}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.websiteText}
-                >
-                    {profile.websiteUrl && profile.websiteUrl?.length > 20
-                        ? `${profile.websiteUrl?.slice(0, maxWebsiteUrlLength)}...`
-                        : profile.websiteUrl}
-                </a>
-            </div>
+            <p className={styles.seeMore} onClick={() => setIsExpanded(!isExpanded)}>
+                {isExpanded ? "Hide" : "See more"}
+            </p>
+            {activeProfile.activeProfile?.websiteUrl && (
+                <div className={styles.website}>
+                    <img src={Globe} alt="globe" />
+                    <a
+                        href={`http://${profile.websiteUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.websiteText}
+                    >
+                        {profile.websiteUrl && profile.websiteUrl?.length > 20
+                            ? `${profile.websiteUrl?.slice(0, maxWebsiteUrlLength)}...`
+                            : profile.websiteUrl}
+                    </a>
+                </div>
+            )}
             {activeProfile.activeProfile?._id && activeProfile.activeProfile?._id !== profile._id && (
                 <div>
                     {!isFollower ? (
@@ -103,19 +109,33 @@ export const ProfileInfoPanel: FC<ProfileInfoProp> = ({ profile, setProfile }) =
                 </div>
             )}
             <div className={styles.socialMediaContainer}>
-                <a href={`http://${profile.twitterUrl}`} target="_blank" rel="noopener noreferrer">
-                    <img src={twitter} alt="twitter" />
-                </a>
-                <a
-                    href={`http://${profile.instagramUrl}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <img src={instagram} alt="instagram" />
-                </a>
-                <a href={`http://${profile.facebookUrl}`} target="_blank" rel="noopener noreferrer">
-                    <img src={facebook} alt="facebook" />
-                </a>
+                {activeProfile.activeProfile?.twitterUrl && (
+                    <a
+                        href={`http://${profile.twitterUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img src={twitter} alt="twitter" />
+                    </a>
+                )}
+                {activeProfile.activeProfile?.instagramUrl && (
+                    <a
+                        href={`http://${profile.instagramUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img src={instagram} alt="instagram" />
+                    </a>
+                )}
+                {activeProfile.activeProfile?.facebookUrl && (
+                    <a
+                        href={`http://${profile.facebookUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img src={facebook} alt="facebook" />
+                    </a>
+                )}
             </div>
             <span className={styles.memberSince}>
                 Member since{" "}

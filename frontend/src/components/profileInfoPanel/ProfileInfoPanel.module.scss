@@ -12,6 +12,7 @@
     border-radius: 16px;
     box-shadow: 0px 40px 32px -24px rgba(15, 15, 15, 0.12);
     align-items: center;
+    position: relative;
 }
 
 .profileAvatar {
@@ -32,6 +33,21 @@
     line-height: $line-height-caption-2;
     font-weight: $font-weight-400;
     font-size: $font-size-caption-2;
+}
+
+.seeMore {
+    color: $c-neutrals-4;
+    font-family: $font-family-poppins;
+    line-height: $line-height-caption-2;
+    font-weight: $font-weight-600;
+    font-size: $font-size-caption-2;
+    padding-top: $spacer-12;
+}
+
+.aboutExpanded:hover,
+.aboutWrapper:hover,
+.seeMore:hover {
+    cursor: pointer;
 }
 
 .aboutWrapper {
@@ -90,7 +106,6 @@
     width: 100%;
     justify-content: space-between;
     padding: $spacer-48;
-    border-bottom: 1px solid $c-neutrals-6;
 }
 
 .memberSince {
@@ -100,4 +115,9 @@
     font-size: $font-size-caption-2;
     line-height: $line-height-caption-2;
     margin-top: $spacer-48;
+    position: absolute;
+    bottom: 30px;
+    border-top: 1px solid $c-neutrals-6;
+    padding-top: $spacer-32;
+    width: 80%;
 }
