@@ -134,6 +134,11 @@
     font-size: $font-size-caption-2-bold;
     line-height: $line-height-caption-2;
     color: $c-neutrals-4;
+    width: 120px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .unitsInStock {
@@ -150,6 +155,11 @@
     font-size: $font-size-body-2-bold;
     line-height: $line-height-body-2-bold;
     color: $c-neutrals-2;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
 }
 
 .avatars {
