@@ -96,6 +96,27 @@
     font-weight: $font-weight-500;
     line-height: $line-height-body-2;
     color: $c-neutrals-4;
+    max-width: 425px;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.productDescriptionFull {
+    -webkit-line-clamp: 1000;
+}
+
+.seeMore {
+    font-size: $font-size-body-2;
+    font-weight: $font-weight-500;
+    line-height: $line-height-body-2;
+    color: $c-neutrals-2;
+}
+
+.seeMore:hover {
+    cursor: pointer;
 }
 
 .bids {

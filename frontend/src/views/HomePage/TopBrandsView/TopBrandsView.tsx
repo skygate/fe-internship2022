@@ -62,7 +62,7 @@ export function TopBrandsView() {
                             </span>
                             {newestAuctions &&
                                 newestAuctions
-                                    .slice(0, PROFILES_IN_COLUMN + 1)
+                                    .slice(0, PROFILES_IN_COLUMN)
                                     .map((item) => (
                                         <CreatorsListItem key={item._id} profile={item.profileID} />
                                     ))}

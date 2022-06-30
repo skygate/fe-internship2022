@@ -42,6 +42,7 @@ export const Auction = () => {
     const [modalsVisibility, setModalsVisibility] = useState(DEFAULT_MODAL_VISIBILITY);
     const [visibleBids, setVisibleBids] = useState(DEFAULT_VISIBLE_BIDS);
     const [selectedViewOption, setSelectedViewOption] = useState("info");
+    const [fullDescriptionView, setFullDescriptionView] = useState(false);
     const highestBid: Bid | undefined = auctionData?.bidHistory[auctionData.bidHistory.length - 1];
     const moreOptionsDropDownRef = useRef<HTMLDivElement>(null);
     const socket = useContext(SocketContext);
@@ -147,6 +148,10 @@ export const Auction = () => {
         setSelectedViewOption(target.id);
     };
 
+    const setView = () => {
+        setFullDescriptionView((prev) => !prev);
+    };
+
     return (
         <AuctionView
             auctionData={auctionData}
@@ -165,6 +170,8 @@ export const Auction = () => {
             menuButtons={menuButtons}
             onMenuButtonsSelect={onMenuButtonSelect}
             selectedViewOption={selectedViewOption}
+            fullDescriptionView={fullDescriptionView}
+            setFullDescriptionView={setView}
         />
     );
 };
