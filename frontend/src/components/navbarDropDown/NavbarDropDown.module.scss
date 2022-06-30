@@ -24,7 +24,7 @@
     font-family: $font-family-dm-sans;
     line-height: $line-height-button-2;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     color: $c-neutrals-2;
     border: 2px solid $c-neutrals-6;
@@ -33,6 +33,13 @@
     font-weight: $font-weight-700;
     font-size: $font-size-button-2;
     margin: 0;
+    width: 150px;
+}
+
+.buttonText {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdownContent {
