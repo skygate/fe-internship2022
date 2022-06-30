@@ -36,6 +36,8 @@ interface AuctionViewProps {
     menuButtons: ButtonInterface[];
     onMenuButtonsSelect: (e: React.MouseEvent) => void;
     selectedViewOption: string;
+    fullDescriptionView: boolean;
+    setFullDescriptionView: () => void;
 }
 
 export const AuctionView = ({
@@ -54,12 +56,15 @@ export const AuctionView = ({
     menuButtons,
     onMenuButtonsSelect,
     selectedViewOption,
+    fullDescriptionView,
+    setFullDescriptionView,
 }: AuctionViewProps) => {
     const { productID, amount, bidHistory, instantSellPrice, price, profileID } = auctionData || {};
     const { productImageUrl, productName, productDescription } = productID || {};
     const highestBid =
         bidHistory && bidHistory[0] ? bidHistory[bidHistory?.length - 1].bid : undefined;
     const profile = useAppSelector(ActiveProfileSelector).activeProfile;
+
     const renderDisplayOption = () => {
         if (!auctionData) return;
         switch (selectedViewOption) {
@@ -80,7 +85,22 @@ export const AuctionView = ({
                     </div>
                 );
             case "description":
-                return <div className={style.productDescription}>{productDescription}</div>;
+                return (
+                    <div>
+                        <div
+                            className={
+                                fullDescriptionView
+                                    ? `${style.productDescription} ${style.productDescriptionFull}`
+                                    : `${style.productDescription}`
+                            }
+                        >
+                            {productDescription}
+                        </div>
+                        <p onClick={setFullDescriptionView} className={style.seeMore}>
+                            {fullDescriptionView ? "Hide" : "See more"}
+                        </p>
+                    </div>
+                );
             case "owner":
                 return (
                     <div>
@@ -153,7 +173,7 @@ export const AuctionView = ({
                             </div>
                         ) : null}
 
-                        {auctionData.instantSellPrice && (
+                        {auctionData.instantSellPrice && auctionData.isActive && (
                             <Button
                                 text="Purchase now"
                                 id="purchase"
@@ -161,7 +181,7 @@ export const AuctionView = ({
                                 onClick={changeModalsVisibility}
                             />
                         )}
-                        {auctionData.putOnSale && (
+                        {auctionData.putOnSale && auctionData.isActive && (
                             <Button
                                 text="Place a bid"
                                 id="placeBid"

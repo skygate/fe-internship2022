@@ -61,7 +61,7 @@ export function NavbarDropDown() {
                 className={styles.dropdownButton}
             >
                 <ProfilePicture width="32px" url={activeAccount.activeProfile?.profilePicture} />
-                <span>
+                <span className={styles.buttonText}>
                     {activeAccount.activeProfile?.profileName &&
                         activeAccount.activeProfile.profileName.slice(0, 14)}
                 </span>

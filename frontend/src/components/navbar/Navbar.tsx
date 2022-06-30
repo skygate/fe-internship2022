@@ -49,60 +49,63 @@ export const Navbar = () => {
 
     return (
         <header>
-            <div className={style.logo} onClick={() => checkLink()}>
-                <img src={logo} alt="logo" />
-            </div>
-            <div className={style.searchInput}>
-                <label htmlFor="search" className={style.label}>
-                    <img src={magnifierIcon} alt="Magnifier icon" />
-                </label>
-                <input
-                    type="text"
-                    id={style.search}
-                    placeholder="Search in Items, Creators"
-                    onChange={onSearch}
-                    className={style.input}
-                />
-                <div className={style.results}>
-                    {results && results?.length > 0 ? (
-                        results.map((item) => (
-                            <ProfileHorizontal
-                                key={item.name}
-                                upperText={item.name}
-                                bottomText={item.object}
-                                imageUrl={item.picture}
-                                imageWidth="50px"
-                                linkTo={item.linkTo}
-                            />
-                        ))
+            <div className={style.wrapper}>
+                <div className={style.left}>
+                    <div className={style.logo} onClick={() => checkLink()}>
+                        <img src={logo} alt="logo" />
+                    </div>
+                    <div className={style.searchInput}>
+                        <label htmlFor="search" className={style.label}>
+                            <img src={magnifierIcon} alt="Magnifier icon" />
+                        </label>
+                        <input
+                            type="text"
+                            id={style.search}
+                            placeholder="Search in Items, Creators"
+                            onChange={onSearch}
+                            className={style.input}
+                        />
+                        <div className={style.results}>
+                            {results && results?.length > 0 ? (
+                                results.map((item) => (
+                                    <ProfileHorizontal
+                                        key={item.name}
+                                        upperText={item.name}
+                                        bottomText={item.object}
+                                        imageUrl={item.picture}
+                                        imageWidth="50px"
+                                        linkTo={item.linkTo}
+                                    />
+                                ))
+                            ) : (
+                                <p>Search for items. Put min. 3 characters</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div className={style.right}>
+                    <nav>
+                        <ul>
+                            <HashLink to="/#discover">
+                                <li className={style.navItem}>Discover</li>
+                            </HashLink>
+                            <Link to="/activity">
+                                <li className={style.navItem}>Activity</li>
+                            </Link>
+                        </ul>
+                    </nav>
+                    <Link to="/create" style={{ textDecoration: "none" }}>
+                        <button className={style.btnCreate}>Create</button>
+                    </Link>
+                    {user.userID === "" ? (
+                        <Link to="/login">
+                            <button className={style.btnWallet}>Log in</button>
+                        </Link>
                     ) : (
-                        <p>Search for items. Put min. 3 characters</p>
+                        <NavbarDropDown />
                     )}
                 </div>
             </div>
-            <nav>
-                <ul>
-                    <HashLink to="/#discover">
-                        <li className={style.navItem}>Discover</li>
-                    </HashLink>
-                    <Link to="/activity">
-                        <li className={style.navItem}>Activity</li>
-                    </Link>
-                    <li className={style.navItem}>
-                        <a href="/">Resources</a>
-                    </li>
-                </ul>
-            </nav>
-            <Link to="/create" style={{ textDecoration: "none" }}>
-                <button className={style.btnCreate}>Create</button>
-            </Link>
-            {user.userID === "" ? (
-                <Link to="/login">
-                    <button className={style.btnWallet}>Log in</button>
-                </Link>
-            ) : (
-                <NavbarDropDown />
-            )}
         </header>
     );
 };

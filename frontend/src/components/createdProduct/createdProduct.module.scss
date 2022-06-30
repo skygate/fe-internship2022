@@ -88,6 +88,10 @@
     color: $c-neutrals-2;
     padding: $spacer-8;
     flex-wrap: wrap;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .productDescription {
@@ -99,4 +103,8 @@
     color: $c-neutrals-4;
     padding: $spacer-8;
     flex-wrap: wrap;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
