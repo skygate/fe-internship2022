@@ -19,6 +19,11 @@ interface RenderInputProps {
 }
 
 export const RenderInput = ({ item, onInputChange, width, value, error }: RenderInputProps) => {
+    const onClick = (e: React.MouseEvent) => {
+        const target = e.target as HTMLInputElement;
+        if (target.value === "0") target.value = "";
+    };
+
     return (
         <div className={style.inputContainer} key={item.id} style={{ width: `${width}` }}>
             <label htmlFor={item.id} className={style.label}>
@@ -33,6 +38,7 @@ export const RenderInput = ({ item, onInputChange, width, value, error }: Render
                 value={value}
                 required={item.required}
                 minLength={item.minlength}
+                onClick={(e) => onClick(e)}
             />
             {error ? <p className={style.error}>{error}</p> : null}
         </div>
