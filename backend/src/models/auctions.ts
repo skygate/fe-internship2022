@@ -26,8 +26,8 @@ const auctionsSchema = new mongoose.Schema({
             },
         },
     ],
-    startDate: String,
-    endDate: String,
+    startDate: Date,
+    endDate: Date,
     likes: [
         {
             like: {
@@ -39,6 +39,10 @@ const auctionsSchema = new mongoose.Schema({
             },
         },
     ],
+    expireAt: Date,
 });
+
+auctionsSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
+
 const auctions = mongoose.model("Auctions", auctionsSchema);
 export default auctions;

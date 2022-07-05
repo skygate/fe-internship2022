@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import auctions from "../models/auctions";
 import actions from "../models/actions";
+import schedule from "node-schedule";
 
 interface Like {
     like: {
@@ -183,7 +184,6 @@ export const addAuction = async (req: Request, res: Response) => {
     const { profileID, productID, price, putOnSale, instantSellPrice } = req.body;
     const amount = 1;
     res.setHeader("Access-Control-Allow-Credentials", "true");
-    // Handling authentication on every fetch
     if (req.user === undefined) return res.status(401).json({ message: "Not authenticated" });
     const newAuction = new auctions({
         profileID,
@@ -197,6 +197,7 @@ export const addAuction = async (req: Request, res: Response) => {
         startDate: new Date(),
         endDate: new Date(new Date().setHours(new Date().getHours() + req.body.duration)),
         likes: [],
+        expireAt: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
     });
     try {
         await newAuction.save();
@@ -337,3 +338,15 @@ export const addRemoveLike = async (req: Request, res: Response) => {
         return res.status(400).json({ errorMessage: "Something gone wrong" });
     }
 };
+
+//set overdated auctions properties "isActive" to false every minute
+schedule.scheduleJob("0 * * * * *", async () => {
+    const allOverDatedAuctions = await auctions.find({
+        endDate: { $lt: new Date() },
+        isActive: true,
+    });
+    allOverDatedAuctions.forEach((auction) => {
+        auction.isActive = false;
+        auction.save();
+    });
+});
