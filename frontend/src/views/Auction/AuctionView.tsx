@@ -96,9 +96,11 @@ export const AuctionView = ({
                         >
                             {productDescription}
                         </div>
-                        <p onClick={setFullDescriptionView} className={style.seeMore}>
-                            {fullDescriptionView ? "Hide" : "See more"}
-                        </p>
+                        {productDescription && productDescription.length > 500 && (
+                            <p onClick={setFullDescriptionView} className={style.seeMore}>
+                                {fullDescriptionView ? "Hide" : "See more"}
+                            </p>
+                        )}
                     </div>
                 );
             case "owner":

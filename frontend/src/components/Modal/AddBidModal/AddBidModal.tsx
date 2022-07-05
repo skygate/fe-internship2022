@@ -30,10 +30,21 @@ export const AddBidModal = ({ onPlaceBid, onClose }: AddBidModalProps) => {
         onClose();
     };
 
+    const onInputClick = (e: React.MouseEvent) => {
+        const target = e.target as HTMLInputElement;
+        if (target.value === "0") target.value = "";
+    };
+
     return (
         <form className={style.form}>
             <label htmlFor="bidValue">Bid value</label>
-            <input type="number" id="bidValue" value={inputValue} onChange={onInputValueChange} />
+            <input
+                type="number"
+                id="bidValue"
+                value={inputValue}
+                onChange={onInputValueChange}
+                onClick={(e) => onInputClick(e)}
+            />
             <div className={style.buttons}>
                 <Button text="Cancel" id="cancelButton" onClick={onCancelButtonClick} />
                 <Button
