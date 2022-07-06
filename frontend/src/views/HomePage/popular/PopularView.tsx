@@ -55,12 +55,9 @@ export const PopularView = ({
                                 ? style.swipeRight
                                 : `${style.swipeRight} ${style.arrowHover}`
                         }
+                        onClick={() => changePage("right")}
                     >
-                        <img
-                            src={arrowRight}
-                            alt="swipe right"
-                            onClick={() => changePage("right")}
-                        />
+                        <img src={arrowRight} alt="swipe right" />
                     </div>
                 </div>
             </div>
