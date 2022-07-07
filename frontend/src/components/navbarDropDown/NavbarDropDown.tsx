@@ -78,6 +78,7 @@ export function NavbarDropDown() {
                 <Link
                     to={`profile/${activeAccount.activeProfile?._id}`}
                     className={styles.dropdownListButton}
+                    onClick={() => setActiveDropdownButton(false)}
                 >
                     {" "}
                     <img src={profileIcon} alt="profile" className={styles.dropdownListIcon} />
